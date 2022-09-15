@@ -16,7 +16,9 @@ endif
 #                               SOURCE FILES                              	   #
 ################################################################################
 
-SRCS =	main.cpp \
+SRCS =	main.cpp	\
+		Server.cpp	\
+		Epoll.cpp	\
 
 ################################################################################
 #                               INCLUDES                             	       #
@@ -92,4 +94,4 @@ sanitize:
 -include $(DEPS)
 
 .PHONY : all clean fclean re vtest
-.SILENT:
+#.SILENT:
