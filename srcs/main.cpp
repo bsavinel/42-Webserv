@@ -13,7 +13,7 @@ void	serverEvent(Epoll &epoll)
 	Epoll::stockEventType::const_iterator		it;
 	Epoll::stockServerType::const_iterator	itServ;
 	t_socket newClient;
-	
+
 	t_sockaddr_in sin;
 	int size = sizeof(sin);
 	for (it = epoll.getAllEvents().begin(); it != epoll.getAllEvents().end(); it++)
@@ -23,7 +23,10 @@ void	serverEvent(Epoll &epoll)
 		if (itServ == epoll.getSockServ().end())
 			continue;
 		sin = itServ->second.getAddress();
-		newClient = accept(itServ->second.getSocket(), (t_sockaddr *)&sin, (socklen_t *)&size);
+		// marche en allant prendre le socket dans le serveur
+		newClient = accept(it->data.fd, (t_sockaddr *)&sin, (socklen_t *)&size);
+		if (newClient == -1)
+			throw std::exception();
 		epoll.addClient(newClient);
 	}
 }
@@ -42,14 +45,15 @@ void	clientEvent(Epoll &epoll)
 		if (it->events & EPOLLIN)
 		{
 			bzero(str,2048);
-			while (recv(it->data.fd, str, 2048, 0) > 0)
+			while (recv(it->data.fd, str, 2048, MSG_DONTWAIT) > 0)
 			{
 				std::cout << str;
 				bzero(str,2048);
 			}
-			std::cout << str << std::endl;
+			epoll.changeSocket(it->data.fd, EPOLLOUT);
+			std::cout << str << "fin de la requete" << std::endl;
 		}
-		else if (it->events & EPOLLOUT)
+		if (it->events & EPOLLOUT)
 		{
 			int fd;
 			int i;
@@ -65,11 +69,9 @@ void	clientEvent(Epoll &epoll)
 			close(fd);
 			//std::cout << "le fd :" << it->data.fd << "attends que l'on ecrive sur dessus" << std::endl; 
 		}
-		else if (it->events & EPOLLRDHUP)
-			epoll.deleteClient(it->data.fd);
-		else
+		if (it->events & EPOLLRDHUP)
 		{
-			std::cerr << "event non reconnue :" << it->events << std::endl;
+			epoll.deleteClient(it->data.fd);
 		}
 	}
 }
@@ -90,7 +92,7 @@ int main(int ac, char **av)
 	(void)ac;
 	(void)av;
 
-	Server	server(AF_INET, SOCK_STREAM, 0, INADDR_ANY, 8080, 100);
+	Server	server(AF_INET, SOCK_STREAM, 0, INADDR_ANY, 8081, 100);
 	Epoll	epoll;
 	try
 	{
