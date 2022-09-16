@@ -1,15 +1,102 @@
+#include "Epoll.hpp"
 #include "Server.hpp"
 #include <cstdlib>
+#include <iostream>
+#include <unistd.h>
+#include <fcntl.h>
+
+typedef struct sockaddr_in t_sockaddr_in;
+typedef struct sockaddr t_sockaddr;
+
+void	serverEvent(Epoll &epoll)
+{
+	Epoll::stockEventType::const_iterator		it;
+	Epoll::stockServerType::const_iterator	itServ;
+	t_socket newClient;
+	
+	t_sockaddr_in sin;
+	int size = sizeof(sin);
+	for (it = epoll.getAllEvents().begin(); it != epoll.getAllEvents().end(); it++)
+	{
+		/*je met le fd que je cherche et je recupere un iterateur sur un serveur*/
+		itServ = epoll.getSockServ().find(it->data.fd);
+		if (itServ == epoll.getSockServ().end())
+			continue;
+		sin = itServ->second.getAddress();
+		newClient = accept(itServ->second.getSocket(), (t_sockaddr *)&sin, (socklen_t *)&size);
+		epoll.addClient(newClient);
+	}
+}
+
+void	clientEvent(Epoll &epoll)
+{
+	Epoll::stockEventType::const_iterator	it;
+	Epoll::stockClientType::const_iterator	itClient;
+	char str[2048];
+
+	for (it = epoll.getAllEvents().begin(); it != epoll.getAllEvents().end(); it++)
+	{
+		itClient = epoll.getSockClient().find(it->data.fd);
+		if (itClient == epoll.getSockClient().end())
+			continue;
+		if (it->events & EPOLLIN)
+		{
+			bzero(str,2048);
+			while (recv(it->data.fd, str, 2048, 0) > 0)
+			{
+				std::cout << str;
+				bzero(str,2048);
+			}
+			std::cout << str << std::endl;
+		}
+		else if (it->events & EPOLLOUT)
+		{
+			int fd;
+			int i;
+			fd = open("", O_RDONLY);
+			bzero(str, 2048);
+			i = read(fd, str, 2048);
+			while (i > 0)
+			{
+				send(it->data.fd, str, i, 0);
+				bzero(str,2048);
+				i = read(fd, str, 2048);
+			}
+			close(fd);
+			//std::cout << "le fd :" << it->data.fd << "attends que l'on ecrive sur dessus" << std::endl; 
+		}
+		else if (it->events & EPOLLRDHUP)
+			epoll.deleteClient(it->data.fd);
+		else
+		{
+			std::cerr << "event non reconnue :" << it->events << std::endl;
+		}
+	}
+}
+
+void routine(Epoll &epoll)
+{
+	while (1)
+	{
+		epoll.wait();
+		// TODO resise vetor events
+		serverEvent(epoll);
+		clientEvent(epoll);
+	}
+}
 
 int main(int ac, char **av)
 {
 	(void)ac;
 	(void)av;
 
-	Server server(AF_INET, SOCK_STREAM, 0, INADDR_ANY, 80, 100);
+	Server	server(AF_INET, SOCK_STREAM, 0, INADDR_ANY, 8080, 100);
+	Epoll	epoll;
 	try
 	{
 		server.launch();
+		epoll.addServer(server.getSocket(), server);
+		routine(epoll);
 	}
 	catch(const std::exception& e)
 	{

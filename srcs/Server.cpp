@@ -73,6 +73,11 @@ int		Server::getSocket() const
 }
 
 
+struct sockaddr_in	Server::getAddress() const
+{
+	return (_address);
+}
+
 // ----------------------------------SETTERS
 
 void	Server::setDomain(int domain)
@@ -118,16 +123,16 @@ void	Server::printConfig() const
 
 void Server::launch()
 {
-	memset(&address, 0, sizeof(address));
-	address.sin_family = _domain;
-	address.sin_port = htons(_port);
-	address.sin_addr.s_addr= htonl(_interface);
+	memset(&_address, 0, sizeof(_address));
+	_address.sin_family = _domain;
+	_address.sin_port = htons(_port);
+	_address.sin_addr.s_addr= htonl(_interface);
 
 	_socket = socket(_domain, _service, _protocol);
 
 	if(_socket == -1)
 		throw ERROR_SOCKET_CREATION();
-	if (bind(_socket, (struct sockaddr *)&address, sizeof(address)) == -1)
+	if (bind(_socket, (struct sockaddr *)&_address, sizeof(_address)) == -1)
 	{
 		throw ERROR_SOCKET_BINDING();
 	}
