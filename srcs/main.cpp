@@ -16,6 +16,7 @@ void	serverEvent(Epoll &epoll)
 	
 	t_sockaddr_in sin;
 	int size = sizeof(sin);
+
 	for (it = epoll.getAllEvents().begin(); it != epoll.getAllEvents().end(); it++)
 	{
 		/*je met le fd que je cherche et je recupere un iterateur sur un serveur*/
@@ -53,7 +54,7 @@ void	clientEvent(Epoll &epoll)
 		{
 			int fd;
 			int i;
-			fd = open("", O_RDONLY);
+			fd = open("./resources/index.html", O_RDONLY);
 			bzero(str, 2048);
 			i = read(fd, str, 2048);
 			while (i > 0)
