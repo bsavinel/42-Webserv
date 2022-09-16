@@ -16,12 +16,14 @@ Epoll::Epoll(const Epoll &rhs)
 
 Epoll::~Epoll()
 {
-	std::set<t_socket>::iterator ptr;
+	Epoll::stockClientType::const_iterator	itClient;
+	Epoll::stockServerType::const_iterator	itServ;
 
-	for (ptr = _sockClient.begin(); ptr != _sockClient.end(); ptr++)
-		close(*ptr);
-	for (ptr = _sockServ.begin(); ptr != _sockServ.end(); ptr++)
-		close(*ptr);
+
+	for (itClient = _sockClient.begin(); itClient != _sockClient.end(); itClient++)
+		deleteClient(*itClient);
+	for (itServ = _sockServ.begin(); itServ != _sockServ.end(); itServ++)
+		deleteServer(itServ->first);
 	close(_instance);
 }
 
@@ -45,11 +47,11 @@ void	Epoll::addClient(t_socket const & sock)
 		throw EpollCtlFailed();
 }
 
-void	Epoll::addServer(t_socket const & sock)
+void	Epoll::addServer(t_socket const & sock, Server const & server)
 {
 	t_epoll_event epollEvent;
 
-	_sockServ.insert(sock);
+	_sockServ.insert(std::make_pair(sock, server));
 	epollEvent.data.fd = sock;
 	epollEvent.events = EPOLLIN;
 	if (epoll_ctl(_instance, EPOLL_CTL_ADD, sock, &epollEvent))
@@ -96,7 +98,7 @@ const std::set<t_socket> &Epoll::getSockClient() const
 	return _sockClient;
 }
 
-const std::set<t_socket> &Epoll::getSockServ() const
+const std::map<t_socket,Server> &Epoll::getSockServ() const
 {
 	return _sockServ;
 }

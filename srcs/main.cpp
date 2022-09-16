@@ -1,45 +1,85 @@
 #include "Epoll.hpp"
 #include "Server.hpp"
 #include <cstdlib>
+#include <iostream>
+#include <unistd.h>
+#include <fcntl.h>
 
 typedef struct sockaddr_in t_sockaddr_in;
 typedef struct sockaddr t_sockaddr;
 
-// TODO regarder si il faut changer l'etat apres avoir fait une action pour le prochain wait ou non on peut aussi garde en moire le fd non fini mais il y a un probleme pour le serveur
 void	serverEvent(Epoll &epoll)
 {
-	Epoll::stockEventType::iterator		it;
-	Epoll::stockServerType::iterator	itServ;
+	Epoll::stockEventType::const_iterator		it;
+	Epoll::stockServerType::const_iterator	itServ;
+	t_socket newClient;
 	
 	t_sockaddr_in sin;
 	int size = sizeof(sin);
-	//! //BUG peut-etre qu'il va faloir mettre en public les truc de getteur
 	for (it = epoll.getAllEvents().begin(); it != epoll.getAllEvents().end(); it++)
 	{
-		t_socket newClient;
-
 		/*je met le fd que je cherche et je recupere un iterateur sur un serveur*/
 		itServ = epoll.getSockServ().find(it->data.fd);
-		if (epoll.getSockServ().find(it->data.fd) == epoll.getSockServ().end())
+		if (itServ == epoll.getSockServ().end())
 			continue;
-		// TODO changer le stock des sesrver en map ayant pour cle le fd et pour valeur la classe serveur
-		// TODO donc toute les fonction aui vont avec c'est a dire addServer et peut-etre deleteServer 
-		// TODO avoir ajouter un getAdress a Serveur
-		newClient = accept(itServ->getSocket(), (t_sockaddr *)&itServ->getAdress(), (socklen_t *)&size);
+		sin = itServ->second.getAddress();
+		newClient = accept(itServ->second.getSocket(), (t_sockaddr *)&sin, (socklen_t *)&size);
 		epoll.addClient(newClient);
 	}
 }
 
 void	clientEvent(Epoll &epoll)
 {
+	Epoll::stockEventType::const_iterator	it;
+	Epoll::stockClientType::const_iterator	itClient;
+	char str[2048];
 
+	for (it = epoll.getAllEvents().begin(); it != epoll.getAllEvents().end(); it++)
+	{
+		itClient = epoll.getSockClient().find(it->data.fd);
+		if (itClient == epoll.getSockClient().end())
+			continue;
+		if (it->events & EPOLLIN)
+		{
+			bzero(str,2048);
+			while (recv(it->data.fd, str, 2048, 0) > 0)
+			{
+				std::cout << str;
+				bzero(str,2048);
+			}
+			std::cout << str << std::endl;
+		}
+		else if (it->events & EPOLLOUT)
+		{
+			int fd;
+			int i;
+			fd = open("", O_RDONLY);
+			bzero(str, 2048);
+			i = read(fd, str, 2048);
+			while (i > 0)
+			{
+				send(it->data.fd, str, i, 0);
+				bzero(str,2048);
+				i = read(fd, str, 2048);
+			}
+			close(fd);
+			//std::cout << "le fd :" << it->data.fd << "attends que l'on ecrive sur dessus" << std::endl; 
+		}
+		else if (it->events & EPOLLRDHUP)
+			epoll.deleteClient(it->data.fd);
+		else
+		{
+			std::cerr << "event non reconnue :" << it->events << std::endl;
+		}
+	}
 }
 
-void routine(Epoll &epoll, Server &server)
+void routine(Epoll &epoll)
 {
 	while (1)
 	{
 		epoll.wait();
+		// TODO resise vetor events
 		serverEvent(epoll);
 		clientEvent(epoll);
 	}
@@ -55,8 +95,8 @@ int main(int ac, char **av)
 	try
 	{
 		server.launch();
-		routine(epoll, server);
-		epoll.addServer(server.getSocket());
+		epoll.addServer(server.getSocket(), server);
+		routine(epoll);
 	}
 	catch(const std::exception& e)
 	{

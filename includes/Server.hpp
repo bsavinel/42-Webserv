@@ -16,7 +16,7 @@ class Server
 		u_long				_interface; // needs to be set to INADDR_ANY
 		int					_port;
 		int					_backlog; // maximum number of queued clients
-		struct sockaddr_in	address;
+		struct sockaddr_in	_address;
 		int					_socket;
 
 	public :
@@ -33,6 +33,7 @@ class Server
 		int		getPort() const;
 		int		getBacklog() const;
 		int		getSocket() const;
+		struct sockaddr_in	getAddress() const;
 
 		//Setters
 		void	setDomain(int domain);
