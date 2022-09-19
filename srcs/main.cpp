@@ -4,6 +4,7 @@
 #include <iostream>
 #include <unistd.h>
 #include <fcntl.h>
+#include <HttpRespond.hpp>
 
 typedef struct sockaddr_in t_sockaddr_in;
 typedef struct sockaddr t_sockaddr;
@@ -16,7 +17,7 @@ void	serverEvent(Epoll &epoll)
 
 	t_sockaddr_in sin;
 	int size = sizeof(sin);
-
+	
 	for (it = epoll.getAllEvents().begin(); it != epoll.getAllEvents().end(); it++)
 	{
 		/*je met le fd que je cherche et je recupere un iterateur sur un serveur*/
@@ -56,18 +57,23 @@ void	clientEvent(Epoll &epoll)
 		}
 		if (it->events & EPOLLOUT)
 		{
+			// TODO mettre la lecture de fichier dans le httpRespond
+			std::string file_extract;
 			int fd;
 			int i;
-			fd = open("./resources/index.html", O_RDONLY);
+			fd = open("./ressources/index.html", O_RDONLY);
 			bzero(str, 2048);
 			i = read(fd, str, 2048);
 			while (i > 0)
 			{
-				send(it->data.fd, str, i, 0);
+				file_extract.append(str);
 				bzero(str,2048);
 				i = read(fd, str, 2048);
 			}
-			close(fd);
+			
+			HttpRespond resp(file_extract, "text/html");
+			send(it->data.fd, resp.getHttpRespond().c_str(), resp.getHttpRespond().size(), MSG_NOSIGNAL);
+			epoll.deleteClient(it->data.fd);
 			//std::cout << "le fd :" << it->data.fd << "attends que l'on ecrive sur dessus" << std::endl; 
 		}
 		if (it->events & EPOLLRDHUP)

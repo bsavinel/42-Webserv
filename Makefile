@@ -16,9 +16,11 @@ endif
 #                               SOURCE FILES                              	   #
 ################################################################################
 
-SRCS =	main.cpp	\
-		Server.cpp	\
-		Epoll.cpp	\
+SRCS =	main.cpp		\
+		itoa.cpp		\
+		Server.cpp		\
+		Epoll.cpp		\
+		HttpRespond.cpp \
 
 ################################################################################
 #                               INCLUDES                             	       #
