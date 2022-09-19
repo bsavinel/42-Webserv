@@ -16,17 +16,21 @@ endif
 #                               SOURCE FILES                              	   #
 ################################################################################
 
-SRCS =	main.cpp		\
-		itoa.cpp		\
-		Server.cpp		\
-		Epoll.cpp		\
-		HttpRespond.cpp \
+SRCS =	main.cpp			\
+		Server.cpp			\
+		exceptWebserv.cpp	\
+		Epoll.cpp			\
+		HttpRespond.cpp		\
+		body.cpp			\
+		ClientEvent.cpp		\
+		ServeurEvent.cpp	\
+		itoa.cpp			\
 
 ################################################################################
 #                               INCLUDES                             	       #
 ################################################################################
 
-INCS				=	-I ./includes/		\
+INCS			=	-I ./includes/	\
 
 LIBINCS			=	
 

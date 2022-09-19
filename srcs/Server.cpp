@@ -1,16 +1,15 @@
 #include "Server.hpp"
+#include "exceptWebserv.hpp"
 
 Server::Server(int domain, int service, int protocol, u_long interface, int port,int backlog)
 : _domain(domain), _service(service), _protocol(protocol), _interface(interface),
 _port(port), _backlog(backlog), _socket(-1)
 {
-	// std::cout << "Server default constructor called" << std::endl;
 }
 
 Server::Server(const Server & src)
 {
 	*this = src;
-	// std::cout << "Server copy constructor called" << std::endl;
 }
 
 Server & Server::operator=(const Server & rhs)
@@ -25,17 +24,15 @@ Server & Server::operator=(const Server & rhs)
 		_backlog = rhs._backlog;
 		
 	}
-	// std::cout << "Server assignment constructor called" << std::endl;
 	return (*this);
 }
 
 Server::~Server()
 {
-	// std::cout << "Server default destructor called" << std::endl;
 }
 
 
-// ---------------------------------GETTERS
+//! ------------------------------ GETTERS ------------------------------
 
 int		Server::getDomain() const
 {
@@ -72,13 +69,12 @@ int		Server::getSocket() const
 	return(_socket);
 }
 
-
 struct sockaddr_in	Server::getAddress() const
 {
 	return (_address);
 }
 
-// ----------------------------------SETTERS
+//! ------------------------------ SETTERS ------------------------------
 
 void	Server::setDomain(int domain)
 {
@@ -131,28 +127,13 @@ void Server::launch()
 	_socket = socket(_domain, _service, _protocol);
 
 	if(_socket == -1)
-		throw ERROR_SOCKET_CREATION();
+		throw exceptWebserv("Server : Failed to create server socket");
 	if (bind(_socket, (struct sockaddr *)&_address, sizeof(_address)) == -1)
 	{
-		throw ERROR_SOCKET_BINDING();
+		throw exceptWebserv("Server : Failed to bind the socket");
 	}
 	if(listen(_socket, _backlog) < 0)
-		throw ERROR_LISTENING_SERVER();
+		throw exceptWebserv("Server : Failed to start listening");
 
 	std::cout << "===========WAITING FOR CONNECTION===========" << std::endl;
-}
-
-const char * Server::ERROR_SOCKET_CREATION::what() const throw()
-{
-	return("Server : Failed to create server socket...");
-}
-
-const char * Server::ERROR_SOCKET_BINDING::what() const throw()
-{	
-	return("Server : Failed to bind the socket ");
-}
-
-const char * Server::ERROR_LISTENING_SERVER::what() const throw()
-{
-	return("Server : Failed to start listening...");
 }

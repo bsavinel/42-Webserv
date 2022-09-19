@@ -7,9 +7,8 @@
 #include <string>
 #include <map>
 #include "Server.hpp"
-
-typedef int t_socket;
-typedef struct epoll_event t_epoll_event;
+#include "define.hpp"
+#include <exception>
 
 class Epoll
 {
@@ -33,16 +32,6 @@ class Epoll
 		const std::set<t_socket> &getSockClient() const;
 		const std::map<t_socket,Server> &getSockServ() const;
 		const std::vector<t_epoll_event> &getAllEvents() const; // ? peut-etre degage le const peut etre pratique
-
-		class	EpollCreateFailed: public std::exception
-		{
-			const char *what() const throw();
-		};
-
-		class	EpollCtlFailed: public std::exception
-		{
-			const char *what() const throw();
-		};
 
 	private:
 		t_socket					_instance;
