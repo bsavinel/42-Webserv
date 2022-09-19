@@ -4,7 +4,7 @@
 #include <iostream>
 #include <unistd.h>
 #include <fcntl.h>
-#include <HttpRespond.hpp>
+#include "HttpRespond.hpp"
 
 typedef struct sockaddr_in t_sockaddr_in;
 typedef struct sockaddr t_sockaddr;
@@ -99,7 +99,9 @@ int main(int ac, char **av)
 	(void)ac;
 	(void)av;
 
-	Server	server(AF_INET, SOCK_STREAM, 0, INADDR_ANY, 8081, 100);
+	if (ac != 2)
+		return 1;
+	Server	server(AF_INET, SOCK_STREAM, 0, INADDR_ANY, atoi(av[1]), 100);
 	Epoll	epoll;
 	try
 	{
