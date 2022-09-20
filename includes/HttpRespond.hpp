@@ -8,7 +8,7 @@ class HttpRespond
 	public:
 		HttpRespond();
 		HttpRespond(const HttpRespond& rhs);
-		HttpRespond(const std::string content, const std::string contentType);
+		HttpRespond();
 		~HttpRespond();
 		
 		HttpRespond &operator=(const HttpRespond& rhs);
