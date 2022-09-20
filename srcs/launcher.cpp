@@ -13,7 +13,7 @@ static void routine(Epoll &epoll)
 	}
 }
 
-void starter(char **av)
+void launcher(char **av)
 {
 	Epoll	epoll;
 	Server	server(AF_INET, SOCK_STREAM, 0, INADDR_ANY, atoi(av[1]), 100);
