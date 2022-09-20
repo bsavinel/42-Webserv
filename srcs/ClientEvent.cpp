@@ -2,7 +2,7 @@
 #include "HttpRespond.hpp"
 #include <iostream>
 
-// changer le open en stream
+// TODO changer le open en stream
 #include <unistd.h>
 #include <fcntl.h>
 
@@ -47,7 +47,6 @@ void	clientEvent(Epoll &epoll)
 			HttpRespond resp(file_extract, "text/html");
 			send(it->data.fd, resp.getHttpRespond().c_str(), resp.getHttpRespond().size(), MSG_NOSIGNAL);
 			epoll.deleteClient(it->data.fd);
-			//std::cout << "le fd :" << it->data.fd << "attends que l'on ecrive sur dessus" << std::endl; 
 		}
 		if (it->events & EPOLLRDHUP)
 		{

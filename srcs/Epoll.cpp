@@ -1,12 +1,13 @@
 #include "Epoll.hpp"
+#include "exceptWebserv.hpp"
 #include <unistd.h>
-#include <exception>
+#include <fcntl.h>
 
 Epoll::Epoll()
 {
-	_instance = epoll_create(10);
+	_instance = epoll_create(8080);
 	if (_instance == -1)
-		throw EpollCreateFailed();
+		throw exceptWebserv("Epoll : Failed to init instance");
 }
 
 Epoll::Epoll(const Epoll &rhs)
@@ -43,8 +44,9 @@ void	Epoll::addClient(t_socket const & sock)
 	_sockClient.insert(sock);
 	epollEvent.data.fd = sock;
 	epollEvent.events = EPOLLIN;
-	if (epoll_ctl(_instance, EPOLL_CTL_ADD, sock, &epollEvent))
-		throw EpollCtlFailed();
+	fcntl(sock, O_NONBLOCK);
+	if (epoll_ctl(_instance, EPOLL_CTL_ADD, sock, &epollEvent) == -1)
+		throw exceptWebserv("Epoll : Failed to add new socket in instance");
 }
 
 void	Epoll::addServer(t_socket const & sock, Server const & server)
@@ -54,8 +56,8 @@ void	Epoll::addServer(t_socket const & sock, Server const & server)
 	_sockServ.insert(std::make_pair(sock, server));
 	epollEvent.data.fd = sock;
 	epollEvent.events = EPOLLIN;
-	if (epoll_ctl(_instance, EPOLL_CTL_ADD, sock, &epollEvent))
-		throw EpollCtlFailed();
+	if (epoll_ctl(_instance, EPOLL_CTL_ADD, sock, &epollEvent) == -1)
+		throw exceptWebserv("Epoll : Failed to add new socket in instance");
 }
 
 void	Epoll::deleteClient(t_socket const & sock)
@@ -79,7 +81,6 @@ void	Epoll::deleteServer(t_socket const & sock)
 
 void	Epoll::changeSocket(t_socket const & sock, uint32_t mask_event)
 {
-//	epoll_ctl(_instance, EPOLL_CTL_MOD, sock, &event);
 	t_epoll_event epollEvent;
 
 	epollEvent.data.fd = sock;
@@ -106,15 +107,4 @@ const std::map<t_socket,Server> &Epoll::getSockServ() const
 const std::vector<t_epoll_event> &Epoll::getAllEvents() const
 {
 	return _AllEvents;
-}
-
-const char * Epoll::EpollCreateFailed::what() const throw()
-{	
-	return("Epoll : Failed to init instance");
-}
-
-
-const char * Epoll::EpollCtlFailed::what() const throw()
-{	
-	return("Epoll : Failed to add new socket in instance");
 }
