@@ -21,7 +21,7 @@ SRCS =	main.cpp			\
 		exceptWebserv.cpp	\
 		Epoll.cpp			\
 		HttpRespond.cpp		\
-		body.cpp			\
+		launcher.cpp			\
 		ClientEvent.cpp		\
 		ServeurEvent.cpp	\
 		itoa.cpp			\

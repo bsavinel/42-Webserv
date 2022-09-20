@@ -1,4 +1,4 @@
-#include "body.hpp"
+#include "launcher.hpp"
 #include <stdlib.h>
 #include "exceptWebserv.hpp"
 #include <iostream>
@@ -9,10 +9,9 @@ int main(int ac, char **av)
 {
 	if (ac != 2)
 		return 1;
-	// TODO changer le catch
 	try
 	{
-		starter(av);
+		launcher(av);
 	}
 	catch(const exceptWebserv& e)
 	{
