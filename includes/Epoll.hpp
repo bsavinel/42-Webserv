@@ -36,7 +36,7 @@ class Epoll
 	private:
 		t_socket					_instance;
 		std::map<t_socket, Server>	_sockServ;
-		std::set<t_socket>			_sockClient;
+		std::map<t_socket>			_sockClient;
 		std::vector<t_epoll_event>	_AllEvents;
 };
 
