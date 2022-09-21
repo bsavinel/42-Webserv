@@ -8,11 +8,11 @@ class HttpRespond
 	public:
 		HttpRespond();
 		HttpRespond(const HttpRespond& rhs);
-		HttpRespond();
 		~HttpRespond();
 		
 		HttpRespond &operator=(const HttpRespond& rhs);
 		const std::string getContent() const;
+		HttpRespond(const std::string content, const std::string contentType);
 		std::string getHeader() const;
 		std::string getHttpRespond() const;
 		void setContent(const std::string content);

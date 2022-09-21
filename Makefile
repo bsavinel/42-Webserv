@@ -17,11 +17,12 @@ endif
 ################################################################################
 
 SRCS =	main.cpp			\
+		Socket.cpp			\
 		Server.cpp			\
 		exceptWebserv.cpp	\
 		Epoll.cpp			\
 		HttpRespond.cpp		\
-		launcher.cpp			\
+		launcher.cpp		\
 		ClientEvent.cpp		\
 		ServeurEvent.cpp	\
 		itoa.cpp			\

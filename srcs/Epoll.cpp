@@ -20,9 +20,8 @@ Epoll::~Epoll()
 	Epoll::stockClientType::const_iterator	itClient;
 	Epoll::stockServerType::const_iterator	itServ;
 
-
 	for (itClient = _sockClient.begin(); itClient != _sockClient.end(); itClient++)
-		deleteClient(*itClient);
+		deleteClient(itClient->first);
 	for (itServ = _sockServ.begin(); itServ != _sockServ.end(); itServ++)
 		deleteServer(itServ->first);
 	close(_instance);
@@ -37,11 +36,11 @@ Epoll &Epoll::operator=(const Epoll &rhs)
 	return *this;
 }
 
-void	Epoll::addClient(t_socket const & sock)
+void	Epoll::addClient(t_socket const & sock, Socket const & socket)
 {
 	t_epoll_event epollEvent;
 
-	_sockClient.insert(sock);
+	_sockClient.insert(std::make_pair(sock, socket));
 	epollEvent.data.fd = sock;
 	epollEvent.events = EPOLLIN;
 	fcntl(sock, O_NONBLOCK);
@@ -94,12 +93,12 @@ void	Epoll::wait()
 	epoll_wait(_instance, _AllEvents.data(), _sockClient.size() + _sockServ.size(), -1);
 }
 
-const std::set<t_socket> &Epoll::getSockClient() const
+const std::map<t_socket, Socket> &Epoll::getSockClient() const
 {
 	return _sockClient;
 }
 
-const std::map<t_socket,Server> &Epoll::getSockServ() const
+const std::map<t_socket, Server> &Epoll::getSockServ() const
 {
 	return _sockServ;
 }
