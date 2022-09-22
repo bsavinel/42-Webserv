@@ -1,5 +1,6 @@
 #include "Epoll.hpp"
 #include "HttpRespond.hpp"
+#include "HttpRequest.hpp"
 #include <iostream>
 
 // TODO changer le open en stream
@@ -11,6 +12,7 @@ void	clientEvent(Epoll &epoll)
 	Epoll::stockEventType::const_iterator	it;
 	Epoll::stockClientType::const_iterator	itClient;
 	char str[2048];
+	std::string stockRequest;
 
 	for (it = epoll.getAllEvents().begin(); it != epoll.getAllEvents().end(); it++)
 	{
@@ -22,11 +24,16 @@ void	clientEvent(Epoll &epoll)
 			bzero(str,2048);
 			while (recv(it->data.fd, str, 2048, MSG_DONTWAIT) > 0)
 			{
-				std::cout << str;
+				stockRequest += str;
 				bzero(str,2048);
 			}
 			epoll.changeSocket(it->data.fd, EPOLLOUT);
-			std::cout << str << "fin de la requete" << std::endl;
+			std::cout << "Debut de la requete" << std::endl << stockRequest << "fin de la requete" << std::endl;
+//			std::cout << str << "double fin de la requete" << std::endl;
+			HttpRequest request(stockRequest);
+			request.parser();
+			std::cout << request << std::endl;
+
 		}
 		if (it->events & EPOLLOUT)
 		{
