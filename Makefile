@@ -21,10 +21,11 @@ SRCS =	main.cpp			\
 		exceptWebserv.cpp	\
 		Epoll.cpp			\
 		HttpRespond.cpp		\
-		launcher.cpp			\
+		launcher.cpp		\
 		ClientEvent.cpp		\
 		ServeurEvent.cpp	\
 		itoa.cpp			\
+		parser.cpp			\
 
 ################################################################################
 #                               INCLUDES                             	       #
