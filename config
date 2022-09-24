@@ -1,7 +1,7 @@
 server 
 {
 	listen 8080;
-	server_name www.streamagogo.fr; #OPTIONNAL
+	server_name www.streamagogo.fr;#OPTIONNAL
 	error_pages  404 resources/error/404.html;
 	client_max_body_size 2000;
 

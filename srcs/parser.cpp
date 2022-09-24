@@ -25,27 +25,34 @@ std::string read_file(char *config_file)
 	return (file_content);
 }
 
-std::string ltrim_wsp(std::string str)
+void	remove_comment(std::string & content_file)
 {
-	size_t start = str.find_first_not_of(WHITESPACE);
-	return((start == std::string::npos) ? "" : str.substr(start));
+	std::string::iterator beg = content_file.begin();
+	std::string::iterator end_of_comment;
+	std::string::iterator end = content_file.end();
+
+	while(beg != end)
+	{
+		if(*beg == '#')
+		{
+			end_of_comment = beg;
+			while (*end_of_comment != '\n' && end_of_comment != end)
+				end_of_comment++;
+			content_file.erase(beg, end_of_comment);
+		}
+		beg++;
+	}
 }
 
-std::string rtrim_wsp(std::string str)
+void	remove_nl(std::string & content_file)
 {
-	size_t end = str.find_last_not_of(WHITESPACE);
-	return((end == std::string::npos) ? "" : str.substr(0, end + 1));
+	content_file.erase(std::remove(content_file.begin(), content_file.end(), '\n'), content_file.end());
 }
 
-void parser(char *config_file_path)
+void parser(char *config_file)
 {
-	//t_config	configuration;
-	std::string	content_file;
-	std::string	line;
-
-	content_file = read_file(config_file_path);
-	content_file = rtrim_wsp(ltrim_wsp(content_file));
-	std::cout << "-----BEGIN----" << std::endl;
-	std::cout << content_file << std::endl; 
-	std::cout << "-----END----" << std::endl;
+	std::string content_file = read_file(config_file);
+	remove_comment(content_file);
+	remove_nl(content_file);
+	std::cout << content_file << std::endl;
 }
