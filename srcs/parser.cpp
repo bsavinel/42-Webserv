@@ -49,10 +49,26 @@ void	remove_nl(std::string & content_file)
 	content_file.erase(std::remove(content_file.begin(), content_file.end(), '\n'), content_file.end());
 }
 
+
 void parser(char *config_file)
 {
 	std::string content_file = read_file(config_file);
+
+	// bool	into_server_block = 0;
+	// bool	into_location_block = 0;
+
 	remove_comment(content_file);
 	remove_nl(content_file);
-	std::cout << content_file << std::endl;
+
+	// std::cout << content_file << std::endl;
+
+	size_t found = content_file.find("server");
+
+	std::cout << "First occurence of server at pos " << found << std::endl;
+
+	size_t next = content_file.find("server", found+1);
+
+	std::cout << "next occurence of server at pos " << next << std::endl;
+
+	
 }

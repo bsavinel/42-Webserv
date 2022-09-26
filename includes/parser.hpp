@@ -11,6 +11,7 @@
 #include <unistd.h>
 #include <Server_config.hpp>
 #include <algorithm>
+#include <stdlib.h>
 
 #define BUFFER_SIZE 200
 
@@ -22,5 +23,7 @@ typedef struct s_config
 
 
 void	parser(char *config_file);
+char	**ft_split(char const *s, char c);
+
 
 #endif

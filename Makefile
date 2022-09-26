@@ -26,6 +26,7 @@ SRCS =	main.cpp			\
 		ServeurEvent.cpp	\
 		itoa.cpp			\
 		parser.cpp			\
+		ft_split.cpp		\
 
 ################################################################################
 #                               INCLUDES                             	       #

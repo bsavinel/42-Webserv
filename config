@@ -16,10 +16,3 @@ server
 		upload_store /uploads;
 	}
 }
-
-
-
-
-
-
-
