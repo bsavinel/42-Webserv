@@ -49,26 +49,46 @@ void	remove_nl(std::string & content_file)
 	content_file.erase(std::remove(content_file.begin(), content_file.end(), '\n'), content_file.end());
 }
 
+std::vector<std::string> split_vector(std::string str, std::string delimiter)
+{
+	std::vector<std::string>	splitted;
+	std::string::iterator		beg = str.begin();
+	std::string::iterator		end = str.end();
+	std::string::iterator		stop = beg;
+
+	while (stop != end)
+	{
+		stop = beg;
+		size_t del = delimiter.find(*stop, 0);
+		while(del && stop != end)
+		{
+			stop++;
+			del = delimiter.find(*stop, 0);
+		}
+		if(del != 0)
+			splitted.push_back(delimiter[del]);
+		std::string word(beg, stop);
+		splitted.push_back(word);
+		if(stop != end)
+			beg = stop + 1;
+	}
+
+	return(splitted);
+}
+
 
 void parser(char *config_file)
 {
 	std::string content_file = read_file(config_file);
-
-	// bool	into_server_block = 0;
-	// bool	into_location_block = 0;
-
 	remove_comment(content_file);
 	remove_nl(content_file);
+	std::cout << content_file << std::endl;
 
-	// std::cout << content_file << std::endl;
+	std::string delimiter = {' ',';','{','}'};
 
-	size_t found = content_file.find("server");
+	std::vector<std::string> splitted = split_vector(content_file, delimiter);
 
-	std::cout << "First occurence of server at pos " << found << std::endl;
 
-	size_t next = content_file.find("server", found+1);
-
-	std::cout << "next occurence of server at pos " << next << std::endl;
 
 	
 }
