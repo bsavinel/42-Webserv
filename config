@@ -6,7 +6,6 @@ server
 	client_max_body_size 2000;
 
 
-	
 	location / 
 	{
 		allow GET POST DELETE;
@@ -18,7 +17,27 @@ server
 		upload_store /uploads;
 	}
 
+
+
+
+	
+
 	location /index {
 
 	}
+
+
+
+
+
+
+
+
+
 }
+
+
+
+
+
+

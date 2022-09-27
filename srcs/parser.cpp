@@ -56,39 +56,47 @@ std::vector<std::string> split_vector(std::string str, std::string delimiter)
 	std::string::iterator		end = str.end();
 	std::string::iterator		stop = beg;
 
-	while (stop != end)
+	while (beg != end)
 	{
 		stop = beg;
 		size_t del = delimiter.find(*stop, 0);
-		while(del && stop != end)
+		while(del == std::string::npos && stop != end)
 		{
 			stop++;
 			del = delimiter.find(*stop, 0);
 		}
-		if(del != 0)
-			splitted.push_back(delimiter[del]);
-		std::string word(beg, stop);
-		splitted.push_back(word);
+		if(stop != beg)
+		{
+			std::string word(beg, stop);
+			splitted.push_back(word);
+		}
+		if(del != std::string::npos && del > 1)
+		{
+			std::string word;
+			word += delimiter[del];
+			splitted.push_back(word);
+			stop++;
+		}
 		if(stop != end)
 			beg = stop + 1;
 	}
-
 	return(splitted);
 }
-
 
 void parser(char *config_file)
 {
 	std::string content_file = read_file(config_file);
 	remove_comment(content_file);
 	remove_nl(content_file);
-	std::cout << content_file << std::endl;
+	//std::cout << content_file << std::endl;
 
-	std::string delimiter = {' ',';','{','}'};
+	std::string delimiter(" \t;{}");
 
 	std::vector<std::string> splitted = split_vector(content_file, delimiter);
 
+	//std::vector<std::string>::iterator beg = splitted.begin();
 
-
+	for(std::vector<std::string>::iterator beg = splitted.begin(); beg != splitted.end(); beg++)
+		std::cout << *beg << std::endl;
 	
 }
