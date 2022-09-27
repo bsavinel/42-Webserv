@@ -65,7 +65,7 @@ std::pair <std::string, bool>	HttpRequest::parseHeader(std::string &header, std:
 
 	if (optionToFindPos == header.npos)
 	{
-		std::cout << "Failed" << std::endl << optionToFindPos << option.first << std::endl;
+		std::cout << "Failed" << std::endl << optionToFindPos << std::endl;
 		option.second = false;
 	}
 	else
