@@ -88,15 +88,31 @@ void parser(char *config_file)
 	std::string content_file = read_file(config_file);
 	remove_comment(content_file);
 	remove_nl(content_file);
-	//std::cout << content_file << std::endl;
 
 	std::string delimiter(" \t;{}");
-
 	std::vector<std::string> splitted = split_vector(content_file, delimiter);
 
-	//std::vector<std::string>::iterator beg = splitted.begin();
+	// for(std::vector<std::string>::iterator beg = splitted.begin(); beg != splitted.end(); beg++)
+	// 	std::cout << *beg << std::endl;
 
-	for(std::vector<std::string>::iterator beg = splitted.begin(); beg != splitted.end(); beg++)
-		std::cout << *beg << std::endl;
-	
+	/* 
+		- iterer sur splitted
+		- detecter le mot server
+			SI serveur detecter, est ce qu il y a un '{'
+			ALORS recuperer le token serveur jusqu'a '}' # getServerToken()
+	*/
+
+
+
+/*
+
+Server block begin
+
+	Location block begin
+	Location block end
+
+Server block end
+
+
+*/
 }

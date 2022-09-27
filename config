@@ -1,13 +1,12 @@
 server 
-{
+begin {
 	listen 8080;
 	server_name www.streamagogo.fr;#OPTIONNAL
 	error_pages  404 resources/error/404.html;
 	client_max_body_size 2000;
 
-
 	location / 
-	{
+	location_block getlocationtoken(&stop){
 		allow GET POST DELETE;
 		return 404 /resources/error/404.html;
 		root /resources/;
@@ -16,28 +15,15 @@ server
 		cgi_pass 
 		upload_store /uploads;
 	}
-
-
-
-
-	
-
-	location /index {
-
-	}
-
-
-
-
-
-
-
-
-
+	stop
+	location / 
+	getlocationtoken(stop){
+		allow GET POST DELETE;
+		return 404 /resources/error/404.html;
+		root /resources/;
+		index index.html;
+		autoindex on;
+		cgi_pass 
+		upload_store /uploads;
+	}stop
 }
-
-
-
-
-
-
