@@ -81,13 +81,13 @@ std::vector<std::string> split_vector(std::string str, std::string delimiter)
 			stop++;
 		}
 		beg = stop;
-		std::cout << "pipi"<< std::endl;
 	}
 	return(splitted);
 }
 
 int	checkNorme(std::vector<std::string>::iterator it, std::vector<std::string> & splitted)
 {
+
 	if ((*it).compare("{") != 0)
 	{
 		std::cout << "0" << std::endl;
@@ -100,8 +100,15 @@ int	checkNorme(std::vector<std::string>::iterator it, std::vector<std::string> &
 		{
 			if ((*(it + 2)).compare("{") == 0)
 			{
-				while (it != splitted.end() && (*it).compare("}") != 0)
+				while (it != splitted.end() && (*it).compare("}") != 0 )
+				{
 					it++;
+					if((*it).compare("location") == 0)
+					{
+						std::cout << "1 bis" << std::endl;
+						return(false);
+					}
+				}
 				if (it == splitted.end())
 				{
 					std::cout << "1" << std::endl;
