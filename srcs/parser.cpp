@@ -70,15 +70,18 @@ std::vector<std::string> split_vector(std::string str, std::string delimiter)
 			std::string word(beg, stop);
 			splitted.push_back(word);
 		}
-		if(del != std::string::npos && del > 1)
+		if(del != std::string::npos)
 		{
-			std::string word;
-			word += delimiter[del];
-			splitted.push_back(word);
+			if (del > 1)
+			{
+				std::string word;
+				word += delimiter[del];
+				splitted.push_back(word);
+			}
 			stop++;
 		}
-		if(stop != end)
-			beg = stop + 1;
+		beg = stop;
+		std::cout << "pipi"<< std::endl;
 	}
 	return(splitted);
 }
