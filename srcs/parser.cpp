@@ -79,49 +79,30 @@ std::vector<std::string> split_vector(std::string str, std::string delimiter)
 	return(splitted);
 }
 
-int	checkNorme(std::vector<std::string>::iterator it, std::vector<std::string> & splitted)
+int	checkbrackets(std::vector<std::string>::iterator it, std::vector<std::string> & splitted)
 {
-	if ((*it).compare("{") != 0)
-	{
-		std::cout << "0" << std::endl;
-		return(false);
-	}
-
 	while (it != splitted.end() && (*it).compare("}") != 0)
 	{
 		if ((*it).compare("location") == 0)
 		{
-			if ((*(it + 2)).compare("{") == 0)
+			if ((it + 2) < splitted.end() && (*(it + 2)).compare("{") == 0)
 			{
 				while (it != splitted.end() && (*it).compare("}") != 0 )
 				{
 					it++;
 					if((*it).compare("location") == 0)
-					{
-						std::cout << "1 bis" << std::endl;
-						return(false);
-					}
+						throw exceptWebserv("Config Error : Location block not closed");
 				}
 				if (it == splitted.end())
-				{
-					std::cout << "1" << std::endl;
-					return(false);
-				}
+					throw exceptWebserv("Config Error : Location block not closed");
 			}
 			else 
-			{
-				std::cout << *(it + 2) << std::endl;
-				std::cout << "2" << std::endl;
-				return (false);
-			}
+				throw exceptWebserv("Config Error : location block format not corresponding");
 		}
 		it++;
 	}
 	if (it == splitted.end())
-	{
-		std::cout << "3" << std::endl;
-		return (false);
-	}
+		throw exceptWebserv("Config Error : Server block not closed");
 	return (true);
 }
 
@@ -135,19 +116,17 @@ void parser(char *config_file)
 
 	std::string delimiter(" \t;{}");
 	std::vector<std::string> splitted = split_vector(content_file, delimiter);
-	std::vector<std::string>::iterator stop;
 
 	for(std::vector<std::string>::iterator beg = splitted.begin(); beg != splitted.end(); beg++)
 	{
 		if ((*beg).compare("server") == 0 && (*(beg + 1)).compare("{") == 0)
 		{
-			stop = beg + 1;
-			for(std::vector<std::string>::iterator beg = splitted.begin(); beg != splitted.end(); beg++)
-				std::cout << *beg << std::endl;
-			int check = checkNorme(beg + 1, splitted);
-			if (check)
-				std::cout << "OK" << std::endl;
-	}
+			beg++;
+			// for(std::vector<std::string>::iterator beg = splitted.begin(); beg != splitted.end(); beg++)
+			// 	std::cout << *beg << std::endl;
+			if(checkbrackets(beg, splitted))
+				std::cout << "format is fine !" << std::endl;
+		}
 	}
 	
 }
