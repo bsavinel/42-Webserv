@@ -53,18 +53,13 @@ std::vector<std::string> split_vector(std::string str, std::string delimiter)
 {
 	std::vector<std::string>	splitted;
 	std::string::iterator		beg = str.begin();
-	std::string::iterator		end = str.end();
-	std::string::iterator		stop = beg;
 
-	while (beg != end)
+	for(std::string::iterator stop = beg; beg != str.end(); beg = stop)
 	{
 		stop = beg;
 		size_t del = delimiter.find(*stop, 0);
-		while(del == std::string::npos && stop != end)
-		{
-			stop++;
+		while(del == std::string::npos && stop++ != str.end())
 			del = delimiter.find(*stop, 0);
-		}
 		if(stop != beg)
 		{
 			std::string word(beg, stop);
@@ -80,14 +75,12 @@ std::vector<std::string> split_vector(std::string str, std::string delimiter)
 			}
 			stop++;
 		}
-		beg = stop;
 	}
 	return(splitted);
 }
 
 int	checkNorme(std::vector<std::string>::iterator it, std::vector<std::string> & splitted)
 {
-
 	if ((*it).compare("{") != 0)
 	{
 		std::cout << "0" << std::endl;
@@ -131,47 +124,6 @@ int	checkNorme(std::vector<std::string>::iterator it, std::vector<std::string> &
 	}
 	return (true);
 }
-/*
-int	checkNorme(std::vector<std::string>::iterator beg, std::vector<std::string> & splitted)
-{
-	std::vector<std::string>::iterator tmp = beg;
-	int	nb_open_brackets = 0;
-	int nb_close_brackets = 0;
-
-	std::cout << "Debut" << std::endl;
-	while(tmp != splitted.end())
-	{
-		if((*tmp).compare("{") == 0)
-		{
-			std::cout << "open bra ++" << std::endl;
-			nb_open_brackets++;
-		}
-		else if((*tmp).compare("}") == 0)
-		{
-			std::cout << "close bra ++" << std::endl;
-			nb_close_brackets++;
-		}
-		tmp++;
-	}
-	std::cout << "fin de boucle" << std::endl;
-	std::cout <<"nb open brackets " << nb_open_brackets << std::endl;
-	if(nb_close_brackets == nb_open_brackets)
-		return (1);
-	return (0);
-}
-*/
-// void getServerBlock(std::vector<std::string>::iterator beg, std::vector<std::string>::iterator & stop, std::vector<std::string> splitted)
-// {
-// 	(void) stop;
-// 	std::vector<std::string>::iterator tmp;
-// 	int	nb_o_brackets = 0;
-// 	for (tmp = beg; tmp != splitted.end(); tmp++)
-// 	{
-// 		if(*tmp == "{")
-// 			nb_o_brackets++;
-// 	}
-// 	std::cout <<"nb open brackets " << nb_o_brackets << std::endl;
-// }
 
 void parser(char *config_file)
 {
@@ -197,24 +149,5 @@ void parser(char *config_file)
 				std::cout << "OK" << std::endl;
 	}
 	}
-	/* 
-		- iterer sur splitted
-		- detecter le mot server
-			SI serveur detecter, est ce qu il y a un '{'
-			ALORS recuperer le token serveur jusqu'a '}' # getServerToken()
-	*/
-
-
-
-/*
-
-Server block begin
-
-	Location block begin
-	Location block end
-
-Server block end
-
-
-*/
+	
 }
