@@ -16,7 +16,6 @@ HttpRequest::HttpRequest()
 HttpRequest::HttpRequest(std::string client_request)
 {
 	_request = client_request;
-//	std::cout << _request << std::endl << "ligne 13" << std::endl;
 }
 
 HttpRequest::HttpRequest(const HttpRequest & src)
@@ -51,7 +50,6 @@ void	HttpRequest::parseStartLine(std::string const & client_request)
 	i = request.find('\n');
 	_httpVersion.first.insert(0, request, 0, i);
 	request.erase(0, i+1);
-//	std::cout << "---------------" << std::endl << _method.first << std::endl << _url.first << std::endl << _httpVersion.first << std::endl << "---------------" << std::endl ;
 }
 
 std::pair <std::string, bool>	HttpRequest::parseHeader(std::string &header, std::string optionToFind)
@@ -65,7 +63,7 @@ std::pair <std::string, bool>	HttpRequest::parseHeader(std::string &header, std:
 
 	if (optionToFindPos == header.npos)
 	{
-		std::cout << "Failed" << std::endl << optionToFindPos << std::endl;
+//		std::cout << "HTTP request option not found" << std::endl << optionToFindPos << std::endl;
 		option.second = false;
 	}
 	else
@@ -81,9 +79,6 @@ void	HttpRequest::parser(void)
 	parseStartLine(_request);
 	_request.erase(0, _request.find('\n') + 1);
 
-// j'affiche la requête
-//	std::cout << std::endl << "-------o---------" << std::endl  << _request<< "-------o---------" << std::endl << std::endl ;
-
 	_Connection = parseHeader(_request, "\nConnection: ");
 	_Accept = parseHeader(_request, "\nAccept: ");
 	_SecFetchSite = parseHeader(_request, "\nSec-Fetch-Site: ");
@@ -92,6 +87,11 @@ void	HttpRequest::parser(void)
 	_Referer = parseHeader(_request, "\nReferer: ");
 	_AcceptEncoding = parseHeader(_request, "\nAccept-Encoding: ");
 }
+
+void HttpRequest::setRequest(std::string const & request)
+{
+	_request = request;
+} 
 
 std::pair<std::string, bool> HttpRequest::getMethod(void) const
 {

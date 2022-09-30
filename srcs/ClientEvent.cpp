@@ -29,11 +29,9 @@ void	clientEvent(Epoll &epoll)
 			}
 			epoll.changeSocket(it->data.fd, EPOLLOUT);
 			std::cout << "Debut de la requete" << std::endl << stockRequest << "fin de la requete" << std::endl;
-//			std::cout << str << "double fin de la requete" << std::endl;
+			
 			HttpRequest request(stockRequest);
 			request.parser();
-			std::cout << request << std::endl;
-
 		}
 		if (it->events & EPOLLOUT)
 		{
@@ -50,7 +48,6 @@ void	clientEvent(Epoll &epoll)
 				bzero(str,2048);
 				i = read(fd, str, 2048);
 			}
-			
 			HttpRespond resp(file_extract, "text/html");
 			send(it->data.fd, resp.getHttpRespond().c_str(), resp.getHttpRespond().size(), MSG_NOSIGNAL);
 			epoll.deleteClient(it->data.fd);

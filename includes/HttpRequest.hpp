@@ -16,18 +16,20 @@ class HttpRequest
 		void							parseStartLine(std::string const & client_request);
 		std::pair <std::string, bool>	parseHeader(std::string &header, std::string optionToFind);
 
-		std::pair<std::string, bool> getMethod(void) const; // GET POST DELETE
-		std::pair<std::string, bool> getUrl(void) const; 
-		std::pair<std::string, bool> getHttpVersion(void) const; // Normallement on s'en branle
+		std::pair<std::string, bool>	getMethod(void) const; // GET POST DELETE
+		std::pair<std::string, bool>	getUrl(void) const; 
+		std::pair<std::string, bool>	getHttpVersion(void) const; // Normallement on s'en branle
 
-		std::pair<std::string, bool> getConnection(void) const;
-		std::pair<std::string, bool> getAccept(void) const;
-		std::pair<std::string, bool> getSecFetchSite(void) const;
-		std::pair<std::string, bool> getSecFetchMode(void) const;
-		std::pair<std::string, bool> getSecFetchDest(void) const;
-		std::pair<std::string, bool> getReferer(void) const;
-		std::pair<std::string, bool> getAcceptEncoding(void) const;
-		std::pair<std::string, bool> getDnt(void) const;
+		std::pair<std::string, bool>	getConnection(void) const;
+		std::pair<std::string, bool>	getAccept(void) const;
+		std::pair<std::string, bool>	getSecFetchSite(void) const;
+		std::pair<std::string, bool>	getSecFetchMode(void) const;
+		std::pair<std::string, bool>	getSecFetchDest(void) const;
+		std::pair<std::string, bool>	getReferer(void) const;
+		std::pair<std::string, bool>	getAcceptEncoding(void) const;
+		std::pair<std::string, bool>	getDnt(void) const;
+
+		void							setRequest(std::string const & request);
 
 	private :
 		std::string	_request;
