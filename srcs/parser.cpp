@@ -108,17 +108,17 @@ int	checkbrackets(std::vector<std::string>::iterator it, std::vector<std::string
 	return (true);
 }
 
-// Server_config *getServerToken(std::vector<std::string>::iterator & it, std::vector<std::string> & splitted)
-// {
-// 	Server_config server = new Server_config;
+Server_config *getServerToken(std::vector<std::string>::iterator & it, std::vector<std::string> & splitted)
+{
+	Server_config *server = new Server_config();
+	server->getConfig(it, splitted);
 
-
-// 	return
-// }
+	return(server);
+}
 
 void parser(char *config_file)
 {
-	//s_config configuration;
+	s_config configuration;
 
 	std::string content_file = read_file(config_file);
 	remove_comment(content_file);
@@ -136,8 +136,8 @@ void parser(char *config_file)
 			// 	std::cout << *beg << std::endl;
 			if(checkbrackets(beg, splitted))
 				std::cout << "format is fine !" << std::endl;
-			//configuration.server_config = getServerToken(beg, splitted);			
-
+			configuration.server_config = getServerToken(beg, splitted);
+			(void) configuration;
 		}
 	}
 	

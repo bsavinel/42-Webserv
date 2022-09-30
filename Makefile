@@ -27,6 +27,7 @@ SRCS =	main.cpp			\
 		itoa.cpp			\
 		parser.cpp			\
 		ft_split.cpp		\
+		Server_config.cpp	\
 
 ################################################################################
 #                               INCLUDES                             	       #

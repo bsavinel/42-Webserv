@@ -1,7 +1,13 @@
 #ifndef SERVER_CONFIG_HPP
 #define SERVER_CONFIG_HPP
 
+#include "iostream"
+#include "string"
+#include "string.h"
+#include "stdlib.h"
+
 #include "Location_block.hpp"
+
 
 class Server_config
 {
@@ -14,10 +20,12 @@ class Server_config
 		std::map<std::string, Location*>	locations;
 
 	public :
-		Server_config(char *config_file);
+		Server_config();
 		Server_config(const Server_config & src);
 		Server_config & operator=(const Server_config & rhs);
 		~Server_config();
+
+		void getConfig(std::vector<std::string>::iterator & it, std::vector<std::string> & splitted);
 };
 
 #endif
