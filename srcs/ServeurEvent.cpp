@@ -1,5 +1,6 @@
 #include "Epoll.hpp"
 #include "define.hpp"
+#include "Socket.hpp"
 #include "exceptWebserv.hpp"
 
 void	serverEvent(Epoll &epoll)
@@ -21,6 +22,6 @@ void	serverEvent(Epoll &epoll)
 		newClient = accept(it->data.fd, (t_sockaddr *)&sin, (socklen_t *)&size);
 		if (newClient == -1)
 			throw exceptWebserv("serverEvent : Accept new client failed");
-		epoll.addClient(newClient);
+		Socket(epoll, newClient); // client est add a epoll a l'interieur
 	}
 }
