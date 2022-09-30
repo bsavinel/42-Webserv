@@ -83,6 +83,8 @@ int	checkbrackets(std::vector<std::string>::iterator it, std::vector<std::string
 {
 	while (it != splitted.end() && (*it).compare("}") != 0)
 	{
+		if((*it).compare("server") == 0)
+			throw exceptWebserv("Config Error : Server block nested into another server block");
 		if ((*it).compare("location") == 0)
 		{
 			if ((it + 2) < splitted.end() && (*(it + 2)).compare("{") == 0)
@@ -106,6 +108,14 @@ int	checkbrackets(std::vector<std::string>::iterator it, std::vector<std::string
 	return (true);
 }
 
+// Server_config *getServerToken(std::vector<std::string>::iterator & it, std::vector<std::string> & splitted)
+// {
+// 	Server_config server = new Server_config;
+
+
+// 	return
+// }
+
 void parser(char *config_file)
 {
 	//s_config configuration;
@@ -126,6 +136,8 @@ void parser(char *config_file)
 			// 	std::cout << *beg << std::endl;
 			if(checkbrackets(beg, splitted))
 				std::cout << "format is fine !" << std::endl;
+			//configuration.server_config = getServerToken(beg, splitted);			
+
 		}
 	}
 	
