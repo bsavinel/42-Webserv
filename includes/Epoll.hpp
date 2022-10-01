@@ -31,7 +31,7 @@ class Epoll
 		void	changeSocket(t_socket const & sock, uint32_t mask_event);
 		void	wait();
 
-		const std::map<t_socket, Socket>	&getSockClient() const;
+		std::map<t_socket, Socket>	&getSockClient();
 		const std::map<t_socket, Server>	&getSockServ() const;
 		const std::vector<t_epoll_event>	&getAllEvents() const; // ? peut-etre degage le const peut etre pratique
 

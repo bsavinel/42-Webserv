@@ -93,7 +93,7 @@ void	Epoll::wait()
 	epoll_wait(_instance, _AllEvents.data(), _sockClient.size() + _sockServ.size(), -1);
 }
 
-const std::map<t_socket, Socket> &Epoll::getSockClient() const
+std::map<t_socket, Socket> &Epoll::getSockClient()
 {
 	return _sockClient;
 }

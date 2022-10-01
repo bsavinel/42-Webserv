@@ -16,6 +16,8 @@ class HttpRequest
 		void							parseStartLine(std::string const & client_request);
 		std::pair <std::string, bool>	parseHeader(std::string &header, std::string optionToFind);
 
+		std::string	getRequest(void) const; // GET POST DELETE
+
 		std::pair<std::string, bool>	getMethod(void) const; // GET POST DELETE
 		std::pair<std::string, bool>	getUrl(void) const; 
 		std::pair<std::string, bool>	getHttpVersion(void) const; // Normallement on s'en branle
@@ -32,9 +34,9 @@ class HttpRequest
 		void							setRequest(std::string const & request);
 
 	private :
-		std::string	_request;
+		std::string					_request;
 		// Start line
-		std::string	_startLine;
+		std::string					_startLine;
 
 		std::pair<std::string, bool> _method; // GET POST DELETE
 		std::pair<std::string, bool> _url; 

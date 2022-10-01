@@ -28,31 +28,18 @@ void	clientEvent(Epoll &epoll)
 				bzero(str,2048);
 			}
 			epoll.changeSocket(it->data.fd, EPOLLOUT);
-			std::cout << "Debut de la requete" << std::endl << stockRequest << "fin de la requete" << std::endl;
+			// std::cerr << "Debut de la requete" << std::endl << std::endl << stockRequest << "fin de la requete" << std::endl << std::endl;
 			
 			/*HttpRequest request(stockRequest);
 			request.parser();*/
+			Socket &tmp = epoll.getSockClient().find(it->data.fd)->second;
+			tmp.setRequest(stockRequest);
 		}
 		if (it->events & EPOLLOUT)
 		{
-			// TODO mettre la lecture de fichier dans le httpRespond
-			std::string file_extract;
-			int fd;
-			int i;
-			fd = open("./ressources/index.html", O_RDONLY);
-			bzero(str, 2048);
-			i = read(fd, str, 2048);
-			while (i > 0)
-			{
-				file_extract.append(str);
-				bzero(str,2048);
-				i = read(fd, str, 2048);
-			}
 			HttpResponse resp(it->data.fd);
-			HttpRequest request(stockRequest);
-			request.parser();
-			resp.buildRespond(request, 213);
-			//send(it->data.fd, resp.getHttpRespond().c_str(), resp.getHttpRespond().size(), MSG_NOSIGNAL);
+//			std::cerr << "Debut de la requete" << std::endl << std::endl << epoll.getSockClient().find(it->data.fd)->second.getRequest().getRequest() << "fin de la requete" << std::endl << std::endl;
+			resp.buildRespond(epoll.getSockClient().find(it->data.fd)->second.getRequest(), 213); //? send la reponse
 			epoll.deleteClient(it->data.fd);
 		}
 		if (it->events & EPOLLRDHUP)

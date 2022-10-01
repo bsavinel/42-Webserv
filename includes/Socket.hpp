@@ -5,6 +5,7 @@ class Socket;
 #include "define.hpp"
 #include "Epoll.hpp"
 #include "HttpRequest.hpp"
+#include <string>
 
 class Socket
 {
@@ -14,6 +15,8 @@ class Socket
 		Socket(Epoll &epoll, t_socket sockfd);// TODO mettre infoserver
 		~Socket();
 		Socket &operator=(const Socket &rhs);
+		void	setRequest(std::string req);
+		const HttpRequest	&getRequest(void) const;
 
 	private:
 		HttpRequest	_request;

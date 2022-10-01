@@ -1,5 +1,6 @@
 {
 	"files.associations": {
+		"*.json": "c",
 		"*.c": "c",
 		"array": "cpp",
 		"*.tcc": "cpp",
@@ -49,6 +50,7 @@
 		"optional": "cpp",
 		"random": "cpp",
 		"fstream": "cpp",
-		"sstream": "cpp"
+		"sstream": "cpp",
+		"ranges": "cpp"
 	}
 }

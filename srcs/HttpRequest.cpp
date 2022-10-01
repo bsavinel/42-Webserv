@@ -93,6 +93,11 @@ void HttpRequest::setRequest(std::string const & request)
 	_request = request;
 } 
 
+std::string	HttpRequest::getRequest(void) const
+{
+	return _request;
+}
+
 std::pair<std::string, bool> HttpRequest::getMethod(void) const
 {
 	return _method;
