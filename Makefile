@@ -22,7 +22,7 @@ SRCS =	main.cpp			\
 		exceptWebserv.cpp	\
 		Epoll.cpp			\
 		HttpRequest.cpp		\
-		HttpRespond.cpp		\
+		HttpResponse.cpp		\
 		launcher.cpp		\
 		ClientEvent.cpp		\
 		ServeurEvent.cpp	\

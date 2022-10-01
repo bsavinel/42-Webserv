@@ -1,5 +1,5 @@
 #include "Epoll.hpp"
-#include "HttpRespond.hpp"
+#include "HttpResponse.hpp"
 #include "HttpRequest.hpp"
 #include <iostream>
 
@@ -30,8 +30,8 @@ void	clientEvent(Epoll &epoll)
 			epoll.changeSocket(it->data.fd, EPOLLOUT);
 			std::cout << "Debut de la requete" << std::endl << stockRequest << "fin de la requete" << std::endl;
 			
-			HttpRequest request(stockRequest);
-			request.parser();
+			/*HttpRequest request(stockRequest);
+			request.parser();*/
 		}
 		if (it->events & EPOLLOUT)
 		{
@@ -48,8 +48,11 @@ void	clientEvent(Epoll &epoll)
 				bzero(str,2048);
 				i = read(fd, str, 2048);
 			}
-			HttpRespond resp(file_extract, "text/html");
-			send(it->data.fd, resp.getHttpRespond().c_str(), resp.getHttpRespond().size(), MSG_NOSIGNAL);
+			HttpResponse resp(it->data.fd);
+			HttpRequest request(stockRequest);
+			request.parser();
+			resp.buildRespond(request, 213);
+			//send(it->data.fd, resp.getHttpRespond().c_str(), resp.getHttpRespond().size(), MSG_NOSIGNAL);
 			epoll.deleteClient(it->data.fd);
 		}
 		if (it->events & EPOLLRDHUP)

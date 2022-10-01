@@ -4,6 +4,7 @@
 class Socket;
 #include "define.hpp"
 #include "Epoll.hpp"
+#include "HttpRequest.hpp"
 
 class Socket
 {
@@ -14,8 +15,9 @@ class Socket
 		~Socket();
 		Socket &operator=(const Socket &rhs);
 
-	private:	
-		int _fd;
+	private:
+		HttpRequest	_request;
+		t_socket	_fd;
 		// TODO mettre infoserver en membre priver
 };
 
