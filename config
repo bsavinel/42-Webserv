@@ -16,3 +16,22 @@ server
 		upload_store /uploads;
 	}
 }
+
+server 
+{
+	listen 8081;
+	server_name www.streamayoygogo.fr;#OPTIONNAL
+	error_pages  405 resources/error/405.html;
+	client_max_body_size 300;
+
+	location / 
+	{
+		allow GET POST DELETE;
+		return 404 /resources/error/404.html;
+		root /resources/;
+		index index.html;
+		autoindex on;
+		cgi_pass.php ./www/bin/php-cgi;
+		upload_store /uploads;
+	}
+}

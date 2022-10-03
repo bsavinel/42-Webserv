@@ -25,7 +25,10 @@ class Server_config
 		Server_config & operator=(const Server_config & rhs);
 		~Server_config();
 
-		void getConfig(std::vector<std::string>::iterator & it, std::vector<std::string> & splitted);
+		void	getConfig(std::vector<std::string>::iterator & it, std::vector<std::string> & splitted);
+		void	printConfig();
+		
+		Server_config						*next;
 };
 
 #endif

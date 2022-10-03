@@ -18,12 +18,14 @@
 typedef struct s_config
 {
 	Server_config	*server_config;
-	s_config		*next;
+	s_config		*next = NULL;
 }	t_config;
 
 
-void	parser(char *config_file);
+void parser(char *config_file, t_config **head);
 char	**ft_split(char const *s, char c);
+void	print_all_conf(t_config *head);
+
 
 
 #endif

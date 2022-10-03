@@ -40,30 +40,38 @@ void Server_config::getConfig(std::vector<std::string>::iterator & it, std::vect
 		{
 			it++;
 			this->listening_port = atoi((*it).c_str());
-			std::cout << "listening port = " << listening_port << std::endl;
+			//std::cout << "listening port = " << listening_port << std::endl;
 		}
 		else if ((*it).compare("server_name") == 0)
 		{
 			it++;
 			this->server_name = *it;
-			std::cout << "server_name = " << server_name << std::endl;
+			//std::cout << "server_name = " << server_name << std::endl;
 		}
 		else if ((*it).compare("error_pages") == 0)
 		{
 			it++;
 			this->error_code = atoi((*it).c_str());
-			std::cout << "error_pages = " << error_code << std::endl;
+			//std::cout << "error_pages = " << error_code << std::endl;
 			it++;
 			this->error_path = *it;
-			std::cout << "error_pages = " << error_path << std::endl;
+			//std::cout << "error_pages = " << error_path << std::endl;
 		}
 		else if ((*it).compare("client_max_body_size") == 0)
 		{
 			it++;
 			this->client_max_body_size = atoi((*it).c_str());
-			std::cout << "client_max_body_size = " << client_max_body_size << std::endl;
+			//std::cout << "client_max_body_size = " << client_max_body_size << std::endl;
 		}
 		it++;
 	}
-	
+}
+
+void	Server_config::printConfig()
+{
+	std::cout << "listening port = " << listening_port << std::endl;
+	std::cout << "server_name = " << server_name << std::endl;
+	std::cout << "error_pages = " << error_code << std::endl;
+	std::cout << "error_pages = " << error_path << std::endl;
+	std::cout << "client_max_body_size = " << client_max_body_size << std::endl;
 }

@@ -112,13 +112,12 @@ Server_config *getServerToken(std::vector<std::string>::iterator & it, std::vect
 {
 	Server_config *server = new Server_config();
 	server->getConfig(it, splitted);
-
 	return(server);
 }
 
-void parser(char *config_file)
+void parser(char *config_file, t_config **head)
 {
-	s_config configuration;
+	t_config *last = NULL;
 
 	std::string content_file = read_file(config_file);
 	remove_comment(content_file);
@@ -136,9 +135,41 @@ void parser(char *config_file)
 			// 	std::cout << *beg << std::endl;
 			if(checkbrackets(beg, splitted))
 				std::cout << "format is fine !" << std::endl;
-			configuration.server_config = getServerToken(beg, splitted);
-			(void) configuration;
+			if(!*head)
+			{
+				t_config *new_config;
+				new_config = (t_config *) malloc(sizeof(t_config));
+				new_config->server_config = getServerToken(beg, splitted);
+				*head = new_config;
+			}
+			else 
+			{
+				last = *head;
+				while (last && last->next)
+					last = last->next;
+				if(!last->next)
+				{
+					t_config *new_config;
+					new_config = (t_config *) malloc(sizeof(t_config));
+					new_config->server_config = getServerToken(beg, splitted);
+					last->next = new_config;
+				}
+			}
 		}
+	}
+}
+
+void	print_all_conf(t_config *head)
+{
+	int i  = 0;
+	if(!head)
+		throw exceptWebserv("Error config : no congiguration found");
+	while (head)
+	{
+		std::cout << "------CONFIG " << i <<"------" << std::endl;
+		head->server_config->printConfig();
+		head = head->next;
+		i++;
 	}
 	
 }
