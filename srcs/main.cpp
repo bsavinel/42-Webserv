@@ -24,9 +24,6 @@
 // }
 
 
-
-
-
 #include "parser.hpp"
 
 int main(int ac, char **av)
@@ -38,6 +35,8 @@ int main(int ac, char **av)
 			t_config *head = NULL;
 			parser(av[1], &head);
 			print_all_conf(head);
+			delete head->server_config;
+			free(head);
 		}
 		catch(const exceptWebserv& e)
 		{

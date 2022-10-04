@@ -2,6 +2,7 @@
 
 
 Server_config::Server_config()
+: listening_port(-1), error_code(0), client_max_body_size(0)
 {
 	// std::cout << "Server_config default constructor called" << std::endl;
 }
@@ -24,7 +25,14 @@ Server_config & Server_config::operator=(const Server_config & rhs)
 
 Server_config::~Server_config()
 {
-	// std::cout << "Server_config default destructor called" << std::endl;
+	int i = 0;
+	for(std::map<std::string, Location*>::iterator it = locations.begin(); it != locations.end(); it++)
+	{
+		i++;
+		delete it->second;
+	}
+	std::cout << "BOUCLE " << i << std::endl;
+	std::cout << "Server_config default destructor called" << std::endl;
 }
 
 void Server_config::getConfig(std::vector<std::string>::iterator & it, std::vector<std::string> & splitted)
@@ -38,7 +46,6 @@ void Server_config::getConfig(std::vector<std::string>::iterator & it, std::vect
 			std::string path_loc = *it;
 			new_loc->getConfig(it, splitted);
 			this->locations.insert(std::make_pair(path_loc, new_loc));
-			
 		}
 		if ((*it).compare("listen") == 0)
 		{

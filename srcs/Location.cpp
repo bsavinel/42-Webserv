@@ -2,13 +2,13 @@
 
 Location::Location()
 {
-	std::cout << "Location default constructor called" << std::endl;
+	//std::cout << "Location default constructor called" << std::endl;
 }
 
 Location::Location(const Location & src)
 {
 	*this = src;
-	std::cout << "Location copy constructor called" << std::endl;
+	//std::cout << "Location copy constructor called" << std::endl;
 }
 
 Location & Location::operator=(const Location & rhs)
@@ -17,13 +17,13 @@ Location & Location::operator=(const Location & rhs)
 	{
 		
 	}
-	std::cout << "Location assignment constructor called" << std::endl;
+	//std::cout << "Location assignment constructor called" << std::endl;
 	return (*this);
 }
 
 Location::~Location()
 {
-	std::cout << "Location default destructor called" << std::endl;
+	//std::cout << "Location default destructor called" << std::endl;
 }
 
 
@@ -89,10 +89,12 @@ void	Location::printConfig()
 	for (std::vector<std::string>::iterator beg = allowed_methods.begin(); beg != allowed_methods.end(); beg++)
 		std::cout << *beg << " ";
 	std::cout << std::endl;
+	
 	std::cout <<"Return code : " << return_code << std::endl;
 	std::cout <<"Redirection path : " << redirection_path << std::endl;
 	std::cout <<"root_path : " << root_path << std::endl;
-	std::cout <<"index_path : " << index_path << std::endl;
+	if(!index_path.empty())
+		std::cout <<"index_path : " << index_path << std::endl;
 	std::cout <<"autoindex : " << autoindex << std::endl;
 	std::cout <<"cgi_file_extension : " << cgi_file_extension << std::endl;
 	std::cout <<"cgi_path_to_script : " << cgi_path_to_script << std::endl;

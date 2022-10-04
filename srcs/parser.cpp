@@ -3,12 +3,13 @@
 std::string read_file(char *config_file)
 {
 	int		fd;
-	char	buff[BUFFER_SIZE];
+	char	buff[BUFFER_SIZE + 1];
 	int		ret;
+	
 	std::string file_content;
+	file_content.clear();
 
-
-	memset(buff,0, sizeof(buff));
+	memset(buff,0, BUFFER_SIZE+1);
 	fd = open(config_file, O_RDONLY);
 	if(fd < 0)
 		throw exceptWebserv("Config Error : can't open the file");
@@ -17,8 +18,9 @@ std::string read_file(char *config_file)
 		throw exceptWebserv("Config Error : something went wrong while reading the file");
 	while(ret > 0)
 	{
+		buff[ret] = 0;
 		file_content.append(buff);
-		memset(buff,0, sizeof(buff));
+		memset(buff,0, BUFFER_SIZE+1);
 		ret = read(fd, buff, BUFFER_SIZE);
 	}
 	close(fd);
