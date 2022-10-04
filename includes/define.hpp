@@ -14,4 +14,15 @@ typedef struct epoll_event t_epoll_event;
  *	Define
  */
 
+ /*
+  *	Enumeration
+  */
+
+typedef enum e_method
+{
+	GET,
+	POST,
+	DELETE
+} t_method;
+
 #endif

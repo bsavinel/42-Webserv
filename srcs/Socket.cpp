@@ -3,6 +3,7 @@
 Socket::Socket()
 {
 	_fd = -1;
+	_init = false
 }
 
 Socket::Socket(const Socket &rhs)
@@ -34,4 +35,9 @@ void	Socket::setRequest(std::string req)
 {
 	_request.setRequest(req);
 	_request.parser();
+}
+
+void	Socket::readSocket()
+{
+	recv(it->data.fd, str, 2048, MSG_DONTWAIT);
 }
