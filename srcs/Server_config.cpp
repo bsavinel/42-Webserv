@@ -35,8 +35,9 @@ void Server_config::getConfig(std::vector<std::string>::iterator & it, std::vect
 		{
 			it++;
 			Location *new_loc = new Location();
+			std::string path_loc = *it;
 			new_loc->getConfig(it, splitted);
-			this->locations.insert(std::make_pair(*it, new_loc));
+			this->locations.insert(std::make_pair(path_loc, new_loc));
 			
 		}
 		if ((*it).compare("listen") == 0)
@@ -81,7 +82,7 @@ void	Server_config::printConfig()
 	std::map<std::string, Location*>::iterator it = this->locations.begin();
 	while (it != this->locations.end())
 	{
-		std::cout << it->first << std::endl;
+		std::cout <<"\t\tLOCATION_BLOCK \t " << it->first << std::endl;
 		it->second->printConfig();
 		it++;
 	}

@@ -15,6 +15,17 @@ server
 		cgi_pass.php ./www/bin/php-cgi;
 		upload_store /uploads;
 	}
+
+	location /blablaba
+	{
+		allow GET DELETE;
+		return 409 /resources/error/409.html;
+		root /resources/;
+		index index2.html;
+		autoindex off;
+		cgi_pass .php ./www/bin/php-cgi;
+		upload_store /uploads;
+	}
 }
 
 server 
@@ -24,7 +35,7 @@ server
 	error_pages  405 resources/error/405.html;
 	client_max_body_size 300;
 
-	location / 
+	location /
 	{
 		allow GET POST DELETE;
 		return 404 /resources/error/404.html;
