@@ -5,8 +5,8 @@
 #include "string"
 #include "string.h"
 #include "stdlib.h"
-
-#include "Location_block.hpp"
+#include <utility>
+#include "Location.hpp"
 
 
 class Server_config
@@ -27,8 +27,6 @@ class Server_config
 
 		void	getConfig(std::vector<std::string>::iterator & it, std::vector<std::string> & splitted);
 		void	printConfig();
-		
-		Server_config						*next;
 };
 
 #endif

@@ -33,8 +33,11 @@ void Server_config::getConfig(std::vector<std::string>::iterator & it, std::vect
 	{
 		if((*it).compare("location") == 0)
 		{
-			while (it != splitted.end() && (*it).compare("}") != 0)
-				it++;
+			it++;
+			Location *new_loc = new Location();
+			new_loc->getConfig(it, splitted);
+			this->locations.insert(std::make_pair(*it, new_loc));
+			
 		}
 		if ((*it).compare("listen") == 0)
 		{
@@ -74,4 +77,13 @@ void	Server_config::printConfig()
 	std::cout << "error_pages = " << error_code << std::endl;
 	std::cout << "error_pages = " << error_path << std::endl;
 	std::cout << "client_max_body_size = " << client_max_body_size << std::endl;
+	
+	std::map<std::string, Location*>::iterator it = this->locations.begin();
+	while (it != this->locations.end())
+	{
+		std::cout << it->first << std::endl;
+		it->second->printConfig();
+		it++;
+	}
+	
 }

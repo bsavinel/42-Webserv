@@ -31,7 +31,7 @@ server
 		root /resources/;
 		index index.html;
 		autoindex on;
-		cgi_pass.php ./www/bin/php-cgi;
+		cgi_pass .php ./www/bin/php-cgi;
 		upload_store /uploads;
 	}
 }

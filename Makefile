@@ -28,6 +28,7 @@ SRCS =	main.cpp			\
 		parser.cpp			\
 		ft_split.cpp		\
 		Server_config.cpp	\
+		Location.cpp		\
 
 ################################################################################
 #                               INCLUDES                             	       #
