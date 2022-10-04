@@ -140,6 +140,7 @@ void parser(char *config_file, t_config **head)
 				t_config *new_config = NULL;
 				new_config = (t_config *) malloc(sizeof(t_config));
 				new_config->server_config = getServerToken(beg, splitted);
+				new_config->next = NULL;
 				*head = new_config;
 			}
 			else 
@@ -152,6 +153,7 @@ void parser(char *config_file, t_config **head)
 					t_config *new_config = NULL;
 					new_config = (t_config *) malloc(sizeof(t_config));
 					new_config->server_config = getServerToken(beg, splitted);
+					new_config->next = NULL;
 					last->next = new_config;
 				}
 			}
