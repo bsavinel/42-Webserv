@@ -18,7 +18,7 @@
 typedef struct s_config
 {
 	Server_config	*server_config;
-	s_config		*next = NULL;
+	s_config		*next;
 }	t_config;
 
 

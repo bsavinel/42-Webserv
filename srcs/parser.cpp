@@ -137,7 +137,7 @@ void parser(char *config_file, t_config **head)
 				std::cout << "format is fine !" << std::endl;
 			if(!*head)
 			{
-				t_config *new_config;
+				t_config *new_config = NULL;
 				new_config = (t_config *) malloc(sizeof(t_config));
 				new_config->server_config = getServerToken(beg, splitted);
 				*head = new_config;
@@ -149,7 +149,7 @@ void parser(char *config_file, t_config **head)
 					last = last->next;
 				if(!last->next)
 				{
-					t_config *new_config;
+					t_config *new_config = NULL;
 					new_config = (t_config *) malloc(sizeof(t_config));
 					new_config->server_config = getServerToken(beg, splitted);
 					last->next = new_config;
