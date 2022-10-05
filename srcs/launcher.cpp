@@ -1,15 +1,19 @@
 #include "Server.hpp"
 #include "Epoll.hpp"
 #include "Event.hpp"
+#include "define.hpp"
+#include "HttpManager.hpp"
 #include <stdlib.h>
 
 static void routine(Epoll &epoll)
 {
+	std::map<t_socket, HttpManager> stockManager;
+
 	while (1)
 	{
 		epoll.wait();
-		serverEvent(epoll);
-		clientEvent(epoll);
+		serverEvent(epoll, stockManager);
+		clientEvent(epoll, stockManager);
 	}
 }
 

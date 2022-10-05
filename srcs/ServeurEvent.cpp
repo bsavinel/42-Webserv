@@ -2,8 +2,9 @@
 #include "define.hpp"
 #include "Socket.hpp"
 #include "exceptWebserv.hpp"
+#include <map>
 
-void	serverEvent(Epoll &epoll)
+void	serverEvent(Epoll &epoll, std::map<t_socket, HttpManager> stockManager)
 {
 	int										size;
 	t_socket 								newClient;
@@ -22,6 +23,8 @@ void	serverEvent(Epoll &epoll)
 		newClient = accept(it->data.fd, (t_sockaddr *)&sin, (socklen_t *)&size);
 		if (newClient == -1)
 			throw exceptWebserv("serverEvent : Accept new client failed");
-		Socket(epoll, newClient); // client est add a epoll a l'interieur
+		//Socket(epoll, newClient); // client est add a epoll a l'interieur
+		epoll.addClient(newClient, 0);
+		stockManager.insert(std::make_pair(newClient, HttpManager(newClient)));
 	}
 }

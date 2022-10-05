@@ -5,22 +5,28 @@
 
 // TODO changer le open en stream
 #include <unistd.h>
+#include <map>
 #include <fcntl.h>
 
-void	clientEvent(Epoll &epoll)
+void	clientEvent(Epoll &epoll, std::map<t_socket, HttpManager> stockManager)
 {
-	Epoll::stockEventType::const_iterator	it;
-	Epoll::stockClientType::const_iterator	itClient;
-	std::map<t_socket, Socket> & socketClient = epoll.getSockClient();
-	std::string stockRequest;
-	char str[2048];
+	Epoll::stockEventType::iterator	it;
+	std::map<t_socket, int> & socketClient = epoll.getSockClient();
+	Epoll::stockClientType::iterator	itClient;
+	//std::string stockRequest;
+	//char str[2048];
 
 	for (it = epoll.getAllEvents().begin(); it != epoll.getAllEvents().end(); it++)
 	{
 		itClient = socketClient.find(it->data.fd);
 		if (itClient == socketClient.end())
 			continue;
-		if (it->events & EPOLLIN)
+		if (stockManager.find(it->data.fd)->second.applyMethod(itClient->second /*Info server*/, *it/*flag event*/))
+		{
+			epoll.deleteClient(it->data.fd);
+			stockManager.erase(it->data.fd);
+		}
+		/*if (it->events & EPOLLIN)
 		{
 			bzero(str, 2048);
 			while (recv(it->data.fd, str, 2048, MSG_DONTWAIT) > 0)
@@ -28,11 +34,11 @@ void	clientEvent(Epoll &epoll)
 				stockRequest += str;
 				bzero(str, 2048);
 			}
-			epoll.changeSocket(it->data.fd, EPOLLOUT);
+			epoll.changeSocket(it->data.fd, EPOLLOUT); // ? normallement ca sert a rien
 			// std::cerr << "Debut de la requete" << std::endl << std::endl << stockRequest << "fin de la requete" << std::endl << std::endl;
 			
-			/*HttpRequest request(stockRequest);
-			request.parser();*/
+			//HttpRequest request(stockRequest);
+			//request.parser();
 			Socket &tmp = socketClient.find(it->data.fd)->second;
 			tmp.setRequest(stockRequest);
 		}
@@ -46,6 +52,6 @@ void	clientEvent(Epoll &epoll)
 		if (it->events & EPOLLRDHUP)
 		{
 			epoll.deleteClient(it->data.fd);
-		}
+		}*/
 	}
 }

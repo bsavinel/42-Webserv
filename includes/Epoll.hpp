@@ -16,7 +16,7 @@ class Epoll
 {
 	public:
 		typedef	std::vector<t_epoll_event>	stockEventType;
-		typedef	std::map<t_socket, Socket>	stockClientType;
+		typedef	std::map<t_socket, int>	stockClientType;
 		typedef	std::map<t_socket, Server>	stockServerType;
 		
 		Epoll(const Epoll &rhs);
@@ -24,21 +24,21 @@ class Epoll
 		~Epoll();
 
 		Epoll	&operator=(const Epoll &rhs);
-		void	addClient(t_socket const & sock, Socket const & socket);
+		void	addClient(t_socket const & sock, int const & infoServ);
 		void	addServer(t_socket const & sock, Server const & server);
 		void	deleteClient(t_socket const & sock);
 		void	deleteServer(t_socket const & sock);
 		void	changeSocket(t_socket const & sock, uint32_t mask_event);
 		void	wait();
 
-		std::map<t_socket, Socket>	&getSockClient();
+		std::map<t_socket, int>				&getSockClient();
 		const std::map<t_socket, Server>	&getSockServ() const;
-		const std::vector<t_epoll_event>	&getAllEvents() const; // ? peut-etre degage le const peut etre pratique
+		std::vector<t_epoll_event>	&getAllEvents(); // ? peut-etre degage le const peut etre pratique
 
 	private:
-		t_socket					_instance;
+		t_instEpoll					_instance;
 		std::map<t_socket, Server>	_sockServ;
-		std::map<t_socket, Socket>	_sockClient;
+		std::map<t_socket, int>		_sockClient;
 		std::vector<t_epoll_event>	_AllEvents;
 };
 
