@@ -25,10 +25,11 @@ SRCS =	main.cpp			\
 		ClientEvent.cpp		\
 		ServeurEvent.cpp	\
 		itoa.cpp			\
-		parser.cpp			\
+		Config.cpp			\
 		ft_split.cpp		\
 		Server_config.cpp	\
 		Location.cpp		\
+		utils.cpp			\
 
 ################################################################################
 #                               INCLUDES                             	       #

@@ -34,5 +34,5 @@ server
 		autoindex on;
 		cgi_pass.php ./www/bin/php-cgi;
 		upload_store /uploads;
-	}		
+	}
 }

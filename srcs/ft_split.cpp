@@ -6,11 +6,11 @@
 /*   By: nburat-d <nburat-d@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/27 16:59:52 by nburat-d          #+#    #+#             */
-/*   Updated: 2022/09/26 11:01:58 by nburat-d         ###   ########.fr       */
+/*   Updated: 2022/10/05 10:54:38 by nburat-d         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "parser.hpp"
+#include "Config.hpp"
 
 static int	ft_wordcount(char const *s, char c)
 {

@@ -6,7 +6,7 @@
 #include <string.h>
 
 
-#include "parser.hpp"
+#include "Config.hpp"
 
 int main(int ac, char **av)
 {
@@ -14,8 +14,7 @@ int main(int ac, char **av)
 	{
 		try
 		{
-			Config configuration;
-			configuration.parser(av[1]);
+			Config configuration(av[1]);
 			configuration.print_all_conf();
 		}
 		catch(const exceptWebserv& e)
