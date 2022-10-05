@@ -25,16 +25,9 @@ Server_config & Server_config::operator=(const Server_config & rhs)
 
 Server_config::~Server_config()
 {
-	int i = 0;
-	std::cout << "SIZE " << locations.size() << std::endl;
-	;
 	for(std::map<std::string, Location*>::iterator it = locations.begin(); it != locations.end(); it++)
-	{
 		delete it->second;
-		i++;
-	}
-	std::cout << "BOUCLE " << i << std::endl;
-	std::cout << "Server_config default destructor called" << std::endl;
+	//std::cout << "Server_config default destructor called" << std::endl;
 }
 
 bool	Server_config::is_path_stored_yet(std::string path)

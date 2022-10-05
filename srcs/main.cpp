@@ -35,8 +35,15 @@ int main(int ac, char **av)
 			t_config *head = NULL;
 			parser(av[1], &head);
 			print_all_conf(head);
-			delete head->server_config;
-			free(head);
+			while (head)
+			{
+				t_config *next = head->next;
+				delete head->server_config;
+				free(head);
+				head = next;
+			}
+			
+			
 		}
 		catch(const exceptWebserv& e)
 		{
