@@ -156,7 +156,7 @@ void	Config::print_all_conf()
 		throw exceptWebserv("Error config : no congiguration found");
 	for(std::list<Server_config*>::iterator it = this->servers.begin(); it != this->servers.end(); it++)
 	{	std::cout << "------CONFIG " << i <<"------" << std::endl;
-		this->servers.front()->printConfig();
+		(*it)->printConfig();
 		i++;
 	}
 	

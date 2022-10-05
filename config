@@ -15,17 +15,6 @@ server
 		cgi_pass.php ./www/bin/php-cgi;
 		upload_store /uploads;
 	}
-
-	location /fddgdtt
-	{
-		allow GET POST DELETE;
-		return 404 /resources/error/404.html;
-		root /resources/;
-		index index.html;
-		autoindex on;
-		cgi_pass.php ./www/bin/php-cgi;
-		upload_store /uploads;
-	}
 		
 }
 
@@ -33,7 +22,7 @@ server
 {
 	listen 8081;
 	server_name www.streamagogo.fr;#OPTIONNAL
-	error_pages  404 resources/error/404.html;
+	error_pages  409 resources/error/404.html;
 	client_max_body_size 2000;
 
 	location / 
@@ -45,17 +34,5 @@ server
 		autoindex on;
 		cgi_pass.php ./www/bin/php-cgi;
 		upload_store /uploads;
-	}
-
-	location /
-	{
-		allow GET POST DELETE;
-		return 409 /resources/error/409.html;
-		root /resources/;
-		index index.html;
-		autoindex on;
-		cgi_pass.php ./www/bin/php-cgi;
-		upload_store /uploads;
-	}
-		
+	}		
 }
