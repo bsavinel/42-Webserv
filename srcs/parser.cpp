@@ -1,5 +1,16 @@
 #include "parser.hpp"
 
+
+Config::Config()
+{
+}
+
+Config::~Config()
+{
+	for (std::list<Server_config*>::iterator it = this->servers.begin(); it != this->servers.end(); it++)
+		delete *it;
+}
+
 std::string read_file(char *config_file)
 {
 	int		fd;
@@ -9,7 +20,7 @@ std::string read_file(char *config_file)
 	std::string file_content;
 	file_content.clear();
 
-	memset(buff,0, BUFFER_SIZE+1);
+	memset(buff,0, BUFFER_SIZE + 1);
 	fd = open(config_file, O_RDONLY);
 	if(fd < 0)
 		throw exceptWebserv("Config Error : can't open the file");
@@ -117,10 +128,9 @@ Server_config *getServerToken(std::vector<std::string>::iterator & it, std::vect
 	return(server);
 }
 
-void parser(char *config_file, t_config **head)
-{
-	t_config *last = NULL;
 
+void Config::parser(char *config_file)
+{
 	std::string content_file = read_file(config_file);
 	remove_comment(content_file);
 	remove_nl(content_file);
@@ -133,46 +143,20 @@ void parser(char *config_file, t_config **head)
 		if ((*beg).compare("server") == 0 && (*(beg + 1)).compare("{") == 0)
 		{
 			beg++;
-			// for(std::vector<std::string>::iterator beg = splitted.begin(); beg != splitted.end(); beg++)
-			// 	std::cout << *beg << std::endl;
 			if(checkbrackets(beg, splitted))
-				std::cout << "format is fine !" << std::endl;
-			if(!*head)
-			{
-				t_config *new_config = NULL;
-				new_config = (t_config *) malloc(sizeof(t_config));
-				new_config->server_config = getServerToken(beg, splitted);
-				new_config->next = NULL;
-				*head = new_config;
-			}
-			else 
-			{
-				last = *head;
-				while (last && last->next)
-					last = last->next;
-				if(!last->next)
-				{
-					t_config *new_config = NULL;
-					new_config = (t_config *) malloc(sizeof(t_config));
-					new_config->server_config = getServerToken(beg, splitted);
-					new_config->next = NULL;
-					last->next = new_config;
-				}
-			}
+				this->servers.push_back(getServerToken(beg, splitted));
 		}
 	}
 }
 
-void	print_all_conf(t_config *head)
+void	Config::print_all_conf()
 {
 	int i  = 0;
-	if(!head)
+	if(this->servers.empty())
 		throw exceptWebserv("Error config : no congiguration found");
-	while (head)
-	{
-		std::cout << "------CONFIG " << i <<"------" << std::endl;
-		head->server_config->printConfig();
-		head = head->next;
+	for(std::list<Server_config*>::iterator it = this->servers.begin(); it != this->servers.end(); it++)
+	{	std::cout << "------CONFIG " << i <<"------" << std::endl;
+		this->servers.front()->printConfig();
 		i++;
 	}
 	

@@ -38,6 +38,7 @@
 		"unordered_map": "cpp",
 		"functional": "cpp",
 		"optional": "cpp",
-		"ranges": "cpp"
+		"ranges": "cpp",
+		"list": "cpp"
 	}
 }

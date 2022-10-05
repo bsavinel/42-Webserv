@@ -12,19 +12,25 @@
 #include <Server_config.hpp>
 #include <algorithm>
 #include <stdlib.h>
+#include <list>
 
 #define BUFFER_SIZE 200
 
-typedef struct s_config
+class Config
 {
-	Server_config	*server_config;
-	s_config		*next;
-}	t_config;
+	private:
+		std::list<Server_config*> servers;
+	public:
+		Config();
+		Config(const Config & src);
+		Config & operator=(const Config & rhs);
+		~Config();
 
+		void parser(char *config_file);
+		void	print_all_conf();
+};
 
-void parser(char *config_file, t_config **head);
 char	**ft_split(char const *s, char c);
-void	print_all_conf(t_config *head);
 
 
 
