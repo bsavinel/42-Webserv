@@ -51,26 +51,16 @@ void Server_config::getConfig(std::vector<std::string>::iterator & it, std::vect
 			}
 		}
 		if ((*it).compare("listen") == 0)
-		{
 			this->listening_port = atoi(((*++it).c_str()));
-		}
 		else if ((*it).compare("server_name") == 0)
-		{
-			it++;
-			this->server_name = *it;
-		}
+			this->server_name = *++it;
 		else if ((*it).compare("error_pages") == 0)
 		{
-			it++;
-			this->error_code = atoi((*it).c_str());
-			it++;
-			this->error_path = *it;
+			this->error_code = atoi((*++it).c_str());
+			this->error_path = *++it;
 		}
 		else if ((*it).compare("client_max_body_size") == 0)
-		{
-			it++;
-			this->client_max_body_size = atoi((*it).c_str());
-		}
+			this->client_max_body_size = atoi((*++it).c_str());
 		it++;
 	}
 }

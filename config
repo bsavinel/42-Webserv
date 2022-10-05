@@ -27,7 +27,7 @@ server
 
 	location / 
 	{
-		allow GET POST DELETE;
+		allow GET POST;
 		return 405 /resources/error/405.html;
 		root /resources/;
 		index index.html;

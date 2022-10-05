@@ -2,13 +2,11 @@
 
 Location::Location()
 {
-	//std::cout << "Location default constructor called" << std::endl;
 }
 
 Location::Location(const Location & src)
 {
 	*this = src;
-	//std::cout << "Location copy constructor called" << std::endl;
 }
 
 Location & Location::operator=(const Location & rhs)
@@ -17,68 +15,46 @@ Location & Location::operator=(const Location & rhs)
 	{
 		
 	}
-	//std::cout << "Location assignment constructor called" << std::endl;
 	return (*this);
 }
 
 Location::~Location()
-{
-	//std::cout << "Location default destructor called" << std::endl;
-}
+{}
 
 
 void Location::getConfig(std::vector<std::string>::iterator & it, std::vector<std::string> & splitted)
 {
 	while (it != splitted.end() && (*it).compare("}") != 0)
 	{
-
 		if ((*it).compare("allow") == 0)
 		{
 			it++;
 			while (it != splitted.end() && (*it).compare(";") != 0)
-			{
-				this->allowed_methods.push_back(*it);
-				it++;
-			}
+				this->allowed_methods.push_back(*it++);
 		}
 		else if ((*it).compare("return") == 0)
 		{
-			it++;
-			this->return_code = atoi((*it).c_str());
-			it++;
-			this->redirection_path = *it;
+			this->return_code = atoi((*++it).c_str());
+			this->redirection_path = *++it;
 		}
 		else if ((*it).compare("root") == 0)
-		{
-			it++;
-			this->root_path = *it;
-		}
+			this->root_path = *++it;
 		else if ((*it).compare("index") == 0)
-		{
-			it++;
-			this->index_path = *it;
-		}
+			this->index_path = *++it;
 		else if ((*it).compare("autoindex") == 0)
 		{
-			it++;
-			if ((*it).compare("on") == 0)
+			if ((*++it).compare("on") == 0)
 				this->autoindex = true;
-			else
+			else if((*it).compare("off") == 0)
 				this->autoindex = false;
 		}
 		else if ((*it).compare("cgi_pass") == 0)
 		{
-			it++;
-			this->cgi_file_extension = *it;
-			it++;
-			this->cgi_path_to_script = *it;
+			this->cgi_file_extension = *++it;
+			this->cgi_path_to_script = *++it;
 		}
 		else if ((*it).compare("upload_store") == 0)
-		{
-			it++;
-			this->upload_dir = *it;
-			
-		}
+			this->upload_dir = *++it;
 		it++;
 	}
 }
