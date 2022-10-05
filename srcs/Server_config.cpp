@@ -26,13 +26,25 @@ Server_config & Server_config::operator=(const Server_config & rhs)
 Server_config::~Server_config()
 {
 	int i = 0;
+	std::cout << "SIZE " << locations.size() << std::endl;
+	;
 	for(std::map<std::string, Location*>::iterator it = locations.begin(); it != locations.end(); it++)
 	{
-		i++;
 		delete it->second;
+		i++;
 	}
 	std::cout << "BOUCLE " << i << std::endl;
 	std::cout << "Server_config default destructor called" << std::endl;
+}
+
+bool	Server_config::is_path_stored_yet(std::string path)
+{
+	for(std::map<std::string, Location*>::iterator it = locations.begin(); it != locations.end(); it++)
+	{
+		if(path == it->first)
+			return(true);
+	}
+	return(false);
 }
 
 void Server_config::getConfig(std::vector<std::string>::iterator & it, std::vector<std::string> & splitted)
@@ -42,10 +54,13 @@ void Server_config::getConfig(std::vector<std::string>::iterator & it, std::vect
 		if((*it).compare("location") == 0)
 		{
 			it++;
-			Location *new_loc = new Location();
 			std::string path_loc = *it;
-			new_loc->getConfig(it, splitted);
-			this->locations.insert(std::make_pair(path_loc, new_loc));
+			if(!is_path_stored_yet(path_loc))
+			{
+				Location *new_loc = new Location();
+				new_loc->getConfig(it, splitted);
+				this->locations.insert(std::make_pair(path_loc, new_loc));
+			}
 		}
 		if ((*it).compare("listen") == 0)
 		{

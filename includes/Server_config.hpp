@@ -27,6 +27,7 @@ class Server_config
 
 		void	getConfig(std::vector<std::string>::iterator & it, std::vector<std::string> & splitted);
 		void	printConfig();
+		bool	is_path_stored_yet(std::string path);
 };
 
 #endif
