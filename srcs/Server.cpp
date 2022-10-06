@@ -1,9 +1,15 @@
 #include "Server.hpp"
-#include "exceptWebserv.hpp"
+
 
 Server::Server(int domain, int service, int protocol, u_long interface, int port,int backlog)
 : _domain(domain), _service(service), _protocol(protocol), _interface(interface),
 _port(port), _backlog(backlog), _socket(-1)
+{
+}
+
+Server::Server(Server_config* server_config)
+: _domain(AF_INET), _service(SOCK_STREAM), _protocol(0), _interface(INADDR_ANY),
+_port(server_config->getListeningPort()), _backlog(200)
 {
 }
 
@@ -75,36 +81,6 @@ struct sockaddr_in	Server::getAddress() const
 }
 
 //! ------------------------------ SETTERS ------------------------------
-
-void	Server::setDomain(int domain)
-{
-	_domain = domain;
-}
-
-void	Server::setService(int service)
-{
-	_service = service;
-}
-
-void	Server::setProtocol(int protocol)
-{
-	_protocol = protocol;
-}
-
-void	Server::setInterface(ulong interface)
-{
-	_interface = interface;
-}
-
-void	Server::setPort(int port)
-{
-	_port = port;
-}
-
-void	Server::setBacklog(int backlog)
-{
-	_backlog = backlog;
-}
 
 void	Server::printConfig() const
 {

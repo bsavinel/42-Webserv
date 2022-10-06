@@ -25,8 +25,18 @@ class Location
 		Location & operator=(const Location & rhs);
 		~Location();
 
-		void	getConfig(std::vector<std::string>::iterator & it, std::vector<std::string> & splitted);
+		void	setConfig(std::vector<std::string>::iterator & it, std::vector<std::string> & splitted);
 		void	printConfig();
+
+		std::vector<std::string>	getAllowedMethods() const;
+		const int&					getReturnCode() const;
+		const std::string&			getRedirectionPath() const;
+		const std::string&			getRootPath() const;
+		const std::string&			getIndexPath() const;
+		const bool&					getAutoPath() const;
+		const std::string&			getCgiFileExtension() const;
+		const std::string&			getCgiPathToScript() const;
+		const std::string&			getUploadDirectory() const;
 };
 
 #endif

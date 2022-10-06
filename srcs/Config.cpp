@@ -3,7 +3,7 @@
 static Server_config *getServerToken(std::vector<std::string>::iterator & it, std::vector<std::string> & splitted)
 {
 	Server_config *server = new Server_config();
-	server->getConfig(it, splitted);
+	server->setConfig(it, splitted);
 	return(server);
 }
 
@@ -56,4 +56,11 @@ void	Config::print_all_conf()
 		std::cout << "------CONFIG " << ++i <<"------" << std::endl;
 		(*it)->printConfig();
 	}
+}
+
+//----------------------------GETTERS--------------------------
+
+std::list<Server_config*>	Config::getServersList() const
+{
+	return (this->servers);
 }

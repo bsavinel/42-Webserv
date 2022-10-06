@@ -40,7 +40,7 @@ bool	Server_config::is_path_stored_yet(std::string path)
 	return(false);
 }
 
-void Server_config::getConfig(std::vector<std::string>::iterator & it, std::vector<std::string> & splitted)
+void Server_config::setConfig(std::vector<std::string>::iterator & it, std::vector<std::string> & splitted)
 {
 	while (it != splitted.end() && (*it).compare("}") != 0)
 	{
@@ -51,7 +51,7 @@ void Server_config::getConfig(std::vector<std::string>::iterator & it, std::vect
 			if(!is_path_stored_yet(path_loc))
 			{
 				Location *new_loc = new Location();
-				new_loc->getConfig(it, splitted);
+				new_loc->setConfig(it, splitted);
 				this->locations.insert(std::make_pair(path_loc, new_loc));
 			}
 		}
@@ -87,4 +87,37 @@ void	Server_config::printConfig()
 		it++;
 	}
 	
+}
+
+//----------------------------GETTERS--------------------------
+
+
+const int&	Server_config::getListeningPort() const
+{
+	return(this->listening_port);
+}
+
+const std::string&	Server_config::getServerName() const
+{
+	return(this->server_name);
+}
+
+const int&	Server_config::getErrorCode() const
+{
+	return(this->error_code);
+}
+
+const std::string&	Server_config::getErrorPath() const
+{
+	return(this->error_path);
+}
+
+const int&	Server_config::getClientMaxBodySize() const
+{
+	return(this->client_max_body_size);
+}
+
+std::map<std::string, Location*> Server_config::getLocationsMap() const
+{
+	return(this->locations);
 }

@@ -1,12 +1,12 @@
-#include "launcher.hpp"
-#include <stdlib.h>
-#include "exceptWebserv.hpp"
-#include <iostream>
-#include <errno.h>
 #include <string.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <iostream>
 
-
+#include "launcher.hpp"
+#include "exceptWebserv.hpp"
 #include "Config.hpp"
+#include "Server.hpp"
 
 int main(int ac, char **av)
 {
@@ -15,7 +15,9 @@ int main(int ac, char **av)
 		try
 		{
 			Config configuration(av[1]);
-			configuration.print_all_conf();
+			//configuration.print_all_conf();
+			std::list<Server_config*>::iterator it = configuration.getServersList().begin();
+			(*it).
 		}
 		catch(const exceptWebserv& e)
 		{

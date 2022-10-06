@@ -20,6 +20,8 @@ class Config
 		~Config();
 
 		void	print_all_conf();
+		std::list<Server_config*>	getServersList() const;
+
 };
 
 

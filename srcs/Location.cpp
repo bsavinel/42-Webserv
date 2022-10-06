@@ -29,8 +29,7 @@ Location & Location::operator=(const Location & rhs)
 Location::~Location()
 {}
 
-
-void Location::getConfig(std::vector<std::string>::iterator & it, std::vector<std::string> & splitted)
+void Location::setConfig(std::vector<std::string>::iterator & it, std::vector<std::string> & splitted)
 {
 	while (it != splitted.end() && (*it).compare("}") != 0)
 	{
@@ -83,4 +82,54 @@ void	Location::printConfig()
 	std::cout <<"cgi_file_extension : " << cgi_file_extension << std::endl;
 	std::cout <<"cgi_path_to_script : " << cgi_path_to_script << std::endl;
 	std::cout <<"upload_dir : " << upload_dir << std::endl;
+}
+
+
+//----------------------------GETTERS--------------------------
+
+
+std::vector<std::string> Location::getAllowedMethods() const
+{
+	return(this->allowed_methods);
+}
+
+
+const int& Location::getReturnCode() const
+{
+	return(this->return_code);
+}
+
+const std::string& Location::getRedirectionPath() const
+{
+	return(this->redirection_path);
+}
+
+const std::string& Location::getRootPath() const
+{
+	return(this->root_path);
+}
+
+const std::string& Location::getIndexPath() const
+{
+	return(this->index_path);
+}
+
+const bool& Location::getAutoPath() const
+{
+	return(this->autoindex);
+
+}
+const std::string& Location::getCgiFileExtension() const
+{
+	return(this->cgi_file_extension);
+}
+
+const std::string& Location::getCgiPathToScript() const
+{
+	return(this->cgi_path_to_script);
+}
+
+const std::string& Location::getUploadDirectory() const
+{
+	return(this->upload_dir);
 }
