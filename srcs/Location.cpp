@@ -13,7 +13,15 @@ Location & Location::operator=(const Location & rhs)
 {
 	if(this != &rhs)
 	{
-		
+		this->allowed_methods = rhs.allowed_methods;
+		this->return_code = rhs.return_code;
+		this->redirection_path = rhs.redirection_path;
+		this->root_path = rhs.root_path;
+		this->index_path = rhs.index_path;
+		this->autoindex = rhs.autoindex;
+		this->cgi_file_extension = rhs.cgi_file_extension;
+		this->cgi_path_to_script = rhs.cgi_path_to_script;
+		this->upload_dir = rhs.upload_dir;
 	}
 	return (*this);
 }

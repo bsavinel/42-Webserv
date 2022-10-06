@@ -14,7 +14,12 @@ Server_config & Server_config::operator=(const Server_config & rhs)
 {
 	if(this != &rhs)
 	{
-		
+		this->listening_port = rhs.listening_port;
+		this->server_name = rhs.server_name;
+		this->error_code = rhs.error_code;
+		this->error_path = rhs.error_path;
+		this->client_max_body_size = rhs.client_max_body_size;
+		this->locations = rhs.locations;
 	}
 	return (*this);
 }
