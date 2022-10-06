@@ -2,6 +2,7 @@
 #include "HttpResponse.hpp"
 #include "HttpRequest.hpp"
 #include <iostream>
+#include <sys/epoll.h>
 
 // TODO changer le open en stream
 #include <unistd.h>
@@ -21,11 +22,30 @@ void	clientEvent(Epoll &epoll, std::map<t_socket, HttpManager> stockManager)
 		itClient = socketClient.find(it->data.fd);
 		if (itClient == socketClient.end())
 			continue;
-		if (stockManager.find(it->data.fd)->second.applyMethod(itClient->second /*Info server*/, *it/*flag event*/))
-		{
-			epoll.deleteClient(it->data.fd);
-			stockManager.erase(it->data.fd);
-		}
+		// TODO EPOLLHUPP pq trop compris mais ca a l'air chiant a gerer
+        // TODO EPOLL_ONE SHOT sa a l'air chiant aussi
+
+        if (it->events & EPOLLRDHUP || it->events & EPOLLERR)
+        {
+            epoll.deleteClient(it->data.fd);
+            stockManager.erase(it->data.fd);
+        }
+
+        if (it->events & EPOLLIN)
+            stockManager.find(it->data.fd)->second.receive();
+        else 
+            stockManager.find(it->data.fd)->second.setRead(false);
+
+        if (stockManager.find(it->data.fd)->second.applyMethod(itClient->second /*Info server*/, *it/*flag event*/))
+        {
+            epoll.deleteClient(it->data.fd);
+            stockManager.erase(it->data.fd);
+        }
+
+        if (it->events & EPOLLOUT)
+            stockManager.find(it->data.fd)->second.sender();
+        else 
+            stockManager.find(it->data.fd)->second.setWrite(false);
 		/*if (it->events & EPOLLIN)
 		{
 			bzero(str, 2048);

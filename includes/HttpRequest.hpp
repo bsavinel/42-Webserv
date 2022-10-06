@@ -12,9 +12,11 @@ class HttpRequest
 		HttpRequest & operator=(const HttpRequest & rhs);
 		~HttpRequest();
 
-		void							parser();
+		void							parser(std::string &request);
 		void							parseStartLine(std::string const & client_request);
 		std::pair <std::string, bool>	parseHeader(std::string &header, std::string optionToFind);
+		void							concatenate(char *str);
+		void							erase(int index);
 
 		std::string	getRequest(void) const; // GET POST DELETE
 
@@ -39,7 +41,7 @@ class HttpRequest
 		std::string					_startLine;
 
 		std::pair<std::string, bool> _method; // GET POST DELETE
-		std::pair<std::string, bool> _url; 
+		std::pair<std::string, bool> _url;
 		std::pair<std::string, bool> _httpVersion; // Normallement on s'en branle
 
 		std::pair<std::string, bool> _Connection;
@@ -56,9 +58,7 @@ class HttpRequest
 		//std::string _UserAgent;
 		//std::string _sec_ch_ua_platform;
 		//std::string _Host;
-		
 };
-
 
 std::ostream &	operator<<( std::ostream & o, HttpRequest const & rhs);
 

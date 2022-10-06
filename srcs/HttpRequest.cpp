@@ -74,18 +74,30 @@ std::pair <std::string, bool>	HttpRequest::parseHeader(std::string &header, std:
 	return (option);
 }
 
-void	HttpRequest::parser(void)
+void	HttpRequest::parser(std::string &request)
 {
 	parseStartLine(_request);
 	_request.erase(0, _request.find('\n') + 1);
 
-	_Connection = parseHeader(_request, "\nConnection: ");
-	_Accept = parseHeader(_request, "\nAccept: ");
-	_SecFetchSite = parseHeader(_request, "\nSec-Fetch-Site: ");
-	_SecFetchMode = parseHeader(_request, "\nSec-Fetch-Mode: ");
-	_SecFetchDest = parseHeader(_request, "\nSec-Fetch-Dest: ");
-	_Referer = parseHeader(_request, "\nReferer: ");
-	_AcceptEncoding = parseHeader(_request, "\nAccept-Encoding: ");
+	_Connection = parseHeader(request, "\nConnection: ");
+	_Accept = parseHeader(request, "\nAccept: ");
+	_SecFetchSite = parseHeader(request, "\nSec-Fetch-Site: ");
+	_SecFetchMode = parseHeader(request, "\nSec-Fetch-Mode: ");
+	_SecFetchDest = parseHeader(request, "\nSec-Fetch-Dest: ");
+	_Referer = parseHeader(request, "\nReferer: ");
+	_AcceptEncoding = parseHeader(request, "\nAccept-Encoding: ");
+
+	_request.erase(0, _request.find('\n\r\n\r') + 1);
+}
+
+void	HttpRequest::concatenate(char *str)
+{
+	_request.append(str);
+}
+
+void	HttpRequest::erase(int index)
+{
+	_request.erase(0, index);
 }
 
 void HttpRequest::setRequest(std::string const & request)
@@ -102,6 +114,7 @@ std::pair<std::string, bool> HttpRequest::getMethod(void) const
 {
 	return _method;
 } 
+
 std::pair<std::string, bool> HttpRequest::getUrl(void) const
 {
 	return _url;
