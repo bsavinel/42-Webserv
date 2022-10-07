@@ -11,7 +11,9 @@ static void routine(Epoll &epoll)
 
 	while (1)
 	{
+		//std::cout << "avant wait" << std::endl;
 		epoll.wait();
+		//std::cout << "apres wait" << std::endl;
 		serverEvent(epoll, stockManager);
 		clientEvent(epoll, stockManager);
 	}

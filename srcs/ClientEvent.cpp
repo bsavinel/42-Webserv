@@ -19,25 +19,25 @@ void	clientEvent(Epoll &epoll, std::map<t_socket, HttpManager> &stockManager)
 
 	for (it = epoll.getAllEvents().begin(); it != epoll.getAllEvents().end(); it++)
 	{
+		//std::cout << "#######################tour de boucle " << std::endl;
 		itClient = socketClient.find(it->data.fd);
 		if (itClient == socketClient.end())
 			continue;
 		// TODO EPOLLHUPP pq trop compris mais ca a l'air chiant a gerer
         // TODO EPOLL_ONE SHOT sa a l'air chiant aussi
-
         if (it->events & EPOLLRDHUP || it->events & EPOLLERR)
         {
+			std::cout << "########### supression" << std::endl;
             epoll.deleteClient(it->data.fd);
             stockManager.erase(it->data.fd);
         }
-
         if (it->events & EPOLLIN)
             stockManager.find(it->data.fd)->second.receive();
         else 
             stockManager.find(it->data.fd)->second.setReadOk(false);
-
         if (stockManager.find(it->data.fd)->second.applyMethod(itClient->second /*Info server*/, *it/*flag event*/))
         {
+			std::cout << "########### supression" << std::endl;
             epoll.deleteClient(it->data.fd);
             stockManager.erase(it->data.fd);
         }
@@ -74,4 +74,6 @@ void	clientEvent(Epoll &epoll, std::map<t_socket, HttpManager> &stockManager)
 			epoll.deleteClient(it->data.fd);
 		}*/
 	}
+	//std::cout << "Fin de event client" << std::endl;
+	
 }
