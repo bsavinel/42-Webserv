@@ -28,12 +28,12 @@ HttpManager::~HttpManager()
 
 }
 
-void	HttpManager::setReadok(bool read)
+void	HttpManager::setReadOk(bool read)
 {
 	_Readok = read;
 }
 
-void	HttpManager::setWriteok(bool write)
+void	HttpManager::setWriteOk(bool write)
 {
 	_Writeok = write;
 }
@@ -54,13 +54,16 @@ int HttpManager::receive()
 
 	for (int i = 0; i < LEN_TO_READ + 1; i++)
 		buffer[i] = 0;
-	if (ret = recv(_socketClient, buffer, LEN_TO_READ, MSG_DONTWAIT) == -1)
+	if ((ret = recv(_socketClient, buffer, LEN_TO_READ, MSG_DONTWAIT)) == -1)
 		return (-1);
 	_request.concatenate(buffer);
+	return (0);
 }
 
 bool	HttpManager::applyMethod(int &stock, t_epoll_event &event)
 {
+	(void)(event);
+	(void)(stock);
 	if (!_init)
 	{
 		_init = true;
@@ -86,5 +89,18 @@ void	HttpManager::parseHeader( void )
 	_request.parser(_buffer);
 
 	/*Pas touche*/
+
+}
+
+void	HttpManager::getMethod()
+{
+
+}
+void	HttpManager::postMethod()
+{
+
+}
+void	HttpManager::deleteMethod()
+{
 
 }

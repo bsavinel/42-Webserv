@@ -13,7 +13,7 @@ class Socket
 	public:
 		Socket();
 		Socket(const Socket &rhs);
-		Socket(Epoll &epoll, t_socket sockfd);// TODO mettre infoserver
+//		Socket(Epoll &epoll, t_socket sockfd);// TODO mettre infoserver
 		~Socket();
 		Socket &operator=(const Socket &rhs);
 		void	setRequest(std::string req);
@@ -21,12 +21,13 @@ class Socket
 		void	readSocket();
 
 	private:
-		HttpManager *_manager;
+//		HttpManager *_manager;
 		bool _init;
 
 		HttpRequest	_request;
 		t_socket	_fd;
 		// TODO mettre infoserver en membre priver
+		char *_str;
 };
 
 #endif

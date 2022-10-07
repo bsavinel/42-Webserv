@@ -23,6 +23,7 @@ SRCS =	main.cpp			\
 		Epoll.cpp			\
 		HttpRequest.cpp		\
 		HttpResponse.cpp		\
+		HttpManager.cpp		\
 		launcher.cpp		\
 		ClientEvent.cpp		\
 		ServeurEvent.cpp	\

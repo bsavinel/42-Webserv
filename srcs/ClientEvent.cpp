@@ -34,7 +34,7 @@ void	clientEvent(Epoll &epoll, std::map<t_socket, HttpManager> stockManager)
         if (it->events & EPOLLIN)
             stockManager.find(it->data.fd)->second.receive();
         else 
-            stockManager.find(it->data.fd)->second.setRead(false);
+            stockManager.find(it->data.fd)->second.setReadOk(false);
 
         if (stockManager.find(it->data.fd)->second.applyMethod(itClient->second /*Info server*/, *it/*flag event*/))
         {
@@ -45,7 +45,7 @@ void	clientEvent(Epoll &epoll, std::map<t_socket, HttpManager> stockManager)
         if (it->events & EPOLLOUT)
             stockManager.find(it->data.fd)->second.sender();
         else 
-            stockManager.find(it->data.fd)->second.setWrite(false);
+            stockManager.find(it->data.fd)->second.setWriteOk(false);
 		/*if (it->events & EPOLLIN)
 		{
 			bzero(str, 2048);

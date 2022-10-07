@@ -30,8 +30,8 @@ class HttpManager
 
 		/*Bsavinel*/
 
-		void	setReadok(bool read); // ? pas sur que se soit utile
-		void	setWriteok(bool write); // ? pas sur que se soit utile
+		void	setReadOk(bool read); // ? pas sur que se soit utile
+		void	setWriteOk(bool write); // ? pas sur que se soit utile
 		void	sender();
 
 	protected:
