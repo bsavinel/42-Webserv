@@ -9,11 +9,11 @@
 #include <map>
 #include <fcntl.h>
 
-void	clientEvent(Epoll &epoll, std::map<t_socket, HttpManager> stockManager)
+void	clientEvent(Epoll &epoll, std::map<t_socket, HttpManager> &stockManager)
 {
-	Epoll::stockEventType::iterator	it;
-	std::map<t_socket, int> & socketClient = epoll.getSockClient();
-	Epoll::stockClientType::iterator	itClient;
+	Epoll::stockEventType::iterator				it;
+	std::map<t_socket, int> &					socketClient =	epoll.getSockClient();
+	Epoll::stockClientType::iterator			itClient;
 	//std::string stockRequest;
 	//char str[2048];
 

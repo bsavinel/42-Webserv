@@ -4,7 +4,7 @@
 #include "exceptWebserv.hpp"
 #include <map>
 
-void	serverEvent(Epoll &epoll, std::map<t_socket, HttpManager> stockManager)
+void	serverEvent(Epoll &epoll, std::map<t_socket, HttpManager> &stockManager)
 {
 	int										size;
 	t_socket 								newClient;

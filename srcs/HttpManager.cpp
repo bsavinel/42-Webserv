@@ -1,6 +1,7 @@
 #include "HttpManager.hpp"
 #include <sys/socket.h>
 
+#include <iostream>
 
 HttpManager::HttpManager(t_socket socketClient)
 {
@@ -19,7 +20,14 @@ HttpManager::HttpManager(const HttpManager& rhs)
 HttpManager		&HttpManager::operator=(const HttpManager& rhs)
 {
 	if (this != &rhs)
-	{}
+	{
+        _socketClient = rhs._socketClient;
+        _init = rhs._init;
+        _isEnd = rhs._isEnd;
+        _Readok = rhs._Readok;
+        _Writeok = rhs._Writeok;
+        _request = rhs._request;
+	}
 	return *this;
 }
 
@@ -57,6 +65,7 @@ int HttpManager::receive()
 	if ((ret = recv(_socketClient, buffer, LEN_TO_READ, MSG_DONTWAIT)) == -1)
 		return (-1);
 	_request.concatenate(buffer);
+	std::cout << buffer << std::endl;
 	return (0);
 }
 

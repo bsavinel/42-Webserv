@@ -41,15 +41,15 @@ void	HttpRequest::parseStartLine(std::string const & client_request)
 
 	i = request.find(' ');
 	_method.first.insert(0, request, 0, i);
-	request.erase(0, i+1);
+	request.erase(0, i + 1);
 
 	i = request.find(' ');
 	_url.first.insert(0, request, 0, i);
-	request.erase(0, i+1);
+	request.erase(0, i + 1);
 
 	i = request.find('\n');
 	_httpVersion.first.insert(0, request, 0, i);
-	request.erase(0, i+1);
+	request.erase(0, i + 1);
 }
 
 std::pair <std::string, bool>	HttpRequest::parseHeader(std::string &header, std::string optionToFind)
