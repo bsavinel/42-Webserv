@@ -34,7 +34,7 @@ const HttpRequest &Socket::getRequest( void ) const
 void	Socket::setRequest(std::string req)
 {
 	_request.setRequest(req);
-	_request.parser(req);
+	_request.parser(/*req*/);
 }
 
 void	Socket::readSocket()

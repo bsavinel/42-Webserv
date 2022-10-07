@@ -79,17 +79,13 @@ bool	HttpManager::applyMethod(int &stock, t_epoll_event &event)
 			deleteMethod();
 		else
 			_isEnd = true;
-		
 	}
 	return _isEnd;
 }
 
 void	HttpManager::parseHeader( void )
 {
-	_request.parser(_buffer);
-
-	/*Pas touche*/
-
+	_request.parser();
 }
 
 void	HttpManager::getMethod()

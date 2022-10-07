@@ -12,7 +12,7 @@ class HttpRequest
 		HttpRequest & operator=(const HttpRequest & rhs);
 		~HttpRequest();
 
-		void							parser(std::string &request);
+		void							parser(/*std::string &request*/);
 		void							parseStartLine(std::string const & client_request);
 		std::pair <std::string, bool>	parseHeader(std::string &header, std::string optionToFind);
 		void							concatenate(char *str);
