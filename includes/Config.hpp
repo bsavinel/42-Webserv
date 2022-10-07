@@ -6,12 +6,12 @@
 #include <list>
 
 #include <utils.hpp>
-#include "Server_config.hpp"
+#include "Server.hpp"
 
 class Config
 {
 	private:
-		std::list<Server_config*> servers;
+		std::list<Server*> servers;
 
 	public:
 		Config(char *config_file);
@@ -20,7 +20,7 @@ class Config
 		~Config();
 
 		void	print_all_conf();
-		std::list<Server_config*>	getServersList() const;
+		std::list<Server*> & getServersList();
 
 };
 

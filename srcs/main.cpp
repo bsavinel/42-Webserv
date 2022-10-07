@@ -14,10 +14,7 @@ int main(int ac, char **av)
 	{
 		try
 		{
-			Config configuration(av[1]);
-			//configuration.print_all_conf();
-			std::list<Server_config*>::iterator it = configuration.getServersList().begin();
-			(*it).
+			launcher(av[1]);
 		}
 		catch(const exceptWebserv& e)
 		{

@@ -1,8 +1,8 @@
 #include "Config.hpp"
 
-static Server_config *getServerToken(std::vector<std::string>::iterator & it, std::vector<std::string> & splitted)
+static Server* getServerToken(std::vector<std::string>::iterator & it, std::vector<std::string> & splitted)
 {
-	Server_config *server = new Server_config();
+	Server *server = new Server();
 	server->setConfig(it, splitted);
 	return(server);
 }
@@ -38,7 +38,7 @@ Config & Config::operator=(const Config & rhs)
 
 Config::~Config()
 {
-	for (std::list<Server_config*>::iterator it = this->servers.begin(); it != this->servers.end(); it++)
+	for (std::list<Server*>::iterator it = this->servers.begin(); it != this->servers.end(); it++)
 		delete *it;
 }
 
@@ -51,7 +51,7 @@ void	Config::print_all_conf()
 	int i  = 0;
 	if(this->servers.empty())
 		throw exceptWebserv("Error config : no congiguration found");
-	for(std::list<Server_config*>::iterator it = this->servers.begin(); it != this->servers.end(); it++)
+	for(std::list<Server*>::iterator it = this->servers.begin(); it != this->servers.end(); it++)
 	{	
 		std::cout << "------CONFIG " << ++i <<"------" << std::endl;
 		(*it)->printConfig();
@@ -60,7 +60,7 @@ void	Config::print_all_conf()
 
 //----------------------------GETTERS--------------------------
 
-std::list<Server_config*>	Config::getServersList() const
+std::list<Server*> & Config::getServersList()
 {
-	return (this->servers);
+	return (servers);
 }

@@ -49,11 +49,11 @@ void	Epoll::addClient(t_socket const & sock)
 		throw exceptWebserv("Epoll : Failed to add new socket in instance");
 }
 
-void	Epoll::addServer(t_socket const & sock, Server const & server)
+void	Epoll::addServer(t_socket const & sock, Server const * server)
 {
 	t_epoll_event epollEvent;
 
-	_sockServ.insert(std::make_pair(sock, server));
+	_sockServ.insert(std::make_pair(sock, *server));
 	epollEvent.data.fd = sock;
 	epollEvent.events = EPOLLIN;
 	if (epoll_ctl(_instance, EPOLL_CTL_ADD, sock, &epollEvent) == -1)

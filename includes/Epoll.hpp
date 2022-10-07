@@ -23,7 +23,7 @@ class Epoll
 
 		Epoll	&operator=(const Epoll &rhs);
 		void	addClient(t_socket const & sock);
-		void	addServer(t_socket const & sock, Server const & server);
+		void	addServer(t_socket const & sock, Server const *server);
 		void	deleteClient(t_socket const & sock);
 		void	deleteServer(t_socket const & sock);
 		void	changeSocket(t_socket const & sock, uint32_t mask_event);

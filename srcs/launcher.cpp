@@ -3,6 +3,8 @@
 #include "Event.hpp"
 #include <stdlib.h>
 
+#include "Config.hpp"
+
 static void routine(Epoll &epoll)
 {
 	while (1)
@@ -13,12 +15,16 @@ static void routine(Epoll &epoll)
 	}
 }
 
-void launcher(char **av)
+void launcher(char *av)
 {
 	Epoll	epoll;
-	Server	server(AF_INET, SOCK_STREAM, 0, INADDR_ANY, atoi(av[1]), 100);
+	Config configuration(av);
 
-	server.launch();
-	epoll.addServer(server.getSocket(), server);
+	configuration.print_all_conf();
+
+	std::list<Server*>::iterator it = (configuration.getServersList()).begin();
+	(*it)->launch();
+	epoll.addServer((*it)->getSocket(), (*it));
+	
 	routine(epoll);
 }
