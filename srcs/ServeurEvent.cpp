@@ -26,6 +26,6 @@ void	serverEvent(Epoll &epoll, std::map<t_socket, HttpManager> &stockManager)
 		//Socket(epoll, newClient); // client est add a epoll a l'interieur
 		epoll.addClient(newClient, 0);
 		stockManager.insert(std::make_pair(newClient, HttpManager(newClient)));
-		std::cout << "nouveau client" << std::endl;
+//		std::cout << "nouveau client" << std::endl;
 	}
 }

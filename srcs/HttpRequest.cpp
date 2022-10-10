@@ -85,8 +85,13 @@ void	HttpRequest::parser(/*std::string &request*/)
 	_SecFetchDest = parseHeader(_request, "\nSec-Fetch-Dest: ");
 	_Referer = parseHeader(_request, "\nReferer: ");
 	_AcceptEncoding = parseHeader(_request, "\nAccept-Encoding: ");
+	_ContentType = parseHeader(_request, "\nContent-Type: ");
 
 	_request.erase(0, _request.find("\n\r\n\r") + 1);
+
+	std::cout << "    ====== " << "BODY START" << " ======    "  << std::endl;
+	std::cout << _request << std::endl;
+	std::cout << "    ====== " << "BODY END" << " ======    "  << std::endl;
 }
 
 void	HttpRequest::concatenate(char *str)
@@ -154,6 +159,10 @@ std::pair<std::string, bool> HttpRequest::getDnt(void) const
 {
 	return _dnt;
 }
+std::pair<std::string, bool> HttpRequest::getContentType(void) const
+{
+	return _ContentType;
+}
 
 std::ostream &	operator<<( std::ostream & o, HttpRequest const & rhs)
 {
@@ -168,5 +177,6 @@ std::ostream &	operator<<( std::ostream & o, HttpRequest const & rhs)
 	o << rhs.getReferer().first << std::endl;
 	o << rhs.getAcceptEncoding().first << std::endl;
 	o << rhs.getDnt().first << std::endl;
+	o << rhs.getContentType().first << std::endl;
 	return o;
 }
