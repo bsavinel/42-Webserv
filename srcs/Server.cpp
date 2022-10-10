@@ -152,6 +152,9 @@ void Server::launch()
 
 	if(_socket == -1)
 		throw exceptWebserv("Server : Failed to create server socket");
+	const int enable = 1;
+	if (setsockopt(_socket, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(int)) < 0)
+   		throw exceptWebserv("Server : Failed to reuse server socket");
 	if (bind(_socket, (struct sockaddr *)&_address, sizeof(_address)) == -1)
 	{
 		throw exceptWebserv("Server : Failed to bind the socket");

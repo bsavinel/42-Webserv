@@ -11,7 +11,7 @@
 void	clientEvent(Epoll &epoll, std::map<t_socket, HttpManager> &stockManager)
 {
 	Epoll::stockEventType::iterator				it;
-	std::map<t_socket, int> &					socketClient =	epoll.getSockClient();
+	std::map<t_socket, Server> &					socketClient =	epoll.getSockClient();
 	Epoll::stockClientType::iterator			itClient;
 	//std::string stockRequest;
 	//char str[2048];
@@ -34,7 +34,9 @@ void	clientEvent(Epoll &epoll, std::map<t_socket, HttpManager> &stockManager)
             stockManager.find(it->data.fd)->second.receive();
         else 
             stockManager.find(it->data.fd)->second.setReadOk(false);
-        if (stockManager.find(it->data.fd)->second.applyMethod(itClient->second /*Info server*/, *it/*flag event*/))
+		//if (stockManager.find(it->data.fd)->second.applyMethod(itClient->second /*Info server*/, *it/*flag event*/))
+		int tmp = 0;
+        if (stockManager.find(it->data.fd)->second.applyMethod(tmp, *it/*flag event*/))
         {
 			std::cout << "########### supression" << std::endl;
             epoll.deleteClient(it->data.fd);

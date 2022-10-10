@@ -36,11 +36,11 @@ Epoll &Epoll::operator=(const Epoll &rhs)
 	return *this;
 }
 
-void	Epoll::addClient(t_socket const & sock, int const & infoServ)
+void	Epoll::addClient(t_socket const & sock, Server const * infoServ)
 {
 	t_epoll_event epollEvent;
 
-	_sockClient.insert(std::make_pair(sock, infoServ));
+	_sockClient.insert(std::make_pair(sock, *infoServ));
 	epollEvent.data.fd = sock;
 	epollEvent.events = EPOLLIN;
 	fcntl(sock, O_NONBLOCK);
@@ -93,7 +93,7 @@ void	Epoll::wait()
 	epoll_wait(_instance, _AllEvents.data(), _sockClient.size() + _sockServ.size(), -1);
 }
 
-std::map<t_socket, int> &Epoll::getSockClient()
+std::map<t_socket, Server> &Epoll::getSockClient()
 {
 	return _sockClient;
 }
