@@ -3,7 +3,7 @@
 
 #include "Epoll.hpp"
 
-void	clientEvent(Epoll &epoll);
-void	serverEvent(Epoll &epoll);
+void	clientEvent(Epoll &epoll, std::map<t_socket, HttpManager> &stockManager);
+void	serverEvent(Epoll &epoll, std::map<t_socket, HttpManager> &stockManager);
 
 #endif

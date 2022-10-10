@@ -17,19 +17,21 @@ endif
 ################################################################################
 
 SRCS =	main.cpp			\
-		launcher.cpp		\
+		Socket.cpp			\
+		Config.cpp			\
 		Server.cpp			\
+		Location.cpp		\
 		exceptWebserv.cpp	\
 		Epoll.cpp			\
-		HttpRespond.cpp		\
+		HttpRequest.cpp		\
+		HttpManager.cpp		\
+		launcher.cpp		\
 		ClientEvent.cpp		\
 		ServeurEvent.cpp	\
 		itoa.cpp			\
-		Config.cpp			\
-		ft_split.cpp		\
-		Location.cpp		\
 		utils.cpp			\
-		
+#		HttpResponse.cpp		\
+
 ################################################################################
 #                               INCLUDES                             	       #
 ################################################################################

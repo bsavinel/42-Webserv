@@ -5,45 +5,61 @@
 
 class HttpRequest
 {
-	private :
-		// Start line
-		std::string _method; // GET POST DELETE
-		std::string _url; 
-		std::string _httpVersion;
-
 	public :
-		HttpRequest(char *);
+		HttpRequest();
+		HttpRequest(std::string client_request);
 		HttpRequest(const HttpRequest & src);
 		HttpRequest & operator=(const HttpRequest & rhs);
 		~HttpRequest();
+
+		void							parser(/*std::string &request*/);
+		void							parseStartLine(std::string const & client_request);
+		std::pair <std::string, bool>	parseHeader(std::string &header, std::string optionToFind);
+		void							concatenate(char *str);
+		void							erase(int index);
+
+		std::string	getRequest(void) const; // GET POST DELETE
+
+		std::pair<std::string, bool>	getMethod(void) const; // GET POST DELETE
+		std::pair<std::string, bool>	getUrl(void) const; 
+		std::pair<std::string, bool>	getHttpVersion(void) const; // Normallement on s'en branle
+
+		std::pair<std::string, bool>	getConnection(void) const;
+		std::pair<std::string, bool>	getAccept(void) const;
+		std::pair<std::string, bool>	getSecFetchSite(void) const;
+		std::pair<std::string, bool>	getSecFetchMode(void) const;
+		std::pair<std::string, bool>	getSecFetchDest(void) const;
+		std::pair<std::string, bool>	getReferer(void) const;
+		std::pair<std::string, bool>	getAcceptEncoding(void) const;
+		std::pair<std::string, bool>	getDnt(void) const;
+
+		void							setRequest(std::string const & request);
+
+	private :
+		std::string					_request;
+		// Start line
+		std::string					_startLine;
+
+		std::pair<std::string, bool> _method; // GET POST DELETE
+		std::pair<std::string, bool> _url;
+		std::pair<std::string, bool> _httpVersion; // Normallement on s'en branle
+
+		std::pair<std::string, bool> _Connection;
+		std::pair<std::string, bool> _Accept;
+		std::pair<std::string, bool> _SecFetchSite;
+		std::pair<std::string, bool> _SecFetchMode;
+		std::pair<std::string, bool> _SecFetchDest;
+		std::pair<std::string, bool> _Referer;
+		std::pair<std::string, bool> _AcceptEncoding;
+		std::pair<std::string, bool> _dnt;
+		//std::string _AcceptLanguage;
+		//std::string _sec_ch_ua;
+		//std::string _sec_ch_ua_mobile;
+		//std::string _UserAgent;
+		//std::string _sec_ch_ua_platform;
+		//std::string _Host;
 };
 
+std::ostream &	operator<<( std::ostream & o, HttpRequest const & rhs);
+
 #endif
-/*
-	private :
-		std::string	_method; // GET POST DELETE
-		std::string	_protocol; // HTTP 1.1
-		std::string	_accept; // Accept: text/html, application/xml
-		std::string _acceptCharset; // Accept-Charset: utf-8
-		std::string _acceptEncoding; // Accept-Encoding: gzip
-		std::string _acceptLanguage; // Accept-Language: fr-FR
-		std::string _authorization; // Basic WjbU7D25zTAlV2tZ7==
-		std::string _cacheControl; // Cache-Control: no-cache
-		std::string _cookie; // Cookie: $Version=1; Content=23
-		std::string _contentLength; // Content-Length: 212
-		std::string _contentType; // Content-Type: application/x_222-form-urlencoded
-		std::string _date; // Date: Mon, 9 March 2020 09:02:22 GMT
-		std::string _expect; // Expect: 100-continue (le serveur doit envoyer le code 100 lorsqu’il est prêt à recevoir la requête)
-		std::string _host; // Host: exemple.fr
-		std::string _ifMatch; //If-Match: „ft678iujhnjio90’pöl“
-		std::string _ifModifiedSince; // IF-Modified-Since: Mon 2 Mar 2020 1:00:00 GMT
-		std::string _ifNoneMatch; // If-None-Match: „cxdrt5678iujhgbvb“
-		std::string _ifRange; // If-Range: Mon 2 Mar 2020 1:00:00 GMT
-		std::string _ifUnmodifiedSince; // If-Modified-Since: Mon 2 Mar 2020 1:00:00 GMT
-		std::string _maxForward; // Max-Forwards: 12
-		std::string _proxyAuthorization; // Proxy-Authorization: Basic WjbU7D25zTAlV2tZ7==
-		std::string _range; // Range: bytes=0-9999
-		std::string _referrer; // Referrer: https://exemple.fr/index.html
-		std::string _TE; // TE: gzip, deflate
-		std::string _userAgent; // Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.132 Safari/537.36
-*/
