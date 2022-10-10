@@ -29,8 +29,12 @@ void launcher(char *av)
 	configuration.print_all_conf();
 
 	std::list<Server*>::iterator it = (configuration.getServersList()).begin();
-	(*it)->launch();
-	epoll.addServer((*it)->getSocket(), (*it));
+	while(it != (configuration.getServersList()).end())
+	{
+		(*it)->launch();
+		epoll.addServer((*it)->getSocket(), (*it));
+		it++;
+	}
 	
 	routine(epoll);
 }
