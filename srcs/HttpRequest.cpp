@@ -7,30 +7,25 @@
 #include <string>
 #include <iostream>
 
-HttpRequest::HttpRequest()
+void	HttpRequest::parser(/*std::string &request*/)
 {
-}
+	parseStartLine(_request);
+	_request.erase(0, _request.find('\n') + 1);
 
-HttpRequest::HttpRequest(std::string client_request)
-{
-	_request = client_request;
-}
+	_Connection = parseHeader(_request, "\nConnection: ");
+	_Accept = parseHeader(_request, "\nAccept: ");
+	_SecFetchSite = parseHeader(_request, "\nSec-Fetch-Site: ");
+	_SecFetchMode = parseHeader(_request, "\nSec-Fetch-Mode: ");
+	_SecFetchDest = parseHeader(_request, "\nSec-Fetch-Dest: ");
+	_Referer = parseHeader(_request, "\nReferer: ");
+	_AcceptEncoding = parseHeader(_request, "\nAccept-Encoding: ");
+	_ContentType = parseHeader(_request, "\nContent-Type: ");
 
-HttpRequest::HttpRequest(const HttpRequest & src)
-{
-	*this = src;
-}
+//	_request.erase(0, _request.find("\n\r\n\r") + 1);
 
-HttpRequest & HttpRequest::operator=(const HttpRequest & rhs)
-{
-	if(this != &rhs)
-	{}
-	return (*this);
-}
-
-HttpRequest::~HttpRequest()
-{
-
+	std::cout << "    ====== " << "BODY START" << " ======    "  << std::endl;
+	std::cout << _request << std::endl;
+	std::cout << "    ====== " << "BODY END" << " ======    "  << std::endl;
 }
 
 void	HttpRequest::parseStartLine(std::string const & client_request)
@@ -73,26 +68,6 @@ std::pair <std::string, bool>	HttpRequest::parseHeader(std::string &header, std:
 	return (option);
 }
 
-void	HttpRequest::parser(/*std::string &request*/)
-{
-	parseStartLine(_request);
-	_request.erase(0, _request.find('\n') + 1);
-
-	_Connection = parseHeader(_request, "\nConnection: ");
-	_Accept = parseHeader(_request, "\nAccept: ");
-	_SecFetchSite = parseHeader(_request, "\nSec-Fetch-Site: ");
-	_SecFetchMode = parseHeader(_request, "\nSec-Fetch-Mode: ");
-	_SecFetchDest = parseHeader(_request, "\nSec-Fetch-Dest: ");
-	_Referer = parseHeader(_request, "\nReferer: ");
-	_AcceptEncoding = parseHeader(_request, "\nAccept-Encoding: ");
-	_ContentType = parseHeader(_request, "\nContent-Type: ");
-
-	_request.erase(0, _request.find("\n\r\n\r") + 1);
-
-	std::cout << "    ====== " << "BODY START" << " ======    "  << std::endl;
-	std::cout << _request << std::endl;
-	std::cout << "    ====== " << "BODY END" << " ======    "  << std::endl;
-}
 
 void	HttpRequest::concatenate(char *str)
 {
@@ -104,6 +79,59 @@ void	HttpRequest::erase(int index)
 	_request.erase(0, index);
 }
 
+std::ostream &	operator<<( std::ostream & o, HttpRequest const & rhs)
+{
+	if (rhs.getMethod().second)
+		o << rhs.getMethod().first << std::endl;
+	if (rhs.getUrl().second)
+		o << rhs.getUrl().first << std::endl; 
+	if (rhs.getHttpVersion().second)
+		o << rhs.getHttpVersion().first << std::endl;
+	if (rhs.getConnection().second)
+		o << rhs.getConnection().first << std::endl;
+	if (rhs.getAccept().second)
+		o << rhs.getAccept().first << std::endl;
+	if (rhs.getSecFetchSite().second)
+		o << rhs.getSecFetchSite().first << std::endl;
+	if (rhs.getSecFetchMode().second)
+		o << rhs.getSecFetchMode().first << std::endl;
+	if (rhs.getSecFetchDest().second)
+		o << rhs.getSecFetchDest().first << std::endl;
+	if (rhs.getReferer().second)
+		o << rhs.getReferer().first << std::endl;
+	if (rhs.getAcceptEncoding().second)
+		o << rhs.getAcceptEncoding().first << std::endl;
+	if (rhs.getDnt().second)
+		o << rhs.getDnt().first << std::endl;
+	if (rhs.getContentType().second)
+		o << rhs.getContentType().first << std::endl;
+	return o;
+}
+HttpRequest::HttpRequest()
+{
+}
+
+HttpRequest::HttpRequest(std::string client_request)
+{
+	_request = client_request;
+}
+
+HttpRequest::HttpRequest(const HttpRequest & src)
+{
+	*this = src;
+}
+
+HttpRequest & HttpRequest::operator=(const HttpRequest & rhs)
+{
+	if(this != &rhs)
+	{}
+	return (*this);
+}
+
+HttpRequest::~HttpRequest()
+{
+
+}
 void HttpRequest::setRequest(std::string const & request)
 {
 	_request = request;
@@ -162,21 +190,4 @@ std::pair<std::string, bool> HttpRequest::getDnt(void) const
 std::pair<std::string, bool> HttpRequest::getContentType(void) const
 {
 	return _ContentType;
-}
-
-std::ostream &	operator<<( std::ostream & o, HttpRequest const & rhs)
-{
-	o << rhs.getMethod().first << std::endl;
-	o << rhs.getUrl().first << std::endl; 
-	o << rhs.getHttpVersion().first << std::endl;
-	o << rhs.getConnection().first << std::endl;
-	o << rhs.getAccept().first << std::endl;
-	o << rhs.getSecFetchSite().first << std::endl;
-	o << rhs.getSecFetchMode().first << std::endl;
-	o << rhs.getSecFetchDest().first << std::endl;
-	o << rhs.getReferer().first << std::endl;
-	o << rhs.getAcceptEncoding().first << std::endl;
-	o << rhs.getDnt().first << std::endl;
-	o << rhs.getContentType().first << std::endl;
-	return o;
 }
