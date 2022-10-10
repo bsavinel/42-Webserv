@@ -3,11 +3,9 @@
 #include <algorithm>
 #include <iostream>
 
-
 #include <fstream>
 #include <string>
 #include <iostream>
-
 
 HttpRequest::HttpRequest()
 {
@@ -32,6 +30,7 @@ HttpRequest & HttpRequest::operator=(const HttpRequest & rhs)
 
 HttpRequest::~HttpRequest()
 {
+
 }
 
 void	HttpRequest::parseStartLine(std::string const & client_request)
