@@ -24,56 +24,33 @@ void	clientEvent(Epoll &epoll, std::map<t_socket, HttpManager> &stockManager)
 		if (itClient == socketClient.end())
 			continue;
 		// TODO EPOLLHUPP pq trop compris mais ca a l'air chiant a gerer
-        // TODO EPOLL_ONE SHOT sa a l'air chiant aussi
+        // TODO EPOLL_ONE_SHOT sa a l'air chiant aussi
         if (it->events & EPOLLRDHUP || it->events & EPOLLERR)
         {
-			std::cout << "########### supression" << std::endl;
             epoll.deleteClient(it->data.fd);
             stockManager.erase(it->data.fd);
         }
         if (it->events & EPOLLIN)
             stockManager.find(it->data.fd)->second.receive();
-        else 
-            stockManager.find(it->data.fd)->second.setReadOk(false);
-        if (stockManager.find(it->data.fd)->second.applyMethod(itClient->second /*Info server*/, *it/*flag event*/))
-        {
-			std::cout << "########### supression" << std::endl;
-            epoll.deleteClient(it->data.fd);
-            stockManager.erase(it->data.fd);
-        }
-
+    	stockManager.find(it->data.fd)->second.applyMethod(itClient->second);
+		// TODO mettre une fermeture a part
+		//stockManager.find(it->data.fd)->second.sender();
+		if (stockManager.find(it->data.fd)->second.getWriteOk())
+		{
+			std::cout << "ta mere" << std::endl;
+			epoll.changeSocket(it->data.fd, EPOLLOUT);
+			stockManager.find(it->data.fd)->second.sender();
+		}
         if (it->events & EPOLLOUT)
+		{
+			//std::cout << "iciciccicicicicicicicicificicici" << std::endl;
             stockManager.find(it->data.fd)->second.sender();
-        else 
-            stockManager.find(it->data.fd)->second.setWriteOk(false);
-		/*if (it->events & EPOLLIN)
-		{
-			bzero(str, 2048);
-			while (recv(it->data.fd, str, 2048, MSG_DONTWAIT) > 0)
-			{
-				stockRequest += str;
-				bzero(str, 2048);
-			}
-			epoll.changeSocket(it->data.fd, EPOLLOUT); // ? normallement ca sert a rien
-			// std::cerr << "Debut de la requete" << std::endl << std::endl << stockRequest << "fin de la requete" << std::endl << std::endl;
-			
-			//HttpRequest request(stockRequest);
-			//request.parser();
-			Socket &tmp = socketClient.find(it->data.fd)->second;
-			tmp.setRequest(stockRequest);
 		}
-		if (it->events & EPOLLOUT)
-		{
-			HttpResponse resp(it->data.fd);
-//			std::cerr << "Debut de la requete" << std::endl << std::endl << socketClient.find(it->data.fd)->second.getRequest().getRequest() << "fin de la requete" << std::endl << std::endl;
-			resp.buildRespond(socketClient.find(it->data.fd)->second.getRequest(), 213); //? send la reponse
-			epoll.deleteClient(it->data.fd);
-		}
-		if (it->events & EPOLLRDHUP)
+		
+		if (stockManager.find(it->data.fd)->second.getIsEnd() == true)
 		{
 			epoll.deleteClient(it->data.fd);
-		}*/
+            stockManager.erase(it->data.fd);
+		}
 	}
-	//std::cout << "Fin de event client" << std::endl;
-	
 }

@@ -13,8 +13,8 @@ HttpManager::HttpManager(t_socket socketClient)
 	_socketClient = socketClient;
 	_init = false;
 	_isEnd = false;
-	_Readok = true;
-	_Writeok = true;
+	_Writeok = false;
+	_headerBuild = false;
 }
 
 HttpManager::HttpManager(const HttpManager& rhs)
@@ -28,10 +28,10 @@ HttpManager		&HttpManager::operator=(const HttpManager& rhs)
 	{
         _socketClient = rhs._socketClient;
         _init = rhs._init;
-        _isEnd = rhs._isEnd;
-        _Readok = rhs._Readok;
         _Writeok = rhs._Writeok;
         _request = rhs._request;
+		_headerBuild = rhs._headerBuild;
+		_file = rhs._file;
 	}
 	return *this;
 }
@@ -41,23 +41,25 @@ HttpManager::~HttpManager()
 
 }
 
-void	HttpManager::setReadOk(bool read)
+bool	HttpManager::getIsEnd()
 {
-	_Readok = read;
+    return _isEnd;
 }
 
-void	HttpManager::setWriteOk(bool write)
+
+bool	HttpManager::getWriteOk()
 {
-	_Writeok = write;
+	return _Writeok;
 }
 
 void	HttpManager::sender()
 {
+	std::cout << "send de merde" << std::endl;
 	if (_respond.size() > 0)
 	{
-		send(_socketClient, _respond.c_str(), _respond.size() - 1, MSG_NOSIGNAL);
+		send(_socketClient, _respond.c_str(), _respond.size(), MSG_NOSIGNAL);
+		_respond.empty();
 	}
-	_respond.empty();
 }
 
 int HttpManager::receive()
@@ -65,38 +67,31 @@ int HttpManager::receive()
 	int ret;
 	char buffer[LEN_TO_READ + 1];
 
-	//std::cout << "passage dans recev" << std::endl;
 	for (int i = 0; i < LEN_TO_READ + 1; i++)
 		buffer[i] = 0;
 	if ((ret = recv(_socketClient, buffer, LEN_TO_READ, MSG_DONTWAIT)) == -1)
 		return (-1);
-	std::cout << buffer << std::endl;
 	_request.concatenate(buffer);
 	return (0);
 }
 
-bool	HttpManager::applyMethod(int &stock, t_epoll_event &event)
+bool	HttpManager::applyMethod(int &infoServer)
 {
-	(void)(event);
-	(void)(stock);
+	(void)(infoServer);
+
 	if (!_init)
 	{
 		_init = true;
-		std::cout << "debut parseHeader" << std::endl;
 		parseHeader();
-		std::cout << "fin parseHeader" << std::endl;
 	}
-	//else
-	//{
-		if (_request.getMethod().first == "GET")
-			getMethod();
-		else if (_request.getMethod().first == "POST")
-			postMethod();
-		else if (_request.getMethod().first == "DELETE")
-			deleteMethod();
-		else
-			_isEnd = true;
-	//}
+	if (_request.getMethod().first == "GET")
+		getMethod(infoServer);
+	else if (_request.getMethod().first == "POST")
+		postMethod();
+	else if (_request.getMethod().first == "DELETE")
+		deleteMethod();
+	else
+		_isEnd = true;
 	return _isEnd;
 }
 
@@ -106,37 +101,41 @@ void	HttpManager::parseHeader( void )
 }
 
 
-void buildHeader(const HttpRequest &request, std::string &header ,off_t size)
+void HttpManager::buildHeaderGet(off_t size)
 {
-	header += "HTTP/1.1 200 OK\n"; // TODO voir les image apres
-	if (request.getUrl().first.find("html") != std::string::npos)
-        header += "Content-Type: text/html\n";
-	else if (request.getUrl().first.find("css") != std::string::npos)
-        header += "Content-Type: text/css\n";
-	else if (request.getUrl().first.find("ico") != std::string::npos)
-        header += "Content-Type: image/x-icon\n";
+	_respond += "HTTP/1.1 200 OK\n"; // TODO voir les image apres
+	if (_request.getUrl().first.find("html") != std::string::npos)
+        _respond += "Content-Type: text/html\n";
+	else if (_request.getUrl().first.find("css") != std::string::npos)
+        _respond += "Content-Type: text/css\n";
+	else if (_request.getUrl().first.find("ico") != std::string::npos)
+        _respond += "Content-Type: image/x-icon\n";
+	if (_request.getUrl().first.compare("/") == 0)
+		_respond += "Content-Type: text/html\n";
 	// TODO changer cette merde
 	std::stringstream ss;
 	ss << size;
 
-	header += "Content-Length: " + ss.str() + "\n";
-    header += "\n";
+	_respond += "Content-Length: " + ss.str() + "\n";
+    _respond += "\n";
+	std::cout << "size : " << ss.str() << std::endl;
 }
 
-void	HttpManager::getMethod()
+void	HttpManager::initialize_get(int &infoServer)
 {
-	char buffer[1024];
+	(void)infoServer;
 	struct stat status;
-	int nb_char = 1;
-	int _file;
 
+	//* open good file and create header + regarder page ererue necesaire a envoye
+
+	// TODO faire un read de 0 pour voir si on peut bien read dessus
 	if (_request.getUrl().first.compare("/") == 0)
 	{
 		_file = open("./ressources/index.html", O_RDONLY);
 	}
 	else
 	{
-		std::string root("./ressources/" + _request.getUrl().first);
+		std::string root("./ressources" + _request.getUrl().first);
 		_file = open(root.c_str(), O_RDONLY);
 	}
 	if (_file < 0)
@@ -146,21 +145,37 @@ void	HttpManager::getMethod()
         close(_file); 
         return ;
 	}
-	std::string header;
-	buildHeader(_request, header ,status.st_size);
-	std::cout << header;
-	send(_socketClient, header.c_str(), header.size(), MSG_NOSIGNAL);
-	while (nb_char)
+	buildHeaderGet(status.st_size);
+	_headerBuild = true;
+}
+
+void	HttpManager::builRespondGet()
+{
+	char buffer[LEN_TO_READ];
+	int nb_char = LEN_TO_READ;
+
+	nb_char = read(_file, buffer, LEN_TO_READ);
+	if (nb_char > 0)
+		_respond.insert(_respond.size(), &buffer[0], nb_char);
+	if (nb_char < LEN_TO_READ)
+		_isEnd = true;
+}
+
+void	HttpManager::getMethod(int &infoServer)
+{
+	(void)infoServer;
+
+	std::cout << "ici" << std::endl;
+	_Writeok = true;
+	if (_headerBuild == false)
 	{
-		nb_char = read(_file, buffer, 1024);
-		if (nb_char > 0)
-		{
-			std::cout << buffer << std::endl;
-			send(_socketClient, buffer, nb_char, MSG_NOSIGNAL);
-		}
+		initialize_get(infoServer);
 	}
-	close(_file);
-	_isEnd = true;
+	builRespondGet();
+	if (_isEnd == true)
+		close(_file);
+
+
 }
 void	HttpManager::postMethod()
 {

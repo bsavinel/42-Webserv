@@ -23,21 +23,21 @@ class HttpManager
 		~HttpManager();
 
 		HttpManager		&operator=(const HttpManager& rhs);
-		bool			applyMethod(int &InfoServer, t_epoll_event &event);
+		bool			applyMethod(int &InfoServer);
 		void			setStock(std::string &stock);
 		int				receive( void );
 		void			parseHeader( void );
 
 		/*Bsavinel*/
 
-		void	setReadOk(bool read); // ? pas sur que se soit utile
-		void	setWriteOk(bool write); // ? pas sur que se soit utile
+		bool	getWriteOk(); // ? pas sur que se soit utile
 		void	sender();
+		bool    getIsEnd();
 
 	protected:
 		t_socket		_socketClient;
 
-		void			getMethod();
+		void			getMethod(int &InfoServer);
 		void			postMethod();
 		void			deleteMethod();
 
@@ -46,8 +46,16 @@ class HttpManager
 		t_method		_method;// il peut sur un get
 		bool			_init; 
 		bool			_isEnd; // Sert a dire si la requete est fini
-		bool			_Readok;
 		bool			_Writeok;
+
+
+		/* pour la reponse get*/
+
+		void			initialize_get(int &infoServer);
+		void 			buildHeaderGet(off_t size);
+		void			builRespondGet();
+		int				_file;
+		bool			_headerBuild;
 		std::string		_respond;
 
 		/*Rpottier*/

@@ -86,7 +86,7 @@ void	HttpRequest::parser(/*std::string &request*/)
 	_Referer = parseHeader(_request, "\nReferer: ");
 	_AcceptEncoding = parseHeader(_request, "\nAccept-Encoding: ");
 
-	_request.erase(0, _request.find("\n\r\n\r") + 1);
+	_request.erase(0, _request.find("\r\n\r\n") + 1);
 }
 
 void	HttpRequest::concatenate(char *str)
