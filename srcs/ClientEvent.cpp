@@ -11,7 +11,7 @@
 void	clientEvent(Epoll &epoll, std::map<t_socket, HttpManager> &stockManager)
 {
 	Epoll::stockEventType::iterator				it;
-	std::map<t_socket, Server> &					socketClient =	epoll.getSockClient();
+	std::map<t_socket, Server> &				socketClient =	epoll.getSockClient();
 	Epoll::stockClientType::iterator			itClient;
 	//std::string stockRequest;
 	//char str[2048];
