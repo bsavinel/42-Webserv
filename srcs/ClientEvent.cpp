@@ -19,7 +19,7 @@ void	clientEvent(Epoll &epoll, std::map<t_socket, HttpManager> &stockManager)
 
 	for (it = epoll.getAllEvents().begin(); it != epoll.getAllEvents().end(); it++)
 	{
-		//std::cout << "#######################tour de boucle " << std::endl;
+//		std::cout << "#######################tour de boucle " << std::endl;
 		itClient = socketClient.find(it->data.fd);
 		if (itClient == socketClient.end())
 			continue;
@@ -32,7 +32,11 @@ void	clientEvent(Epoll &epoll, std::map<t_socket, HttpManager> &stockManager)
             stockManager.erase(it->data.fd);
         }
         if (it->events & EPOLLIN)
+        {
+            std::cout << "Call Receive() " << std::endl;
             stockManager.find(it->data.fd)->second.receive();
+            std::cout << "End Call Receive() " << std::endl;
+        }
         else 
             stockManager.find(it->data.fd)->second.setReadOk(false);
         if (stockManager.find(it->data.fd)->second.applyMethod(itClient->second /*Info server*/, *it/*flag event*/))

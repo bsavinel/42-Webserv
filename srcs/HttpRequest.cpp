@@ -12,6 +12,8 @@ void	HttpRequest::parser(/*std::string &request*/)
 	parseStartLine(_request);
 	_request.erase(0, _request.find('\n') + 1);
 
+	std::cout << _request << std::endl;
+
 	_Connection = parseHeader(_request, "\nConnection: ");
 	_Accept = parseHeader(_request, "\nAccept: ");
 	_SecFetchSite = parseHeader(_request, "\nSec-Fetch-Site: ");
@@ -21,11 +23,10 @@ void	HttpRequest::parser(/*std::string &request*/)
 	_AcceptEncoding = parseHeader(_request, "\nAccept-Encoding: ");
 	_ContentType = parseHeader(_request, "\nContent-Type: ");
 
-//	_request.erase(0, _request.find("\n\r\n\r") + 1);
-
-	std::cout << "    ====== " << "BODY START" << " ======    "  << std::endl;
+	_request.erase(0, _request.find("\r\n\r\n") + 1);
+	 std::cout << "    ====== " << "BODY START" << " ======    "  << std::endl;
 	std::cout << _request << std::endl;
-	std::cout << "    ====== " << "BODY END" << " ======    "  << std::endl;
+	 std::cout << "    ====== " << "BODY END" << " ======    "  << std::endl;
 }
 
 void	HttpRequest::parseStartLine(std::string const & client_request)

@@ -70,9 +70,9 @@ int HttpManager::receive()
 		buffer[i] = 0;
 	if ((ret = recv(_socketClient, buffer, LEN_TO_READ, MSG_DONTWAIT)) == -1)
 		return (-1);
-	std::cout << "    ====== " << "PARSER START" << " ======    "  << std::endl;
-	std::cout << buffer << std::endl;
-	std::cout << "    ====== " << "PARSER END" << " ======    "  << std::endl;
+	// std::cout << "    ====== " << "PARSER START" << " ======    "  << std::endl;
+	 std::cout << buffer << std::endl;
+	// std::cout << "    ====== " << "PARSER END" << " ======    "  << std::endl;
 	_request.concatenate(buffer);
 	return (0);
 }
@@ -84,10 +84,10 @@ bool	HttpManager::applyMethod(int &stock, t_epoll_event &event)
 	if (!_init)
 	{
 		_init = true;
-		std::cout << "    ====== " << "PARSER START" << " ======    "  << std::endl;
+//		std::cout << "    ====== " << "PARSER START" << " ======    "  << std::endl;
 		parseHeader();
-		std::cout << _request << std::endl;
-		std::cout << "    ====== " << "PARSER END" << " ======    "  << std::endl;
+		// std::cout << _request << std::endl;
+		// std::cout << "    ====== " << "PARSER END" << " ======    "  << std::endl;
 	}
 	//else
 	//{
@@ -105,7 +105,9 @@ bool	HttpManager::applyMethod(int &stock, t_epoll_event &event)
 
 void	HttpManager::parseHeader( void )
 {
+	std::cout << "Call parser" << std::endl;
 	_request.parser();
+	std::cout << "End Call parser" << std::endl;
 }
 
 
@@ -158,9 +160,9 @@ void	HttpManager::getMethod()
 		nb_char = read(_file, buffer, 1024);
 		if (nb_char > 0)
 		{
-		std::cout << "    ====== " << "BUFFER SEND START" << " ======    "  << std::endl;
-			std::cout << buffer << std::endl;
-		std::cout << "    ====== " << "BUFFER SEND END" << " ======    "  << std::endl;
+		// std::cout << "    ====== " << "BUFFER SEND START" << " ======    "  << std::endl;
+		// 	std::cout << buffer << std::endl;
+		// std::cout << "    ====== " << "BUFFER SEND END" << " ======    "  << std::endl;
 			send(_socketClient, buffer, nb_char, MSG_NOSIGNAL);
 		}
 	}
