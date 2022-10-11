@@ -86,7 +86,7 @@ bool	HttpManager::applyMethod(int &stock, t_epoll_event &event)
 		_init = true;
 //		std::cout << "    ====== " << "PARSER START" << " ======    "  << std::endl;
 		parseHeader();
-		// std::cout << _request << std::endl;
+		std::cout << _request << std::endl;
 		// std::cout << "    ====== " << "PARSER END" << " ======    "  << std::endl;
 	}
 	//else

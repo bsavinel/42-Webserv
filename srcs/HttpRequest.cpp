@@ -21,6 +21,7 @@ void	HttpRequest::parser(/*std::string &request*/)
 	_SecFetchDest = parseHeader(_request, "\nSec-Fetch-Dest: ");
 	_Referer = parseHeader(_request, "\nReferer: ");
 	_AcceptEncoding = parseHeader(_request, "\nAccept-Encoding: ");
+	_Boundary = parseHeader(_request, " boundary=");
 	_ContentType = parseHeader(_request, "\nContent-Type: ");
 
 	_request.erase(0, _request.find("\r\n\r\n") + 1);
@@ -106,6 +107,8 @@ std::ostream &	operator<<( std::ostream & o, HttpRequest const & rhs)
 		o << rhs.getDnt().first << std::endl;
 	if (rhs.getContentType().second)
 		o << rhs.getContentType().first << std::endl;
+	if (rhs.getBoundary().second)
+		o << rhs.getBoundary().first << std::endl;
 	return o;
 }
 HttpRequest::HttpRequest()
@@ -191,4 +194,9 @@ std::pair<std::string, bool> HttpRequest::getDnt(void) const
 std::pair<std::string, bool> HttpRequest::getContentType(void) const
 {
 	return _ContentType;
+}
+
+std::pair<std::string, bool> HttpRequest::getBoundary(void) const
+{
+	return _Boundary;
 }

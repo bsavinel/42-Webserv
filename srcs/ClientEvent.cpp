@@ -47,7 +47,10 @@ void	clientEvent(Epoll &epoll, std::map<t_socket, HttpManager> &stockManager)
         }
 
         if (it->events & EPOLLOUT)
+        {
+            std::cout << " EPOLLOUT " << std::endl;
             stockManager.find(it->data.fd)->second.sender();
+        }
         else 
             stockManager.find(it->data.fd)->second.setWriteOk(false);
 	}
