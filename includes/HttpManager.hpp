@@ -7,6 +7,7 @@
 # include "HttpRequest.hpp"
 # include "HttpResponse.hpp"
 #include <sys/types.h>
+#include "Server.hpp"
 #include <sys/socket.h>
 // TODO metre trois if pour repartir dans la methode adequate
 // TODO changer dans epoll le map des clients, pour lie au manager le fd
@@ -23,7 +24,7 @@ class HttpManager
 		~HttpManager();
 
 		HttpManager		&operator=(const HttpManager& rhs);
-		bool			applyMethod(int &InfoServer);
+		bool			applyMethod(const Server &server);
 		void			setStock(std::string &stock);
 		int				receive( void );
 		void			parseHeader( void );
@@ -36,9 +37,10 @@ class HttpManager
 		const std::string &getResponse() const;
 
 	protected:
+		Server			_server;
 		t_socket		_socketClient;
 
-		void			getMethod(int &InfoServer);
+		void			getMethod(const Server &server);
 		void			postMethod();
 		void			deleteMethod();
 
@@ -52,7 +54,7 @@ class HttpManager
 
 		/* pour la reponse get*/
 
-		void			initialize_get(int &infoServer);
+		void			initialize_get(const Server &server);
 		void 			buildHeaderGet(off_t size);
 		void			builRespondGet();
 		int				_file;

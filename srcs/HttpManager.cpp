@@ -75,17 +75,15 @@ int HttpManager::receive()
 	return (0);
 }
 
-bool	HttpManager::applyMethod(int &infoServer)
+bool	HttpManager::applyMethod(const Server &server)
 {
-	(void)(infoServer);
-
 	if (!_init)
 	{
 		_init = true;
 		parseHeader();
 	}
 	if (_request.getMethod().first == "GET")
-		getMethod(infoServer);
+		getMethod(server);
 	else if (_request.getMethod().first == "POST")
 		postMethod();
 	else if (_request.getMethod().first == "DELETE")
@@ -121,9 +119,9 @@ void HttpManager::buildHeaderGet(off_t size)
 	std::cout << "size : " << ss.str() << std::endl;
 }
 
-void	HttpManager::initialize_get(int &infoServer)
+void	HttpManager::initialize_get(const Server &server)
 {
-	(void)infoServer;
+	(void)server;
 	struct stat status;
 
 	//* open good file and create header + regarder page ererue necesaire a envoye
@@ -161,15 +159,13 @@ void	HttpManager::builRespondGet()
 		_isEnd = true;
 }
 
-void	HttpManager::getMethod(int &infoServer)
+void	HttpManager::getMethod(const Server &server)
 {
-	(void)infoServer;
-
 	std::cout << "ici" << std::endl;
 	_Writeok = true;
 	if (_headerBuild == false)
 	{
-		initialize_get(infoServer);
+		initialize_get(server);
 	}
 	builRespondGet();
 	if (_isEnd == true)
