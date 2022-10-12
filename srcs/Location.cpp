@@ -33,20 +33,26 @@ void Location::setConfig(std::vector<std::string>::iterator & it, std::vector<st
 {
 	while (it != splitted.end() && (*it).compare("}") != 0)
 	{
-		if ((*it).compare("allow") == 0)
+		if ((*it).compare("allow") == 0 && (*(it + 1)) != ";")
 		{
 			it++;
 			while (it != splitted.end() && (*it).compare(";") != 0)
 				this->allowed_methods.push_back(*it++);
 		}
-		else if ((*it).compare("return") == 0)
+		else if ((*it).compare("return") == 0 && (*(it + 1)) != ";")
 		{
-			this->return_code = atoi((*++it).c_str());
-			this->redirection_path = *++it;
+			int tmp = atoi((*++it).c_str());
+			if(tmp)
+			{
+				this->return_code = tmp;
+				this->redirection_path = *++it;
+			}
+			else
+				this->redirection_path = *it;
 		}
-		else if ((*it).compare("root") == 0)
+		else if ((*it).compare("root") == 0 && (*(it + 1)) != ";")
 			this->root_path = *++it;
-		else if ((*it).compare("index") == 0)
+		else if ((*it).compare("index") == 0 && (*(it + 1)) != ";")
 			this->index_path = *++it;
 		else if ((*it).compare("autoindex") == 0)
 		{
@@ -55,12 +61,12 @@ void Location::setConfig(std::vector<std::string>::iterator & it, std::vector<st
 			else if((*it).compare("off") == 0)
 				this->autoindex = false;
 		}
-		else if ((*it).compare("cgi_pass") == 0)
+		else if ((*it).compare("cgi_pass") == 0 && (*(it + 1)) != ";")
 		{
 			this->cgi_file_extension = *++it;
 			this->cgi_path_to_script = *++it;
 		}
-		else if ((*it).compare("upload_store") == 0)
+		else if ((*it).compare("upload_store") == 0 && (*(it + 1)) != ";")
 			this->upload_dir = *++it;
 		it++;
 	}

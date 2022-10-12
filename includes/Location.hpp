@@ -1,8 +1,10 @@
 #ifndef LOCATION_BLOCK_HPP
 #define LOCATION_BLOCK_HPP
 
-#include <string>
 #include <stdlib.h>
+#include <ctype.h>
+
+#include <string>
 #include <iostream>
 #include <vector>
 #include <map>

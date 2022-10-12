@@ -182,7 +182,9 @@ void Server::setConfig(std::vector<std::string>::iterator & it, std::vector<std:
 		if((*it).compare("location") == 0)
 		{
 			it++;
-			std::string path_loc = *it;
+			std::string path_loc;
+			if((*it) != ";")
+				path_loc = *it;
 			if(!is_path_stored_yet(path_loc))
 			{
 				Location *new_loc = new Location();
@@ -190,16 +192,16 @@ void Server::setConfig(std::vector<std::string>::iterator & it, std::vector<std:
 				this->locations.insert(std::make_pair(path_loc, new_loc));
 			}
 		}
-		if ((*it).compare("listen") == 0)
+		if ((*it).compare("listen") == 0 && (*(it + 1)) != ";")
 			this->_port = atoi(((*++it).c_str()));
-		else if ((*it).compare("server_name") == 0)
+		else if ((*it).compare("server_name") == 0 && (*(it + 1)) != ";")
 			this->server_name = *++it;
-		else if ((*it).compare("error_pages") == 0)
+		else if ((*it).compare("error_pages") == 0 && (*(it + 1)) != ";")
 		{
 			this->error_code = atoi((*++it).c_str());
 			this->error_path = *++it;
 		}
-		else if ((*it).compare("client_max_body_size") == 0)
+		else if ((*it).compare("client_max_body_size") == 0 && (*(it + 1)) != ";")
 			this->client_max_body_size = atoi((*++it).c_str());
 		it++;
 	}
