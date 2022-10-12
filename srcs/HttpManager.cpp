@@ -54,11 +54,10 @@ bool	HttpManager::getWriteOk()
 
 void	HttpManager::sender()
 {
-	std::cout << "send de merde" << std::endl;
 	if (_respond.size() > 0)
 	{
 		send(_socketClient, _respond.c_str(), _respond.size(), MSG_NOSIGNAL);
-		_respond.empty();
+		_respond.clear();
 	}
 }
 
