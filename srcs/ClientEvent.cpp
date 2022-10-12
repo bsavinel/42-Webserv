@@ -9,6 +9,16 @@
 #include <map>
 #include <fcntl.h>
 
+static void print_status(t_epoll_event event)
+{
+	std::cout << "le fd : " << event.data.fd << " a les evenement: ";
+	if (event.events & EPOLLIN)
+		std::cout << "EPOLLIN";
+	if (event.events & EPOLLOUT)
+		std::cout << "EPOLLOUT";
+	std::cout << std::endl;
+}
+
 void	clientEvent(Epoll &epoll, std::map<t_socket, HttpManager> &stockManager)
 {
 	Epoll::stockEventType::iterator				it;
@@ -19,12 +29,16 @@ void	clientEvent(Epoll &epoll, std::map<t_socket, HttpManager> &stockManager)
 
 	for (it = epoll.getAllEvents().begin(); it != epoll.getAllEvents().end(); it++)
 	{
-		//std::cout << "#######################tour de boucle " << std::endl;
 		itClient = socketClient.find(it->data.fd);
 		if (itClient == socketClient.end())
 			continue;
+
+		print_status(*it);
 		// TODO EPOLLHUPP pq trop compris mais ca a l'air chiant a gerer
         // TODO EPOLL_ONE_SHOT sa a l'air chiant aussi
+
+
+
         if (it->events & EPOLLRDHUP || it->events & EPOLLERR)
         {
             epoll.deleteClient(it->data.fd);
@@ -33,22 +47,17 @@ void	clientEvent(Epoll &epoll, std::map<t_socket, HttpManager> &stockManager)
         if (it->events & EPOLLIN)
             stockManager.find(it->data.fd)->second.receive();
     	stockManager.find(it->data.fd)->second.applyMethod(itClient->second);
-		// TODO mettre une fermeture a part
-		//stockManager.find(it->data.fd)->second.sender();
 		if (stockManager.find(it->data.fd)->second.getWriteOk())
 		{
-			std::cout << "ta mere" << std::endl;
 			epoll.changeSocket(it->data.fd, EPOLLOUT);
-			stockManager.find(it->data.fd)->second.sender();
+			//stockManager.find(it->data.fd)->second.sender();
 		}
-        if (it->events & EPOLLOUT)
-		{
-			//std::cout << "iciciccicicicicicicicicificicici" << std::endl;
-            stockManager.find(it->data.fd)->second.sender();
-		}
-		
+      /*  if (it->events & EPOLLOUT)
+            stockManager.find(it->data.fd)->second.sender();*/
+		stockManager.find(it->data.fd)->second.sender();
 		if (stockManager.find(it->data.fd)->second.getIsEnd() == true)
 		{
+			std::cout << "#############supression" << std::endl;
 			epoll.deleteClient(it->data.fd);
             stockManager.erase(it->data.fd);
 		}

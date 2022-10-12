@@ -33,6 +33,7 @@ class HttpManager
 		bool	getWriteOk(); // ? pas sur que se soit utile
 		void	sender();
 		bool    getIsEnd();
+		const std::string &getResponse() const;
 
 	protected:
 		t_socket		_socketClient;

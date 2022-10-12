@@ -185,3 +185,8 @@ void	HttpManager::deleteMethod()
 {
 
 }
+
+const std::string &HttpManager::getResponse() const
+{
+	return _respond;
+}
