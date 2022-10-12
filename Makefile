@@ -5,8 +5,8 @@ NAME = Webserv
 ################################################################################
 
 CC			= c++
-CPPCFLAGS	= -Wall -Wextra -Werror -MMD -std=c++98 -g3
-LDFLAGS		= -Wall -Wextra -Werror -std=c++98 -g3
+CPPCFLAGS	= -Wall -Wextra -Werror -MMD -std=c++98 -g3 -fsanitize=address
+LDFLAGS		= -Wall -Wextra -Werror -std=c++98 -g3 -fsanitize=address
 
 ifeq (sanitize, $(filter sanitize, $(MAKECMDGOALS)))
 	CPPFLAGS += -fsanitize=address

@@ -3,11 +3,9 @@
 #include <algorithm>
 #include <iostream>
 
-
 #include <fstream>
 #include <string>
 #include <iostream>
-
 
 HttpRequest::HttpRequest()
 {
@@ -32,6 +30,7 @@ HttpRequest & HttpRequest::operator=(const HttpRequest & rhs)
 
 HttpRequest::~HttpRequest()
 {
+
 }
 
 void	HttpRequest::parseStartLine(std::string const & client_request)
@@ -87,7 +86,7 @@ void	HttpRequest::parser(/*std::string &request*/)
 	_Referer = parseHeader(_request, "\nReferer: ");
 	_AcceptEncoding = parseHeader(_request, "\nAccept-Encoding: ");
 
-	_request.erase(0, _request.find("\n\r\n\r") + 1);
+	_request.erase(0, _request.find("\r\n\r\n") + 1);
 }
 
 void	HttpRequest::concatenate(char *str)
