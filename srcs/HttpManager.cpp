@@ -132,11 +132,11 @@ void	HttpManager::getMethod()
 
 	if (_request.getUrl().first.compare("/") == 0)
 	{
-		_file = open("./ressources/index.html", O_RDONLY);
+		_file = open("./data/www/index.html", O_RDONLY);
 	}
 	else
 	{
-		std::string root("./ressources/" + _request.getUrl().first);
+		std::string root("./data/www/" + _request.getUrl().first);
 		_file = open(root.c_str(), O_RDONLY);
 	}
 	if (_file < 0)
