@@ -24,7 +24,7 @@ void	serverEvent(Epoll &epoll, std::map<t_socket, HttpManager> &stockManager)
 		if (newClient == -1)
 			throw exceptWebserv("serverEvent : Accept new client failed");
 		//Socket(epoll, newClient); // client est add a epoll a l'interieur
-		epoll.addClient(newClient, &epoll.getSockServ().find(it->data.fd)->second);
+		epoll.addClient(newClient, &epoll.getSockServ().find(it->data.fd)->second); // on associe l evetn client a un serveur
 		stockManager.insert(std::make_pair(newClient, HttpManager(newClient)));
 	}
 }

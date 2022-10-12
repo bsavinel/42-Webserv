@@ -3,6 +3,8 @@
 
 #include <string>
 
+#include <Server.hpp>
+
 class HttpRequest
 {
 	public :
@@ -17,7 +19,7 @@ class HttpRequest
 		std::pair <std::string, bool>	parseHeader(std::string &header, std::string optionToFind);
 		void							concatenate(char *str);
 		void							erase(int index);
-
+		void							findConfigLocation(const Server &server);
 		std::string	getRequest(void) const; // GET POST DELETE
 
 		std::pair<std::string, bool>	getMethod(void) const; // GET POST DELETE
@@ -40,18 +42,20 @@ class HttpRequest
 		// Start line
 		std::string					_startLine;
 
-		std::pair<std::string, bool> _method; // GET POST DELETE
-		std::pair<std::string, bool> _url;
-		std::pair<std::string, bool> _httpVersion; // Normallement on s'en branle
+		std::pair<std::string, bool>	_method; // GET POST DELETE
+		std::pair<std::string, bool> 	_url;
+		std::pair<std::string, bool> 	_httpVersion; // Normallement on s'en branle
 
-		std::pair<std::string, bool> _Connection;
-		std::pair<std::string, bool> _Accept;
-		std::pair<std::string, bool> _SecFetchSite;
-		std::pair<std::string, bool> _SecFetchMode;
-		std::pair<std::string, bool> _SecFetchDest;
-		std::pair<std::string, bool> _Referer;
-		std::pair<std::string, bool> _AcceptEncoding;
-		std::pair<std::string, bool> _dnt;
+//		Location						*_location;
+
+		std::pair<std::string, bool> 	_Connection;
+		std::pair<std::string, bool> 	_Accept;
+		std::pair<std::string, bool> 	_SecFetchSite;
+		std::pair<std::string, bool> 	_SecFetchMode;
+		std::pair<std::string, bool> 	_SecFetchDest;
+		std::pair<std::string, bool> 	_Referer;
+		std::pair<std::string, bool> 	_AcceptEncoding;
+		std::pair<std::string, bool> 	_dnt;
 		//std::string _AcceptLanguage;
 		//std::string _sec_ch_ua;
 		//std::string _sec_ch_ua_mobile;

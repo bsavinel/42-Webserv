@@ -81,6 +81,7 @@ bool	HttpManager::applyMethod(const Server &server)
 	{
 		_init = true;
 		parseHeader();
+		_request.findConfigLocation(server);
 	}
 	if (_request.getMethod().first == "GET")
 		getMethod(server);
@@ -96,6 +97,9 @@ bool	HttpManager::applyMethod(const Server &server)
 void	HttpManager::parseHeader( void )
 {
 	_request.parser();
+	std::cout << "##################################" << std::endl;
+	std::cout << _request << std::endl;
+	std::cout << "##################################" << std::endl;
 }
 
 
