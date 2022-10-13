@@ -10,12 +10,9 @@
 static void routine(Epoll &epoll)
 {
 	std::map<t_socket, HttpManager> stockManager;
-
 	while (1)
 	{
-		//std::cout << "avant wait" << std::endl;
 		epoll.wait();
-		//std::cout << "apres wait" << std::endl;
 		serverEvent(epoll, stockManager);
 		clientEvent(epoll, stockManager);
 	}
@@ -47,7 +44,7 @@ void launcher(char *av)
 	Epoll	epoll;
 	Config configuration(av);
 
-	configuration.print_all_conf();
+	//configuration.print_all_conf();
 
 	if(!check_server_port(configuration))
 		throw exceptWebserv("Error : Two servers set on the same port");

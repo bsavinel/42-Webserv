@@ -1,5 +1,7 @@
 #include "HttpRequest.hpp"
 #include "exceptWebserv.hpp"
+#include "Server.hpp"
+#include "Location.hpp"
 #include <algorithm>
 #include <iostream>
 
@@ -31,6 +33,59 @@ HttpRequest & HttpRequest::operator=(const HttpRequest & rhs)
 HttpRequest::~HttpRequest()
 {
 
+}
+ 
+// std::vector<std::string> splitUrl(std::string url, std::string del)
+// {
+// 	std::vector<std::string> split;
+
+//     int start, end = -1*del.size();
+//     do {
+//         start = end + del.size();
+//         end = url.find(del, start);
+//         split.push_back(url.substr(start, end - start));
+//     } while (end != -1);
+// 	return (split);
+// }
+
+// int sizeSplitUrl(std::string url, std::string del)
+// {
+// 	std::vector<std::string> split;
+// 	int							splitSize = 0;
+//     int start, end = -1*del.size();
+//     do {
+//         start = end + del.size();
+//         end = url.find(del, start);
+//         split.push_back(url.substr(start, end - start));
+//     } while (end != -1);
+// 	return (split.size());
+// }
+
+Location	*HttpRequest::findLocation(const Server &server)
+{
+	std::map<std::string, Location*>			tmpMapLocation			= server.getLocationsMap();
+	std::map<std::string, Location*>::iterator	itLocationBlock			= tmpMapLocation.begin();
+	std::map<std::string, Location*>::iterator	endIttLocationBlock		= tmpMapLocation.end();
+	std::string									urlCopy					= _url.first;
+
+	while (!urlCopy.empty())
+	{
+		itLocationBlock = tmpMapLocation.begin();
+		while (itLocationBlock != endIttLocationBlock)
+		{
+			if (itLocationBlock->first.compare(urlCopy.c_str()) == 0)
+				return itLocationBlock->second;
+			itLocationBlock++;
+		}
+		if (urlCopy.find_last_of("/") != urlCopy.npos)
+		{
+			urlCopy.erase(urlCopy.find_last_of("/") , urlCopy.size());
+			urlCopy.erase(urlCopy.find_last_of("/") + 1 , urlCopy.size());
+		}
+		else
+			urlCopy.clear();
+	}
+	return (server.getLocationsMap().find("/")->second);
 }
 
 void	HttpRequest::parseStartLine(std::string const & client_request)
@@ -103,6 +158,11 @@ void HttpRequest::setRequest(std::string const & request)
 {
 	_request = request;
 } 
+
+void HttpRequest::setLocation(Location *location)
+{
+	_location = location;
+}
 
 std::string	HttpRequest::getRequest(void) const
 {

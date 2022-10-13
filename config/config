@@ -15,6 +15,16 @@ server
 		cgi_pass .php ./www/bin/php-cgi;
 		upload_store /uploads ;
 	}
+	location /animal/
+	{
+		allow GET POST DELETE;
+		return 404 /resources/error/404.html;
+		root /resources/;
+		index index.html;
+		autoindex on;
+		cgi_pass .php ./www/bin/php-cgi;
+		upload_store /uploads;
+	}
 }
 
 server 
