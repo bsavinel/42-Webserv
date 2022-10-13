@@ -25,7 +25,6 @@ class HttpManager
 
 		HttpManager		&operator=(const HttpManager& rhs);
 		bool			applyMethod(const Server &server);
-		void			setStock(std::string &stock);
 		int				receive( void );
 		void			parseHeader( void );
 
@@ -44,12 +43,15 @@ class HttpManager
 		void			postMethod();
 		void			deleteMethod();
 
-		/*Bsavinel*/
+		/*Read write*/
+		bool			_Writeok;
+		bool			_Readok;
+		void			canRead();
+		void			canWite();
+		
 
-		t_method		_method;// il peut sur un get
 		bool			_init; 
 		bool			_isEnd; // Sert a dire si la requete est fini
-		bool			_Writeok;
 
 
 		/* pour la reponse get*/

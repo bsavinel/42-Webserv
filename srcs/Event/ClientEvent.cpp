@@ -48,7 +48,7 @@ void	clientEvent(Epoll &epoll, std::map<t_socket, HttpManager> &stockManager)
     	stockManager.find(it->data.fd)->second.applyMethod(socketClient.find(it->data.fd)->second);
 		if (stockManager.find(it->data.fd)->second.getWriteOk())
 		{
-			epoll.changeSocket(it->data.fd, EPOLLOUT);
+			epoll.changeSocket(it->data.fd, EPOLLOUT | EPOLLIN);
 			//stockManager.find(it->data.fd)->second.sender();
 		}
       /*  if (it->events & EPOLLOUT)

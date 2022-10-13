@@ -16,27 +16,28 @@ endif
 #                               SOURCE FILES                              	   #
 ################################################################################
 
-SRCS =	main.cpp			\
-		Socket.cpp			\
-		Config.cpp			\
-		Server.cpp			\
-		Location.cpp		\
-		exceptWebserv.cpp	\
-		Epoll.cpp			\
-		HttpRequest.cpp		\
-		HttpManager.cpp		\
-		launcher.cpp		\
-		ClientEvent.cpp		\
-		ServeurEvent.cpp	\
-		itoa.cpp			\
-		utils.cpp			\
-#		HttpResponse.cpp		\
+SRCS =	Config/Config.cpp		\
+		Config/Location.cpp		\
+		Config/Server.cpp		\
+		Event/ClientEvent.cpp	\
+		Event/ServeurEvent.cpp	\
+		HTTP/HttpManager.cpp	\
+		HTTP/HttpRequest.cpp	\
+		Utils/exceptWebserv.cpp	\
+		Utils/utils.cpp			\
+		Epoll.cpp				\
+		launcher.cpp			\
+		main.cpp				\
 
 ################################################################################
 #                               INCLUDES                             	       #
 ################################################################################
 
-INCS			=	-I ./includes/	\
+INCS			=	-I ./includes/				\
+					-I ./includes/Config		\
+					-I ./includes/HTTP			\
+					-I ./includes/LoopManage	\
+					-I ./includes/Utils			\
 
 LIBINCS			=	
 
@@ -106,4 +107,5 @@ sanitize:
 -include $(DEPS)
 
 .PHONY : all clean fclean re vtest
+
 #.SILENT:

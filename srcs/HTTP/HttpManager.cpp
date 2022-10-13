@@ -54,11 +54,10 @@ bool	HttpManager::getWriteOk()
 
 void	HttpManager::sender()
 {
-	std::cout << "send de merde" << std::endl;
 	if (_respond.size() > 0)
 	{
 		send(_socketClient, _respond.c_str(), _respond.size(), MSG_NOSIGNAL);
-		_respond.empty();
+		_respond.clear();
 	}
 }
 
@@ -97,9 +96,9 @@ bool	HttpManager::applyMethod(const Server &server)
 void	HttpManager::parseHeader( void )
 {
 	_request.parser();
-	std::cout << "##################################" << std::endl;
+	/*std::cout << "##################################" << std::endl;
 	std::cout << _request << std::endl;
-	std::cout << "##################################" << std::endl;
+	std::cout << "##################################" << std::endl;*/
 }
 
 
@@ -165,7 +164,6 @@ void	HttpManager::builRespondGet()
 
 void	HttpManager::getMethod(const Server &server)
 {
-	std::cout << "ici" << std::endl;
 	_Writeok = true;
 	if (_headerBuild == false)
 	{
@@ -174,8 +172,6 @@ void	HttpManager::getMethod(const Server &server)
 	builRespondGet();
 	if (_isEnd == true)
 		close(_file);
-
-
 }
 void	HttpManager::postMethod()
 {
