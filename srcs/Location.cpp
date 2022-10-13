@@ -82,8 +82,7 @@ void	Location::printConfig()
 	std::cout <<"Return code : " << return_code << std::endl;
 	std::cout <<"Redirection path : " << redirection_path << std::endl;
 	std::cout <<"root_path : " << root_path << std::endl;
-	if(!index_path.empty())
-		std::cout <<"index_path : " << index_path << std::endl;
+	std::cout <<"index_path : " << index_path << std::endl;
 	std::cout <<"autoindex : " << autoindex << std::endl;
 	std::cout <<"cgi_file_extension : " << cgi_file_extension << std::endl;
 	std::cout <<"cgi_path_to_script : " << cgi_path_to_script << std::endl;
