@@ -30,6 +30,7 @@ SRCS =	main.cpp			\
 		ServeurEvent.cpp	\
 		itoa.cpp			\
 		utils.cpp			\
+		Error.cpp			\
 #		HttpResponse.cpp		\
 
 ################################################################################
