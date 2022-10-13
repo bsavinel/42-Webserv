@@ -7,19 +7,19 @@
 
 #include "Config.hpp"
 
-// static void routine(Epoll &epoll)
-// {
-// 	std::map<t_socket, HttpManager> stockManager;
+static void routine(Epoll &epoll)
+{
+	std::map<t_socket, HttpManager> stockManager;
 
-// 	while (1)
-// 	{
-// 		//std::cout << "avant wait" << std::endl;
-// 		epoll.wait();
-// 		//std::cout << "apres wait" << std::endl;
-// 		serverEvent(epoll, stockManager);
-// 		clientEvent(epoll, stockManager);
-// 	}
-// }
+	while (1)
+	{
+		//std::cout << "avant wait" << std::endl;
+		epoll.wait();
+		//std::cout << "apres wait" << std::endl;
+		serverEvent(epoll, stockManager);
+		clientEvent(epoll, stockManager);
+	}
+}
 
 void launcher(char *av)
 {
@@ -28,12 +28,12 @@ void launcher(char *av)
 
 	configuration.print_all_conf();
 
-	// std::list<Server*>::iterator itServer = (configuration.getServersList()).begin();
-	// while(itServer != (configuration.getServersList()).end())
-	// {
-	// 	(*itServer)->launch();
-	// 	epoll.addServer((*itServer)->getSocket(), (*itServer));
-	// 	itServer++;
-	// }
-	//routine(epoll);
+	std::list<Server*>::iterator itServer = (configuration.getServersList()).begin();
+	while(itServer != (configuration.getServersList()).end())
+	{
+		(*itServer)->launch();
+		epoll.addServer((*itServer)->getSocket(), (*itServer));
+		itServer++;
+	}
+	routine(epoll);
 }
