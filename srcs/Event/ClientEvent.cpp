@@ -56,19 +56,17 @@ void	clientEvent(Epoll &epoll, std::map<t_socket, HttpManager> &stockManager)
 
 		if (manager.getModeChange() && manager.getWriteOk())
 		{
-			std::cout << "changement en epoll out" << std::endl;
 			epoll.changeSocket(it->data.fd, EPOLLOUT);
 			manager.setModeChange(false);
 		}
 
 		if (manager.getModeChange() && manager.getReadOk())
 		{
-			std::cout << "changement en epoll in" << std::endl;
 			epoll.changeSocket(it->data.fd, EPOLLIN);
 			manager.setModeChange(false);
 		}
 
-      	if (it->events & EPOLLOUT)
+		if (it->events & EPOLLOUT)
 			manager.sender();
 	}
 }

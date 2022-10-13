@@ -76,20 +76,13 @@ bool	HttpManager::applyMethod()
 	return _isEnd;
 }
 
-void	HttpManager::parseHeader( void )
-{
-	_request.parser();
-	/*std::cout << "##################################" << std::endl;
-	std::cout << _request << std::endl;
-	std::cout << "##################################" << std::endl;*/
-}
 
 void	HttpManager::initialize(const Server &server)
 {
 	if (!_init)
 	{
 		_init = true;
-		parseHeader();
+		_request.parser();
 		_request.setLocation(_request.findLocation(server));
 	}
 }

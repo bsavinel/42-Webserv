@@ -58,7 +58,7 @@ class HttpManager
 
 		/*initialisation*/
 
-		void			parseHeader( void );
+
 
 		/*Get methode*/
 
