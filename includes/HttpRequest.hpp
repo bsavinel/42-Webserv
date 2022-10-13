@@ -8,23 +8,16 @@
 class HttpRequest
 {
 	public :
-		HttpRequest();
-		HttpRequest(std::string client_request);
-		HttpRequest(const HttpRequest & src);
-		HttpRequest & operator=(const HttpRequest & rhs);
-		~HttpRequest();
-
-		void							parser(/*std::string &request*/);
+		void							parser( void );
 		void							parseStartLine(std::string const & client_request);
 		std::pair <std::string, bool>	parseHeader(std::string &header, std::string optionToFind);
 		void							concatenate(char *str);
 		void							erase(int index);
-		void							findConfigLocation(const Server &server);
-		std::string	getRequest(void) const; // GET POST DELETE
 
-		std::pair<std::string, bool>	getMethod(void) const; // GET POST DELETE
+		std::string						getRequest(void) const;
+		std::pair<std::string, bool>	getMethod(void) const;
 		std::pair<std::string, bool>	getUrl(void) const; 
-		std::pair<std::string, bool>	getHttpVersion(void) const; // Normallement on s'en branle
+		std::pair<std::string, bool>	getHttpVersion(void) const;
 
 		std::pair<std::string, bool>	getConnection(void) const;
 		std::pair<std::string, bool>	getAccept(void) const;
@@ -36,17 +29,19 @@ class HttpRequest
 		std::pair<std::string, bool>	getDnt(void) const;
 
 		void							setRequest(std::string const & request);
+		void							setLocation(Location *location);
+
+		Location						*findLocation(const Server &server);
 
 	private :
-		std::string					_request;
-		// Start line
-		std::string					_startLine;
+		std::string						_request;
 
-		std::pair<std::string, bool>	_method; // GET POST DELETE
+		std::string						_startLine;
+
+		std::pair<std::string, bool>	_method;
 		std::pair<std::string, bool> 	_url;
-		std::pair<std::string, bool> 	_httpVersion; // Normallement on s'en branle
+		std::pair<std::string, bool> 	_httpVersion;
 
-//		Location						*_location;
 
 		std::pair<std::string, bool> 	_Connection;
 		std::pair<std::string, bool> 	_Accept;
@@ -62,6 +57,15 @@ class HttpRequest
 		//std::string _UserAgent;
 		//std::string _sec_ch_ua_platform;
 		//std::string _Host;
+	
+		Location						*_location;
+
+	public:
+		HttpRequest();
+		HttpRequest(std::string client_request);
+		HttpRequest(const HttpRequest & src);
+		HttpRequest & operator=(const HttpRequest & rhs);
+		~HttpRequest();
 };
 
 std::ostream &	operator<<( std::ostream & o, HttpRequest const & rhs);

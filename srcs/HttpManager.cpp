@@ -81,7 +81,7 @@ bool	HttpManager::applyMethod(const Server &server)
 	{
 		_init = true;
 		parseHeader();
-		_request.findConfigLocation(server);
+		_request.setLocation(_request.findLocation(server));
 	}
 	if (_request.getMethod().first == "GET")
 		getMethod(server);
