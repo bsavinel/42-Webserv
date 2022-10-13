@@ -15,6 +15,10 @@ static void print_status(t_epoll_event event)
 		std::cout << "EPOLLIN";
 	if (event.events & EPOLLOUT)
 		std::cout << "EPOLLOUT";
+	if (event.events & EPOLLONESHOT)
+		std::cout << "EPOLLONESHOT";
+	if (event.events & EPOLLEXCLUSIVE)
+		std::cout << "EPOLLEXCLUSIVE";
 	std::cout << std::endl;
 }
 
@@ -31,34 +35,40 @@ void	clientEvent(Epoll &epoll, std::map<t_socket, HttpManager> &stockManager)
 		itClient = socketClient.find(it->data.fd);
 		if (itClient == socketClient.end())
 			continue;
+		HttpManager &manager = stockManager.find(it->data.fd)->second;
 
 		print_status(*it);
-		// TODO EPOLLHUPP pq trop compris mais ca a l'air chiant a gerer
-        // TODO EPOLL_ONE_SHOT sa a l'air chiant aussi
-
-
-
-        if (it->events & EPOLLRDHUP || it->events & EPOLLERR)
-        {
-            epoll.deleteClient(it->data.fd);
-            stockManager.erase(it->data.fd);
-        }
-        if (it->events & EPOLLIN)
-            stockManager.find(it->data.fd)->second.receive();
-    	stockManager.find(it->data.fd)->second.applyMethod(socketClient.find(it->data.fd)->second);
-		if (stockManager.find(it->data.fd)->second.getWriteOk())
+		if (manager.getIsEnd() || it->events & EPOLLRDHUP || it->events & EPOLLERR)
 		{
-			epoll.changeSocket(it->data.fd, EPOLLOUT | EPOLLIN);
-			//stockManager.find(it->data.fd)->second.sender();
-		}
-      /*  if (it->events & EPOLLOUT)
-            stockManager.find(it->data.fd)->second.sender();*/
-		stockManager.find(it->data.fd)->second.sender();
-		if (stockManager.find(it->data.fd)->second.getIsEnd() == true)
-		{
-			std::cout << "#############supression" << std::endl;
+			std::cout << "Fd : " << it->data.fd << " a ete suprimer" << std::endl;
 			epoll.deleteClient(it->data.fd);
-            stockManager.erase(it->data.fd);
+			stockManager.erase(it->data.fd);
+			continue ;
 		}
+
+
+        if (it->events & EPOLLIN)
+            manager.receive();
+	
+		if (manager.getInit() == false)
+			manager.initialize(socketClient.find(it->data.fd)->second);
+    	manager.applyMethod();
+
+		if (manager.getModeChange() && manager.getWriteOk())
+		{
+			std::cout << "changement en epoll out" << std::endl;
+			epoll.changeSocket(it->data.fd, EPOLLOUT);
+			manager.setModeChange(false);
+		}
+
+		if (manager.getModeChange() && manager.getReadOk())
+		{
+			std::cout << "changement en epoll in" << std::endl;
+			epoll.changeSocket(it->data.fd, EPOLLIN);
+			manager.setModeChange(false);
+		}
+
+      	if (it->events & EPOLLOUT)
+			manager.sender();
 	}
 }

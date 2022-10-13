@@ -5,7 +5,6 @@
 # include "define.hpp"
 # include "define.hpp"
 # include "HttpRequest.hpp"
-# include "HttpResponse.hpp"
 #include <sys/types.h>
 #include "Server.hpp"
 #include <sys/socket.h>
@@ -18,56 +17,71 @@
 class HttpManager
 {
 	public:
+
 		HttpManager(int sockClient);
 		HttpManager(const HttpManager& rhs);
-
+		
 		~HttpManager();
 
-		HttpManager		&operator=(const HttpManager& rhs);
-		bool			applyMethod(const Server &server);
-		int				receive( void );
-		void			parseHeader( void );
+		HttpManager			&operator=(const HttpManager& rhs);
 
-		/*Bsavinel*/
+		bool				applyMethod();
+		int					receive( void );
+		void				sender();
+		void				initialize(const Server &server);
 
-		bool	getWriteOk(); // ? pas sur que se soit utile
-		void	sender();
-		bool    getIsEnd();
-		const std::string &getResponse() const;
+		/*Geter setter*/
 
-	protected:
+		const bool			&getInit() const;
+		const bool			&getWriteOk() const;
+		const bool			&getReadOk() const;
+		const bool    		&getIsEnd() const;
+		const bool			&getModeChange() const;
+		const std::string	&getResponse() const;
+
+		void				setModeChange(bool modeChange);
+
+	private:
+
 		Server			_server;
 		t_socket		_socketClient;
 
-		void			getMethod(const Server &server);
-		void			postMethod();
-		void			deleteMethod();
-
-		/*Read write*/
+		/*for outisde chose*/
 		bool			_Writeok;
 		bool			_Readok;
+		bool			_modeChange;
+		bool			_init;
+		bool			_isEnd;
+
 		void			canRead();
-		void			canWite();
-		
+		void			canWrite();
 
-		bool			_init; 
-		bool			_isEnd; // Sert a dire si la requete est fini
+		/*initialisation*/
 
+		void			parseHeader( void );
 
-		/* pour la reponse get*/
+		/*Get methode*/
 
-		void			initialize_get(const Server &server);
+		void			getMethod();
+		void			initialize_get();
 		void 			buildHeaderGet(off_t size);
 		void			builRespondGet();
+		bool			_endGet;
 		int				_file;
 		bool			_headerBuild;
+
+		/*Post methode*/
+
+		void			postMethod();
+
+		/*delete methode*/
+
+		void			deleteMethod();
+
+		/*Reponse Requete*/
+
 		std::string		_respond;
-
-		/*Rpottier*/
-
-		std::string		_buffer;
 		HttpRequest		_request;
-		//HttpResponse	_response;
 };
 
 #endif
