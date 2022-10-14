@@ -1,3 +1,5 @@
 *.o
 *.d
 Webserv
+.vscode
+settings.json

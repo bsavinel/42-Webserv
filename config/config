@@ -1,0 +1,47 @@
+server 
+{
+	listen 8080;
+	server_name ;#OPTIONNAL
+	error_pages 404 resources/error/404.html;
+	client_max_body_size 2000;
+
+	location / 
+	{
+		allow GET POST DELETE;
+		return 404 /resources/error/404.html;
+		root /resources/;
+		index ;
+		autoindex on;
+		cgi_pass .php ./www/bin/php-cgi;
+		upload_store /uploads ;
+	}
+	location /animal/
+	{
+		allow GET POST DELETE;
+		return 404 /resources/error/404.html;
+		root /resources/;
+		index index.html;
+		autoindex on;
+		cgi_pass .php ./www/bin/php-cgi;
+		upload_store /uploads;
+	}
+}
+
+server 
+{
+	listen 7070;
+	server_name ;#OPTIONNAL
+	error_pages 404 resources/error/404.html;
+	client_max_body_size 2000;
+
+	location / 
+	{
+		allow GET POST DELETE;
+		return 404 /resources/error/404.html;
+		root /resources/;
+		index ;
+		autoindex on;
+		cgi_pass .php ./www/bin/php-cgi;
+		upload_store /uploads ;
+	}
+}
