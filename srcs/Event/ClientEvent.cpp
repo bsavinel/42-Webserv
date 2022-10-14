@@ -1,5 +1,5 @@
 #include "Epoll.hpp"
-#include "HttpRequest.hpp"
+#include "HttpManager.hpp"
 #include <iostream>
 #include <sys/epoll.h>
 
