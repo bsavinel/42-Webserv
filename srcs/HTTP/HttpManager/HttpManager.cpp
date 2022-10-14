@@ -1,6 +1,7 @@
 #include "HttpManager.hpp"
 #include <sys/socket.h>
 #include <iostream>
+void	autoIndex(HttpRequest &request);
 
 HttpManager::HttpManager(t_socket socketClient)
 {
@@ -70,6 +71,7 @@ bool	HttpManager::applyMethod()
 {
 	if (!_isEnd)
 	{
+		autoIndex(_request);
 		if (_request.getMethod().first == "GET")
 			getMethod();
 		else if (_request.getMethod().first == "POST")
@@ -81,7 +83,6 @@ bool	HttpManager::applyMethod()
 	}
 	return _isEnd;
 }
-
 
 void	HttpManager::initialize(const Server &server)
 {

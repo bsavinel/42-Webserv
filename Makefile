@@ -26,6 +26,7 @@ SRCS =	Config/Config.cpp					\
 		HTTP/HttpManager/HttpM_GetSet.cpp	\
 		HTTP/HttpManager/HttpM_Post.cpp		\
 		HTTP/HttpManager/HttpManager.cpp	\
+		HTTP/HttpManager/autoIndex.cpp	\
 		HTTP/HttpRequest.cpp				\
 		Utils/exceptWebserv.cpp				\
 		Utils/utils.cpp						\
