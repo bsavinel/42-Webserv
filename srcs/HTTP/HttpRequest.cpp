@@ -215,6 +215,11 @@ std::pair<std::string, bool> HttpRequest::getDnt(void) const
 	return _dnt;
 }
 
+Location					*HttpRequest::getLocation(void) const
+{
+	return _location;
+}
+
 std::ostream &	operator<<( std::ostream & o, HttpRequest const & rhs)
 {
 	o << rhs.getMethod().first << std::endl;

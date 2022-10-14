@@ -28,6 +28,7 @@ class HttpRequest
 		std::pair<std::string, bool>	getAcceptEncoding(void) const;
 		std::pair<std::string, bool>	getDnt(void) const;
 
+		Location						*getLocation(void) const;
 		void							setRequest(std::string const & request);
 		void							setLocation(Location *location);
 
