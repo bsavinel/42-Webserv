@@ -1,7 +1,7 @@
 #include "Epoll.hpp"
 #include "define.hpp"
-#include "Socket.hpp"
 #include "exceptWebserv.hpp"
+#include "HttpManager.hpp"
 #include <map>
 
 void	serverEvent(Epoll &epoll, std::map<t_socket, HttpManager> &stockManager)

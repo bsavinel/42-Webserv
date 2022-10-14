@@ -3,7 +3,6 @@
 
 class Epoll;
 
-#include "Socket.hpp"
 #include <vector>
 #include <sys/epoll.h>
 #include <string>
