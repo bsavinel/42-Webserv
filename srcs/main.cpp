@@ -15,7 +15,7 @@ int main(int ac, char **av)
 	(void)av;
 
 	Error test;
-	std::cout << test.getError(202) << std::endl;
+	std::cout << test.getError(200) << std::endl;
 	// if (ac == 2)
 	// {
 	// 	try

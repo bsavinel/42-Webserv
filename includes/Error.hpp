@@ -7,15 +7,18 @@
 
 class Error
 {
-	private :
-		std::map<int, std::string> errors;
-		static int is_init;
-	
 	public :
+		typedef std::map<int, std::string> ErrMap;
+
 		Error();
 		~Error();
+		
 		std::string getError(int nbr);
-
+		
+	private :
+		static ErrMap _errMap;
+		static void initMap();
+		
 };
 
 #endif
