@@ -1,10 +1,12 @@
 #include "Error.hpp"
 
 std::map<int, std::string> Error::_errMap;
+int Error::init = 0;
 
 Error::Error()
 {
-	initMap();
+	if(init == 0)
+		initMap();
 }
 
 Error::~Error()

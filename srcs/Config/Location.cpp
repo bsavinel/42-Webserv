@@ -2,6 +2,7 @@
 
 Location::Location()
 {
+
 }
 
 Location::Location(const Location & src)
@@ -137,4 +138,9 @@ const std::string& Location::getCgiPathToScript() const
 const std::string& Location::getUploadDirectory() const
 {
 	return(this->upload_dir);
+}
+
+const Location*				Location::getObjectAdress() const
+{
+	return(this);
 }
