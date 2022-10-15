@@ -35,6 +35,8 @@ void	HttpManager::initialize_get()
 	{
 		_file = open("./data/www/index.html", O_RDONLY);
 	}
+	else if (_request.getUrl().first.size() !=1 && *(_request.getUrl().first.rbegin()) == '/')
+		autoIndex(_request);
 	else
 	{
 		std::string root("./data/www/" + _request.getUrl().first);
@@ -57,6 +59,10 @@ void	HttpManager::builRespondGet()
 	int nb_char = LEN_TO_READ;
 
 	nb_char = read(_file, buffer, LEN_TO_READ);
+	// std::string str(buffer);
+	// std::cout << "================="<<std::endl;
+	// std::cout << str << std::endl;
+	// std::cout << "================="<<std::endl;
 	if (nb_char > 0)
 		_respond.insert(_respond.size(), &buffer[0], nb_char);
 	if (nb_char < LEN_TO_READ)

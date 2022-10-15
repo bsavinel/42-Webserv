@@ -13,7 +13,7 @@ void	autoIndex(HttpRequest &request)
 //	std::cout << "PATH = [" << request.getLocation()->getRootPath() << "]" << std::endl;
 	//	if (request.getLocation()->getRootPath().compare("/") == 0)
 	//	{
-			dir = opendir(".");
+			dir = opendir("./data/www");
 	//	}
 //	else
 //	{
@@ -21,13 +21,20 @@ void	autoIndex(HttpRequest &request)
 //		dir = opendir(path.c_str());
 //	}
 //	dirToRead = readdir(dir);
+	index += "<!DOCTYPE html>";
+	index += "<html lang=\"en\">";
 	index += "<html>";
 	index += "<head><title> index </title></head>";
 	index += "<body>";
 	while ((dirToRead = readdir(dir)) != NULL)
 	{
-		std::cout << dirToRead->d_name << std::endl;
+		std::string file(dirToRead->d_name);
+		index += "<a href=\"";
+		index += file;
+		index += "\"></a>";
 	}
 	index += "</body>";
 	index += "</html>";
+	std::cout << "index: " << index << std::endl;
 }
+

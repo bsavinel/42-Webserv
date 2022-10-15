@@ -71,15 +71,22 @@ bool	HttpManager::applyMethod()
 {
 	if (!_isEnd)
 	{
+	std::cout << "================="<<std::endl;
+	std::cout << _request << std::endl;
+	std::cout << "================="<<std::endl;
+		std::cout << "++++++++++++++++"<<std::endl;
+	std::cout << *(_request.getUrl().first.rbegin()) << std::endl;
+	std::cout << "++++++++++++++++"<<std::endl;
+	if (_request.getUrl().first.size() !=1 && *(_request.getUrl().first.rbegin()) == '/')
 		autoIndex(_request);
-		if (_request.getMethod().first == "GET")
-			getMethod();
-		else if (_request.getMethod().first == "POST")
-			postMethod();
-		else if (_request.getMethod().first == "DELETE")
-			deleteMethod();
-		else
-			_isEnd = true;
+	else if (_request.getMethod().first == "GET")
+		getMethod();
+	else if (_request.getMethod().first == "POST")
+		postMethod();
+	else if (_request.getMethod().first == "DELETE")
+		deleteMethod();
+	else
+		_isEnd = true;
 	}
 	return _isEnd;
 }
