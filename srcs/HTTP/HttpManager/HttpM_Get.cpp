@@ -4,7 +4,7 @@
 #include <unistd.h>
 #include <sstream>
 #include <iostream>
-
+void	autoIndex(HttpRequest &request);
 
 void HttpManager::buildHeaderGet(off_t size)
 {
@@ -25,6 +25,13 @@ void HttpManager::buildHeaderGet(off_t size)
     _respond += "\n";
 }
 
+int	tryToGetFolder(std::string url)
+{
+	if (url.size() !=1 && *(url.rbegin()) == '/')
+		return true;
+	return false;
+}
+
 void	HttpManager::initialize_get()
 {
 	struct stat status;
@@ -35,8 +42,8 @@ void	HttpManager::initialize_get()
 	{
 		_file = open("./data/www/index.html", O_RDONLY);
 	}
-	else if (_request.getUrl().first.size() !=1 && *(_request.getUrl().first.rbegin()) == '/')
-		autoIndex(_request);
+	// else if (tryToGetFolder(_request.getUrl().first))
+	// 	_file = autoIndex(_request);
 	else
 	{
 		std::string root("./data/www/" + _request.getUrl().first);

@@ -77,9 +77,9 @@ bool	HttpManager::applyMethod()
 		std::cout << "++++++++++++++++"<<std::endl;
 	std::cout << *(_request.getUrl().first.rbegin()) << std::endl;
 	std::cout << "++++++++++++++++"<<std::endl;
-	if (_request.getUrl().first.size() !=1 && *(_request.getUrl().first.rbegin()) == '/')
-		autoIndex(_request);
-	else if (_request.getMethod().first == "GET")
+
+
+	if (_request.getMethod().first == "GET")
 		getMethod();
 	else if (_request.getMethod().first == "POST")
 		postMethod();
