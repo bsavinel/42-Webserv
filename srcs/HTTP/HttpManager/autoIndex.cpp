@@ -12,56 +12,107 @@ std::string getParentFolderPath(std::string const & folderPath)
 	return (parentFolder);
 }
 
+std::string getAbsolutePathDirectory(std::string const & folderPath, std::string &fileName)
+{
+	std::string pathDirectory;
+
+	pathDirectory += folderPath;
+	pathDirectory += fileName;
+	pathDirectory.append("/");
+
+	return pathDirectory;
+}
+
+std::string insertHtmlHeader(std::string title)
+{
+	std::string header;
+
+	header += "<!DOCTYPE html>";
+	header += "\n";
+	header += "<html lang=\"en\">";
+	header += "\n";
+	header += "<html>";
+	header += "\n";
+	header += "<head><title>";
+	header += title;
+	header += "</title></head>";
+	header += "\n";
+	header += "<body>";
+	header += "\n";	
+
+	return header;
+}
+
+std::string insertHtmlClosingHeader(void)
+{
+	std::string closingHeader;
+
+	closingHeader += "</body>";
+	closingHeader += "\n";
+	closingHeader += "</html>";
+	closingHeader += "\n";
+
+	return closingHeader;
+}
+
+std::string insertHtmlReference(std::string link, std::string userText)
+{
+	std::string href;
+
+	href += "<a href=\"";
+	href += link;
+	href += "\">";
+	href += userText;
+	href += "</a>";
+	href += "\n";
+
+//	std::cout << "href = [" << href << "]" << std::endl;
+	return href;
+}
+
 void	autoIndex(HttpRequest &request)
 {
 	(void)(request);
+
 	DIR				*dir;
 	struct dirent	*dirToRead;
+	std::string		parentFolder;
 	std::string		index;
+	std::string		url;
+	std::string		fileName;
 
-//	std::string		parentFolder = getParentFolderPath(request.getUrl().first);
-//	dir = opendir(request.getUrl().first.c_str());
+	url 			= request.getUrl().first;
+	std::cout << "url = " << url << std::endl;
+	parentFolder	= getParentFolderPath(url);
+	dir				= opendir(url.c_str());
 
-	std::string url("./data/www/");
-	dir = opendir(url.c_str());
-	std::string		parentFolder = getParentFolderPath(url);
+/*TEMPORAIRE*/
+//	std::string url("./data/www/");
+//	dir = opendir(url.c_str());
+//	std::string		parentFolder = getParentFolderPath(url);
+/*FIN TEMPORAIRE*/
 
-	index += "<!DOCTYPE html>";
-	index += "\n";
-	index += "<html lang=\"en\">";
-	index += "\n";
-	index += "<html>";
-	index += "\n";
-	index += "<head><title> index </title></head>";
-	index += "\n";
-	index += "<body>";
-	index += "\n";
+	index += insertHtmlHeader("\"Auto Index\"");
+
 	while ((dirToRead = readdir(dir)) != NULL)
 	{
-		std::string file(dirToRead->d_name);
-		std::cout << "file : " << file << std::endl;
-		if (file.compare(".") == 0)
+		fileName = dirToRead->d_name;
+		std::cout << "fileName : " << fileName << std::endl;
+		if (fileName.compare(".") == 0)
 			continue ;
-		else if (file.compare("..") == 0)
-		{
-			index += "<a href=\"";
-			index += parentFolder;
-			index += "\"></a>";
-			index += "\n";
-		}
+		else if (fileName.compare("..") == 0)
+			index += insertHtmlReference(parentFolder, parentFolder);
 		else
 		{
-			index += "<a href=\"";
-			index += file;
-			index += "\"></a>";
-			index += "\n";
+			if (dirToRead->d_type == DT_DIR)
+				fileName = getAbsolutePathDirectory(url, fileName);
+			index += insertHtmlReference(fileName, fileName);
 		}
 	}
-	index += "</body>";
-	index += "\n";
-	index += "</html>";
-	index += "\n";
-	std::cout << "index: " << std::endl << index << std::endl;
 
-	std::cout << ": index" << std::endl;
+	index += insertHtmlClosingHeader();
+
+	std::cout << std::endl << "START index: "  << std::endl<< std::endl << index << std::endl;
+
+	std::cout << "END index" << std::endl;
 }

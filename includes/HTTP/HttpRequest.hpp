@@ -30,6 +30,7 @@ class HttpRequest
 
 		Location						*getLocation(void) const;
 		void							setRequest(std::string const & request);
+		void							setUrl(std::string const & url);
 		void							setLocation(Location *location);
 
 		Location						*findLocation(const Server &server);

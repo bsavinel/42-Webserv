@@ -164,6 +164,13 @@ void HttpRequest::setLocation(Location *location)
 	_location = location;
 }
 
+
+void	HttpRequest::setUrl(std::string const & url)
+{
+	_url.first = url;
+	_url.second = true;
+}
+
 std::string	HttpRequest::getRequest(void) const
 {
 	return _request;
