@@ -14,4 +14,10 @@ server
 		root ./bsavinel/site/;
 		autoindex on;
 	}
+	location /methode/test/
+	{
+		allow GET POST DELETE;
+		root ./bsavinel/site/;
+		autoindex on;
+	}
 }

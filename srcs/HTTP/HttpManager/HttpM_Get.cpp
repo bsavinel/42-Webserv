@@ -91,6 +91,7 @@ void HttpManager::getMethod()
 	}
 	else
 	{
+		std::cout <<"HERE : " << _request.getUrl().first << std::endl;
 		if (tryToGetFolder(_request.getUrl().first))
 		{
 			_respond = autoIndex(_request);
@@ -101,6 +102,7 @@ void HttpManager::getMethod()
 		else
 			builRespondGet();
 	}
-	if (_isEnd == true)
+	if (_isEnd == true && _file != -1)
 		close(_file);
 }
+

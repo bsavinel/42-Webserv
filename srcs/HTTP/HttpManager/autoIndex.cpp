@@ -9,7 +9,7 @@ std::string	autoIndex(HttpRequest &request)
 
 	DIR				*dir;
 	struct dirent	*dirToRead;
-	std::string		parentFolder;
+//	std::string		parentFolder;
 	std::string		index;
 	std::string		url;
 	std::string		fileName;
@@ -17,8 +17,7 @@ std::string	autoIndex(HttpRequest &request)
 /*TEMPORAIRE*/
 
 	url				= constructPatchFromLocationBlock(request.getLocation(), request.getUrl().first);
-	std::cout << "url = " << url << std::endl;
-	parentFolder	= getParentFolderPath(url);
+//	parentFolder	= getParentFolderPath(url);
 	dir				= opendir(url.c_str());
 
 //	std::string url("./data/www/");
@@ -34,8 +33,8 @@ std::string	autoIndex(HttpRequest &request)
 //		std::cout << "fileName : " << fileName << std::endl;
 		if (fileName.compare(".") == 0)
 			continue ;
-		else if (fileName.compare("..") == 0)
-			index += insertHtmlReference(parentFolder, parentFolder);
+		else if (fileName.compare("..") == 0 && request.getUrl().first.compare("/") != 0)
+			index += insertHtmlReference(fileName, fileName);
 		else
 		{
 			if (dirToRead->d_type == DT_DIR)
@@ -61,6 +60,7 @@ std::string getParentFolderPath(std::string const & folderPath)
 {
 	std::string		parentFolder(folderPath);
 
+	std::cout << "folderPath : " << folderPath << std::endl;
 	if (*(parentFolder.rbegin()) == '/')
 		parentFolder.erase(parentFolder.length() - 1, 1);
 	parentFolder.erase(parentFolder.find_last_of('/') + 1, parentFolder.npos);
@@ -76,7 +76,7 @@ std::string constructPatchFromLocationBlock(Location const * location, std::stri
 	rootPath.erase(rootPath.size() - 1, 1);
 	pathDirectory += rootPath;
 	pathDirectory += fileName;
-	pathDirectory.append("/");
+//	pathDirectory.append("/");
 
 	return pathDirectory;
 }

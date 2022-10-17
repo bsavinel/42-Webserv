@@ -12,6 +12,7 @@ HttpManager::HttpManager(t_socket socketClient)
 	_isEnd = false;
 	_Writeok = false;
 	_headerBuild = false;
+	_file = -1;
 }
 
 HttpManager::HttpManager(const HttpManager& rhs)
