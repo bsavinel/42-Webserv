@@ -21,6 +21,7 @@ class Location
 		std::string					cgi_file_extension;
 		std::string					cgi_path_to_script;
 		std::string					upload_dir;
+		std::string					locate;
 
 	public :
 		Location();
@@ -28,7 +29,7 @@ class Location
 		Location & operator=(const Location & rhs);
 		~Location();
 
-		void	setConfig(std::vector<std::string>::iterator & it, std::vector<std::string> & splitted);
+		void	setConfig(std::vector<std::string>::iterator & it, std::vector<std::string> & splitted, std::string &loc);
 		void	printConfig();
 
 		std::vector<std::string>	getAllowedMethods() const;
@@ -40,6 +41,8 @@ class Location
 		const std::string&			getCgiFileExtension() const;
 		const std::string&			getCgiPathToScript() const;
 		const std::string&			getUploadDirectory() const;
+		const std::string&			getLocate() const;
+		const Location*			getObjectAdress() const;
 };
 
 #endif

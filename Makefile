@@ -32,6 +32,7 @@ SRCS =	Config/Config.cpp					\
 		Utils/utils.cpp						\
 		Epoll.cpp							\
 		launcher.cpp						\
+		Utils/Error.cpp						\
 		main.cpp							\
 
 ################################################################################
