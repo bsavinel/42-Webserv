@@ -2,6 +2,25 @@
 #include "iostream"
 #include <dirent.h>
 
+void HttpManager::buildHeaderGet(off_t size)
+{
+	_respond += "HTTP/1.1 200 OK\n"; // TODO voir les image apres
+	if (_request.getUrl().first.find("html") != std::string::npos)
+        _respond += "Content-Type: text/html\n";
+	else if (_request.getUrl().first.find("css") != std::string::npos)
+        _respond += "Content-Type: text/css\n";
+	else if (_request.getUrl().first.find("ico") != std::string::npos)
+        _respond += "Content-Type: image/x-icon\n";
+	if (_request.getUrl().first.compare("/") == 0)
+		_respond += "Content-Type: text/html\n";
+	// TODO changer cette merde
+	std::stringstream ss;
+	ss << size;
+
+	_respond += "Content-Length: " + ss.str() + "\n";
+    _respond += "\n";
+}
+
 std::string getParentFolderPath(std::string const & folderPath)
 {
 	std::string		parentFolder(folderPath);
@@ -12,7 +31,18 @@ std::string getParentFolderPath(std::string const & folderPath)
 	return (parentFolder);
 }
 
-std::string getAbsolutePathDirectory(std::string const & folderPath, std::string &fileName)
+std::string constructPatchFromLocationBlock(Location const * location, std::string const & fileName)
+{
+	std::string pathDirectory;
+
+	pathDirectory += location->getRootPath();
+	pathDirectory += fileName;
+	pathDirectory.append("/");
+
+	return pathDirectory;
+}
+
+std::string getAbsolutePathDirectory(std::string const & folderPath, std::string & fileName)
 {
 	std::string pathDirectory;
 
@@ -81,12 +111,13 @@ void	autoIndex(HttpRequest &request)
 	std::string		url;
 	std::string		fileName;
 
-	url 			= request.getUrl().first;
-//	std::cout << "url = " << url << std::endl;
+/*TEMPORAIRE*/
+
+//	url				= constructPatchFromLocationBlock(request.getLocation(), request.getUrl().first);
+	std::cout << "url = " << url << std::endl;
 	parentFolder	= getParentFolderPath(url);
 	dir				= opendir(url.c_str());
 
-/*TEMPORAIRE*/
 //	std::string url("./data/www/");
 //	dir = opendir(url.c_str());
 //	std::string		parentFolder = getParentFolderPath(url);

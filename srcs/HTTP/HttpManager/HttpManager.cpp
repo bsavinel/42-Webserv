@@ -71,12 +71,12 @@ bool	HttpManager::applyMethod()
 {
 	if (!_isEnd)
 	{
-	std::cout << "================="<<std::endl;
-	std::cout << _request << std::endl;
-	std::cout << "================="<<std::endl;
-		std::cout << "++++++++++++++++"<<std::endl;
-	std::cout << *(_request.getUrl().first.rbegin()) << std::endl;
-	std::cout << "++++++++++++++++"<<std::endl;
+	// std::cout << "================="<<std::endl;
+	// std::cout << _request << std::endl;
+	// std::cout << "================="<<std::endl;
+	// 	std::cout << "++++++++++++++++"<<std::endl;
+	// std::cout << *(_request.getUrl().first.rbegin()) << std::endl;
+	// std::cout << "++++++++++++++++"<<std::endl;
 
 
 	if (_request.getMethod().first == "GET")

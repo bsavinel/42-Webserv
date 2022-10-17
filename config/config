@@ -15,7 +15,7 @@ server
 		cgi_pass .php ./www/bin/php-cgi;
 		upload_store /uploads ;
 	}
-	location /image/
+	location /www/
 	{
 		allow GET POST DELETE;
 		return 404 /resources/error/404.html;

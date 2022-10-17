@@ -38,7 +38,11 @@ void	HttpManager::initialize_get()
 	//* open good file and create header + regarder page ererue necesaire a envoye
 
 	// TODO faire un read de 0 pour voir si on peut bien read dessus
-	if (_request.getUrl().first.compare("/") == 0)
+	if(tryToGetFolder(_request.getUrl().first))
+	{
+		// 	_file = autoIndex(_request);
+	}
+	else if (_request.getUrl().first.compare("/") == 0)
 	{
 		_file = open("./data/www/index.html", O_RDONLY);
 	}
