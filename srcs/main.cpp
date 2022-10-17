@@ -36,7 +36,7 @@ void	autoIndex(HttpRequest &request);
 int main(void)
 {
 	HttpRequest request;
-	request.setUrl("./data/www/");
+	request.setUrl("/data/www/");
 	autoIndex(request);
 	return 0;
 }

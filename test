@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<html>
+<head><title>"Auto Index"</title></head>
+<body>
+<a href="./data/">./data/</a>
+<a href="style.css">style.css</a>
+<a href="Post.html">Post.html</a>
+<a href="getfile.html">getfile.html</a>
+<a href="favicon.ico">favicon.ico</a>
+<a href="Delete.html">Delete.html</a>
+<a href="index.html">index.html</a>
+</body>
+</html>

@@ -82,7 +82,7 @@ void	autoIndex(HttpRequest &request)
 	std::string		fileName;
 
 	url 			= request.getUrl().first;
-	std::cout << "url = " << url << std::endl;
+//	std::cout << "url = " << url << std::endl;
 	parentFolder	= getParentFolderPath(url);
 	dir				= opendir(url.c_str());
 
@@ -97,7 +97,7 @@ void	autoIndex(HttpRequest &request)
 	while ((dirToRead = readdir(dir)) != NULL)
 	{
 		fileName = dirToRead->d_name;
-		std::cout << "fileName : " << fileName << std::endl;
+//		std::cout << "fileName : " << fileName << std::endl;
 		if (fileName.compare(".") == 0)
 			continue ;
 		else if (fileName.compare("..") == 0)
