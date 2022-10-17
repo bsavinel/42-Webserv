@@ -1,26 +1,62 @@
 #include "HttpManager.hpp"
-#include "iostream"
+#include "autoIndex.hpp"
+#include <iostream>
 #include <dirent.h>
 
-void HttpManager::buildHeaderGet(off_t size)
+std::string	autoIndex(HttpRequest &request)
 {
-	_respond += "HTTP/1.1 200 OK\n"; // TODO voir les image apres
-	if (_request.getUrl().first.find("html") != std::string::npos)
-        _respond += "Content-Type: text/html\n";
-	else if (_request.getUrl().first.find("css") != std::string::npos)
-        _respond += "Content-Type: text/css\n";
-	else if (_request.getUrl().first.find("ico") != std::string::npos)
-        _respond += "Content-Type: image/x-icon\n";
-	if (_request.getUrl().first.compare("/") == 0)
-		_respond += "Content-Type: text/html\n";
-	// TODO changer cette merde
-	std::stringstream ss;
-	ss << size;
+	(void)(request);
 
-	_respond += "Content-Length: " + ss.str() + "\n";
-    _respond += "\n";
+	DIR				*dir;
+	struct dirent	*dirToRead;
+	std::string		parentFolder;
+	std::string		index;
+	std::string		url;
+	std::string		fileName;
+
+/*TEMPORAIRE*/
+
+	url				= constructPatchFromLocationBlock(request.getLocation(), request.getUrl().first);
+	std::cout << "url = " << url << std::endl;
+	parentFolder	= getParentFolderPath(url);
+	dir				= opendir(url.c_str());
+
+//	std::string url("./data/www/");
+//	dir = opendir(url.c_str());
+//	std::string		parentFolder = getParentFolderPath(url);
+/*FIN TEMPORAIRE*/
+
+	index += insertHtmlHeader("\"Auto Index\"");
+
+	while ((dirToRead = readdir(dir)) != NULL)
+	{
+		fileName = dirToRead->d_name;
+//		std::cout << "fileName : " << fileName << std::endl;
+		if (fileName.compare(".") == 0)
+			continue ;
+		else if (fileName.compare("..") == 0)
+			index += insertHtmlReference(parentFolder, parentFolder);
+		else
+		{
+			if (dirToRead->d_type == DT_DIR)
+				fileName = getAbsolutePathDirectory(url, fileName);
+			index += insertHtmlReference(fileName, fileName);
+		}
+	}
+
+	index += insertHtmlClosingHeader();
+
+	std::cout << std::endl << "START index: "  << std::endl<< std::endl << index << std::endl;
+
+	std::cout << "END index" << std::endl;
+	return index;
 }
-
+int	tryToGetFolder(std::string url)
+{
+	if (url.size() !=1 && *(url.rbegin()) == '/')
+		return true;
+	return false;
+}
 std::string getParentFolderPath(std::string const & folderPath)
 {
 	std::string		parentFolder(folderPath);
@@ -34,8 +70,11 @@ std::string getParentFolderPath(std::string const & folderPath)
 std::string constructPatchFromLocationBlock(Location const * location, std::string const & fileName)
 {
 	std::string pathDirectory;
+	std::string rootPath(location->getRootPath());
 
-	pathDirectory += location->getRootPath();
+//	rootPath = ;
+	rootPath.erase(rootPath.size() - 1, 1);
+	pathDirectory += rootPath;
 	pathDirectory += fileName;
 	pathDirectory.append("/");
 
@@ -98,52 +137,4 @@ std::string insertHtmlReference(std::string link, std::string userText)
 
 //	std::cout << "href = [" << href << "]" << std::endl;
 	return href;
-}
-
-void	autoIndex(HttpRequest &request)
-{
-	(void)(request);
-
-	DIR				*dir;
-	struct dirent	*dirToRead;
-	std::string		parentFolder;
-	std::string		index;
-	std::string		url;
-	std::string		fileName;
-
-/*TEMPORAIRE*/
-
-//	url				= constructPatchFromLocationBlock(request.getLocation(), request.getUrl().first);
-	std::cout << "url = " << url << std::endl;
-	parentFolder	= getParentFolderPath(url);
-	dir				= opendir(url.c_str());
-
-//	std::string url("./data/www/");
-//	dir = opendir(url.c_str());
-//	std::string		parentFolder = getParentFolderPath(url);
-/*FIN TEMPORAIRE*/
-
-	index += insertHtmlHeader("\"Auto Index\"");
-
-	while ((dirToRead = readdir(dir)) != NULL)
-	{
-		fileName = dirToRead->d_name;
-//		std::cout << "fileName : " << fileName << std::endl;
-		if (fileName.compare(".") == 0)
-			continue ;
-		else if (fileName.compare("..") == 0)
-			index += insertHtmlReference(parentFolder, parentFolder);
-		else
-		{
-			if (dirToRead->d_type == DT_DIR)
-				fileName = getAbsolutePathDirectory(url, fileName);
-			index += insertHtmlReference(fileName, fileName);
-		}
-	}
-
-	index += insertHtmlClosingHeader();
-
-	std::cout << std::endl << "START index: "  << std::endl<< std::endl << index << std::endl;
-
-	std::cout << "END index" << std::endl;
 }

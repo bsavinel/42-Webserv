@@ -1,10 +1,11 @@
 #include "HttpManager.hpp"
+#include "autoIndex.hpp"
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <unistd.h>
 #include <sstream>
 #include <iostream>
-void	autoIndex(HttpRequest &request);
+
 std::string HttpManager::buildHeader(off_t contentLenght, int statusCode)
 {
 	std::string	header;
@@ -30,20 +31,23 @@ std::string HttpManager::buildHeader(off_t contentLenght, int statusCode)
 	return header;
 }
 
-void	HttpManager::initialize_get()
+std::string HttpManager::LocalPathFile_get()
 {
 	std::string name_file;
 
-	// TODO faire un read de 0 pour voir si on peut bien read dessus
-	if (_request.getUrl().first.compare("/") == 0)
-	{
-		_file = open("./data/www/index.html", O_RDONLY);
-	}
-	else
-	{
-		std::string root("./data/www/" + _request.getUrl().first);
-		_file = open(root.c_str(), O_RDONLY);
-	}
+	name_file = _request.getLocation()->getRootPath();
+	name_file.erase(--name_file.end());
+	name_file += _request.getUrl().first;
+	if ('/' == *(--name_file.end()))
+		name_file += _request.getLocation()->getIndexPath();
+	std::cout << "name file :" << name_file << std::endl;
+	return name_file;
+}
+
+void	HttpManager::OpenFile_get(std::string &file_name)
+{
+	// TODO check les droits
+	_file = open(file_name.c_str(), O_RDONLY);
 	if (_file < 0)
 		return ;
 }
@@ -68,10 +72,6 @@ void HttpManager::builRespondGet()
 	int nb_char = LEN_TO_READ;
 
 	nb_char = read(_file, buffer, LEN_TO_READ);
-	// std::string str(buffer);
-	// std::cout << "================="<<std::endl;
-	// std::cout << str << std::endl;
-	// std::cout << "================="<<std::endl;
 	if (nb_char > 0)
 		_respond.insert(_respond.size(), &buffer[0], nb_char);
 	if (nb_char < LEN_TO_READ)
@@ -80,16 +80,27 @@ void HttpManager::builRespondGet()
 
 void HttpManager::getMethod()
 {
+	std::string header;
+
 	canWrite();
-	/*if (tryToGetFolder(_request.getUrl().first))
+	if (_headerBuild == false)
 	{
-		autoindex
-		_headerBuild == true;
+		if (!tryToGetFolder(_request.getUrl().first))
+			initialize_get();
+		_headerBuild = true;
 	}
-	else */if (_headerBuild == false)
-		initialize_get();
 	else
-		builRespondGet();
+	{
+		if (tryToGetFolder(_request.getUrl().first))
+		{
+			_respond = autoIndex(_request);
+			header = buildHeader(_respond.size(), 200);
+			_respond = header + _respond;
+			_isEnd = true;
+		}
+		else
+			builRespondGet();
+	}
 	if (_isEnd == true)
 		close(_file);
 }
