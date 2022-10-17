@@ -10,7 +10,6 @@ HttpManager::HttpManager(t_socket socketClient)
 	_modeChange = false;
 	_init = false;
 	_isEnd = false;
-	_endGet = false;
 	_Writeok = false;
 	_headerBuild = false;
 }
@@ -31,8 +30,8 @@ HttpManager		&HttpManager::operator=(const HttpManager& rhs)
 		_modeChange = rhs._modeChange;
         _init = rhs._init;
 		_isEnd = rhs._isEnd;
-		_endGet = rhs._endGet;
 		_file = rhs._file;
+		_name_file = rhs._name_file;
 		_headerBuild = rhs._headerBuild;
 		_respond = rhs._respond;
         _request = rhs._request;

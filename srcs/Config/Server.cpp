@@ -161,8 +161,7 @@ void Server::launch()
 	}
 	if(listen(_socket, _backlog) < 0)
 		throw exceptWebserv("Server : Failed to start listening");
-
-	std::cout << "===========WAITING FOR CONNECTION===========" << std::endl;
+	std::cout << "Port :" << _port << std::endl;
 }
 
 bool	Server::is_path_stored_yet(std::string path)

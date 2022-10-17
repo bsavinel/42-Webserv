@@ -1,0 +1,17 @@
+server 
+{
+	listen 8080;
+
+	location / 
+	{
+		allow GET POST DELETE;
+		root ./bsavinel/site/;
+		index index.html;
+	}
+	location /methode/
+	{
+		allow GET POST DELETE;
+		root ./bsavinel/site/;
+		autoindex on;
+	}
+}
