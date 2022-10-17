@@ -17,6 +17,7 @@ class Error
 		
 	private :
 		static ErrMap _errMap;
+		static int init;
 		static void initMap();
 		
 };

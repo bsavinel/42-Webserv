@@ -2,6 +2,7 @@
 
 Location::Location()
 {
+
 }
 
 Location::Location(const Location & src)
@@ -144,4 +145,8 @@ const std::string& Location::getUploadDirectory() const
 const std::string&	Location::getLocate() const
 {
 	return locate;
+}
+const Location*				Location::getObjectAdress() const
+{
+	return(this);
 }

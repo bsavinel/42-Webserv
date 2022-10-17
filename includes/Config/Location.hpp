@@ -42,6 +42,7 @@ class Location
 		const std::string&			getCgiPathToScript() const;
 		const std::string&			getUploadDirectory() const;
 		const std::string&			getLocate() const;
+		const Location*			getObjectAdress() const;
 };
 
 #endif
