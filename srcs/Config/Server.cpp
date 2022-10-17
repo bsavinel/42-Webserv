@@ -188,7 +188,7 @@ void Server::setConfig(std::vector<std::string>::iterator & it, std::vector<std:
 			if(!is_path_stored_yet(path_loc))
 			{
 				Location *new_loc = new Location();
-				new_loc->setConfig(it, splitted);
+				new_loc->setConfig(it, splitted, path_loc);
 				this->locations.insert(std::make_pair(path_loc, new_loc));
 			}
 		}

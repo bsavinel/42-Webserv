@@ -22,6 +22,7 @@ Location & Location::operator=(const Location & rhs)
 		this->cgi_file_extension = rhs.cgi_file_extension;
 		this->cgi_path_to_script = rhs.cgi_path_to_script;
 		this->upload_dir = rhs.upload_dir;
+		locate = rhs.locate;
 	}
 	return (*this);
 }
@@ -29,8 +30,9 @@ Location & Location::operator=(const Location & rhs)
 Location::~Location()
 {}
 
-void Location::setConfig(std::vector<std::string>::iterator & it, std::vector<std::string> & splitted)
+void Location::setConfig(std::vector<std::string>::iterator & it, std::vector<std::string> & splitted, std::string &loc)
 {
+	locate = loc;
 	while (it != splitted.end() && (*it).compare("}") != 0)
 	{
 		if ((*it).compare("allow") == 0 && (*(it + 1)) != ";")
@@ -137,4 +139,9 @@ const std::string& Location::getCgiPathToScript() const
 const std::string& Location::getUploadDirectory() const
 {
 	return(this->upload_dir);
+}
+
+const std::string&	Location::getLocate() const
+{
+	return locate;
 }
