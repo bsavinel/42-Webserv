@@ -55,6 +55,7 @@ class HttpManager
 
 		void			canRead();
 		void			canWrite();
+		std::string 	buildHeader(off_t contentLenght, int statusCode);
 
 		/*initialisation*/
 
@@ -62,12 +63,15 @@ class HttpManager
 
 		/*Get methode*/
 
+		std::string		LocalPathFile_get();
 		void			getMethod();
+		void			OpenFile_get(std::string &file_name);
 		void			initialize_get();
-		void 			buildHeaderGet(off_t size);
+		void 			buildHeaderGet();
 		void			builRespondGet();
-		bool			_endGet;
+
 		int				_file;
+		std::string		_name_file;
 		bool			_headerBuild;
 
 		/*Post methode*/
