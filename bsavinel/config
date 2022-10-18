@@ -5,20 +5,24 @@ server
 	location / 
 	{
 		allow GET POST DELETE;
-		root ./bsavinel/site/;
+		root bsavinel/site/;
 		autoindex on;
 	}
+
 	location /methode/
 	{
 		index index.html;
 		allow GET POST DELETE;
-		root ./bsavinel/site/;
+		root bsavinel/site/;
 		autoindex on;
 	}
+
 	location /methode/test/
 	{
 		allow GET POST DELETE;
 		root ./bsavinel/site/;
 		autoindex on;
+		return 403 /error/403.html
 	}
+
 }
