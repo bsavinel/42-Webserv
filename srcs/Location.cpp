@@ -1,7 +1,8 @@
 #include "Location.hpp"
 
-Location::Location()
+Location::Location() : autoindex(false)
 {
+	this->index_path.clear();
 }
 
 Location::Location(const Location & src)
