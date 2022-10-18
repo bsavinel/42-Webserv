@@ -7,11 +7,12 @@
 
 std::string	autoIndex(HttpRequest &request);
 int	tryToGetFolder(std::string url);
+int	isRootDirectory(std::string fileName);
 std::string getParentFolderPath(std::string const & folderPath);
 std::string constructPatchFromLocationBlock(Location const * location, std::string const & fileName);
 std::string getAbsolutePathDirectory(std::string const & folderPath, std::string & fileName);
 std::string insertHtmlHeader(std::string title);
-std::string insertHtmlClosingHeader(void);
+std::string insertHtmlClosing(void);
 std::string insertHtmlReference(std::string link, std::string userText);
 
 #endif

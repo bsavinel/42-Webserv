@@ -9,62 +9,31 @@ std::string	autoIndex(HttpRequest &request)
 
 	DIR				*dir;
 	struct dirent	*dirToRead;
-//	std::string		parentFolder;
-	std::string		index;
-	std::string		url;
+	std::string		autoIndexHtmlPage;
+	std::string		dirPath;
 	std::string		fileName;
 
-/*TEMPORAIRE*/
+	dirPath		= constructPatchFromLocationBlock(request.getLocation(), request.getUrl().first);
+	dir			= opendir(dirPath.c_str());
 
-	url				= constructPatchFromLocationBlock(request.getLocation(), request.getUrl().first);
-//	parentFolder	= getParentFolderPath(url);
-	dir				= opendir(url.c_str());
-
-//	std::string url("./data/www/");
-//	dir = opendir(url.c_str());
-//	std::string		parentFolder = getParentFolderPath(url);
-/*FIN TEMPORAIRE*/
-
-	index += insertHtmlHeader("\"Auto Index\"");
+	autoIndexHtmlPage += insertHtmlHeader("\"Auto Index\"");
 
 	while ((dirToRead = readdir(dir)) != NULL)
 	{
 		fileName = dirToRead->d_name;
-//		std::cout << "fileName : " << fileName << std::endl;
-		if (fileName.compare(".") == 0)
+		if (fileName.compare(".") == 0 || (fileName.compare("..") == 0 && isRootDirectory(request.getUrl().first)))
 			continue ;
-		else if (fileName.compare("..") == 0 && request.getUrl().first.compare("/") != 0)
-			index += insertHtmlReference(fileName, fileName);
+		else if (fileName.compare("..") == 0 && !isRootDirectory(request.getUrl().first))
+			autoIndexHtmlPage += insertHtmlReference(fileName, fileName);
 		else
 		{
 			if (dirToRead->d_type == DT_DIR)
-				fileName = getAbsolutePathDirectory(url, fileName);
-			index += insertHtmlReference(fileName, fileName);
+				fileName = getAbsolutePathDirectory(request.getUrl().first, fileName);
+			autoIndexHtmlPage += insertHtmlReference(fileName, fileName);
 		}
 	}
-
-	index += insertHtmlClosingHeader();
-
-	std::cout << std::endl << "START index: "  << std::endl<< std::endl << index << std::endl;
-
-	std::cout << "END index" << std::endl;
-	return index;
-}
-int	tryToGetFolder(std::string url)
-{
-	if (url.size() !=1 && *(url.rbegin()) == '/')
-		return true;
-	return false;
-}
-std::string getParentFolderPath(std::string const & folderPath)
-{
-	std::string		parentFolder(folderPath);
-
-	std::cout << "folderPath : " << folderPath << std::endl;
-	if (*(parentFolder.rbegin()) == '/')
-		parentFolder.erase(parentFolder.length() - 1, 1);
-	parentFolder.erase(parentFolder.find_last_of('/') + 1, parentFolder.npos);
-	return (parentFolder);
+	autoIndexHtmlPage += insertHtmlClosing();
+	return autoIndexHtmlPage;
 }
 
 std::string constructPatchFromLocationBlock(Location const * location, std::string const & fileName)
@@ -72,22 +41,9 @@ std::string constructPatchFromLocationBlock(Location const * location, std::stri
 	std::string pathDirectory;
 	std::string rootPath(location->getRootPath());
 
-//	rootPath = ;
 	rootPath.erase(rootPath.size() - 1, 1);
 	pathDirectory += rootPath;
 	pathDirectory += fileName;
-//	pathDirectory.append("/");
-
-	return pathDirectory;
-}
-
-std::string getAbsolutePathDirectory(std::string const & folderPath, std::string & fileName)
-{
-	std::string pathDirectory;
-
-	pathDirectory += folderPath;
-	pathDirectory += fileName;
-	pathDirectory.append("/");
 
 	return pathDirectory;
 }
@@ -112,7 +68,22 @@ std::string insertHtmlHeader(std::string title)
 	return header;
 }
 
-std::string insertHtmlClosingHeader(void)
+std::string insertHtmlReference(std::string link, std::string userText)
+{
+	std::string href;
+
+	href += "<a href=\"";
+	href += link;
+	href += "\">";
+	href += userText;
+	href += "</a>";
+	href += "</br>";
+	href += "\n";
+
+	return href;
+}
+
+std::string insertHtmlClosing(void)
 {
 	std::string closingHeader;
 
@@ -124,17 +95,38 @@ std::string insertHtmlClosingHeader(void)
 	return closingHeader;
 }
 
-std::string insertHtmlReference(std::string link, std::string userText)
+std::string getParentFolderPath(std::string const & folderPath)
 {
-	std::string href;
+	std::string		parentFolder(folderPath);
 
-	href += "<a href=\"";
-	href += link;
-	href += "\">";
-	href += userText;
-	href += "</a>";
-	href += "\n";
+	std::cout << "folderPath : " << folderPath << std::endl;
+	if (*(parentFolder.rbegin()) == '/')
+		parentFolder.erase(parentFolder.length() - 1, 1);
+	parentFolder.erase(parentFolder.find_last_of('/') + 1, parentFolder.npos);
+	return (parentFolder);
+}
 
-//	std::cout << "href = [" << href << "]" << std::endl;
-	return href;
+std::string getAbsolutePathDirectory(std::string const & folderPath, std::string & fileName)
+{
+	std::string pathDirectory;
+
+	pathDirectory += folderPath;
+	pathDirectory += fileName;
+	pathDirectory.append("/");
+
+	return pathDirectory;
+}
+
+int	tryToGetFolder(std::string url)
+{
+	if (*(url.rbegin()) == '/')
+		return true;
+	return false;
+}
+
+int	isRootDirectory(std::string fileName)
+{
+	if (fileName.compare("/") == 0)
+		return true;
+	return false;
 }

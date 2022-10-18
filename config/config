@@ -1,5 +1,6 @@
 server 
 {
+
 	listen 8080;
 	server_name ;#OPTIONNAL
 	error_pages 404 resources/error/404.html;
@@ -15,6 +16,7 @@ server
 		cgi_pass .php ./www/bin/php-cgi;
 		upload_store /uploads ;
 	}
+
 	location /www/
 	{
 		allow GET POST DELETE;
@@ -25,4 +27,5 @@ server
 		cgi_pass .php ./www/bin/php-cgi;
 		upload_store /uploads;
 	}
+
 }

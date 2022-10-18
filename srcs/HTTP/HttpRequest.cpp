@@ -90,8 +90,8 @@ Location	*HttpRequest::findLocation(const Server &server)
 
 void	HttpRequest::parseStartLine(std::string const & client_request)
 {
-	std::string request(client_request);
-	int i;
+	std::string	request(client_request);
+	int			i;
 
 	i = request.find(' ');
 	_method.first.insert(0, request, 0, i);
