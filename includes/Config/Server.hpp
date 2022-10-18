@@ -24,8 +24,9 @@ class Server
 		struct sockaddr_in					_address;
 		int									_socket;
 		std::string							server_name;
-		int									error_code;
-		std::string							error_path;
+		std::map<int, std::string>			error_map; // First error_code, Second path_to_html;
+		// int									error_code;
+		// std::string							error_path;
 		int									client_max_body_size;
 		std::map<std::string, Location*>	locations; //First = Path-of-location, Second = Object Location
 
@@ -46,8 +47,9 @@ class Server
 		const int&							getSocket() const;
 		struct sockaddr_in					getAddress() const;		
 		const std::string&					getServerName() const;
-		const int&							getErrorCode() const;
-		const std::string&					getErrorPath() const;
+		std::map<int, std::string>			getErrorMap() const;
+		// const int&							getErrorCode() const;
+		// const std::string&					getErrorPath() const;
 		const int&							getClientMaxBodySize() const;
 		std::map<std::string, Location*>	getLocationsMap() const;
 

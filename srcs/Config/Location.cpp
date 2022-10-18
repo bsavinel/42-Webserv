@@ -1,8 +1,7 @@
 #include "Location.hpp"
 
-Location::Location()
+Location::Location() : autoindex(false)
 {
-
 }
 
 Location::Location(const Location & src)

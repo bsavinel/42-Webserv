@@ -9,7 +9,7 @@
 
 Server::Server()
 : _domain(AF_INET), _service(SOCK_STREAM), _protocol(0), _interface(INADDR_ANY),
-_backlog(200), _socket(-1), error_code(0), client_max_body_size(0)
+_backlog(200), _socket(-1), client_max_body_size(0)
 {
 }
 
@@ -29,8 +29,8 @@ Server & Server::operator=(const Server & rhs)
 		_port = rhs._port;
 		_backlog = rhs._backlog;
 		server_name = rhs.server_name;
-		error_code = rhs.error_code;
-		error_path = rhs.error_path;
+		// error_code = rhs.error_code;
+		// error_path = rhs.error_path;
 		client_max_body_size = rhs.client_max_body_size;
 		locations = rhs.locations;
 		
@@ -94,15 +94,15 @@ const std::string&	Server::getServerName() const
 	return(this->server_name);
 }
 
-const int&	Server::getErrorCode() const
-{
-	return(this->error_code);
-}
+// const int&	Server::getErrorCode() const
+// {
+// 	return(this->error_code);
+// }
 
-const std::string&	Server::getErrorPath() const
-{
-	return(this->error_path);
-}
+// const std::string&	Server::getErrorPath() const
+// {
+// 	return(this->error_path);
+// }
 
 const int&	Server::getClientMaxBodySize() const
 {
@@ -114,6 +114,11 @@ std::map<std::string, Location*> Server::getLocationsMap() const
 	return(this->locations);
 }
 
+std::map<int, std::string> Server::getErrorMap() const
+{
+	return(this->error_map);
+}
+
 //! ------------------------------ SETTERS ------------------------------
 
 void	Server::printConfig()
@@ -121,8 +126,14 @@ void	Server::printConfig()
 	std::cout << "----Server Configuration----" << std::endl;
 	std::cout << "port = " << _port << std::endl;
 	std::cout << "server_name = " << server_name << std::endl;
-	std::cout << "error_pages = " << error_code << std::endl;
-	std::cout << "error_pages = " << error_path << std::endl;
+	std::cout << "-----Map Error Content------" << std::endl;
+	for(std::map<int, std::string>::iterator iterr = error_map.begin(); iterr != error_map.end(); iterr++)
+	{
+		std::cout << iterr->first << iterr->second << _domain << std::endl;
+	}
+	
+	// std::cout << "error_pages = " << error_code << std::endl;
+	// std::cout << "error_pages = " << error_path << std::endl;
 	std::cout << "client_max_body_size = " << client_max_body_size << std::endl;
 	std::cout << "Domain IP: " << _domain << std::endl;
 	std::cout << "Service : " << _service << std::endl;
@@ -130,13 +141,13 @@ void	Server::printConfig()
 	std::cout << "Interface : " << _interface << std::endl;
 	std::cout << "Maximum Queued connection allowed : " << _domain << std::endl;
 
-	std::map<std::string, Location*>::iterator it = locations.begin();
-	while (it != this->locations.end())
+	std::map<std::string, Location*>::iterator itloc = locations.begin();
+	while (itloc != this->locations.end())
 	{
-		std::cout <<"\tLOCATION_BLOCK\t " << it->first << std::endl;
-		it->second->printConfig();
+		std::cout <<"\tLOCATION_BLOCK\t " << itloc->first << std::endl;
+		itloc->second->printConfig();
 		std::cout << std::endl;
-		it++;
+		itloc++;
 	}
 	
 }
@@ -197,8 +208,11 @@ void Server::setConfig(std::vector<std::string>::iterator & it, std::vector<std:
 			this->server_name = *++it;
 		else if ((*it).compare("error_pages") == 0 && (*(it + 1)) != ";")
 		{
-			this->error_code = atoi((*++it).c_str());
-			this->error_path = *++it;
+			int error_num = atoi((*++it).c_str());
+			std::string path_to_file = *++it;
+			this->error_map.insert(std::make_pair(error_num, path_to_file));
+			// this->error_code = atoi((*++it).c_str());
+			// this->error_path = *++it;
 		}
 		else if ((*it).compare("client_max_body_size") == 0 && (*(it + 1)) != ";")
 			this->client_max_body_size = atoi((*++it).c_str());
