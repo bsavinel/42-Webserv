@@ -4,9 +4,9 @@ NAME = Webserv
 #                           COMPILATION SETTING                        	       #
 ################################################################################
 
-CC			= c++
-CPPCFLAGS	= -Wall -Wextra -Werror -MMD -std=c++98 -g3 #-fsanitize=address
-LDFLAGS		= -Wall -Wextra -Werror -std=c++98 -g3 #-fsanitize=address
+CXX			= c++
+CXXFLAGS	= -Wall -Wextra -Werror -std=c++98 -g3
+CPPFLAGS	= -MMD
 
 ifeq (sanitize, $(filter sanitize, $(MAKECMDGOALS)))
 	CPPFLAGS += -fsanitize=address
@@ -26,14 +26,14 @@ SRCS =	Config/Config.cpp					\
 		HTTP/HttpManager/HttpM_GetSet.cpp	\
 		HTTP/HttpManager/HttpM_Post.cpp		\
 		HTTP/HttpManager/HttpManager.cpp	\
-		HTTP/HttpManager/autoIndex.cpp	\
+		HTTP/HttpManager/autoIndex.cpp		\
 		HTTP/HttpRequest.cpp				\
 		Utils/exceptWebserv.cpp				\
 		Utils/utils.cpp						\
 		Epoll.cpp							\
 		launcher.cpp						\
 		Utils/Error.cpp						\
-		main.cpp							\
+		main.cpp
 
 ################################################################################
 #                               INCLUDES                             	       #
@@ -43,7 +43,7 @@ INCS			=	-I ./includes/				\
 					-I ./includes/Config		\
 					-I ./includes/HTTP			\
 					-I ./includes/LoopManage	\
-					-I ./includes/Utils			\
+					-I ./includes/Utils
 
 LIBINCS			=	
 
@@ -59,7 +59,7 @@ OBJ_PATH		=	./objs/
 ################################################################################
 
 OBJS			=	$(addprefix $(OBJ_PATH), ${SRCS:.cpp=.o})
-DEPS			=	$(addprefix $(OBJ_PATH), ${SRCS:.cpp=.d})
+DEPS			=	${OBJS:.o=.d}
 
 ################################################################################
 #                                   COLORS                                     #
@@ -80,11 +80,11 @@ all	:
 
 $(NAME) : $(OBJS)
 	echo "Linking $(NAME)"
-	$(CC) $(LDFLAGS) $(LIBINCS) -o $@ $(OBJS) $(INCS) 
+	$(CXX) $(CXXFLAGS) $(LIBINCS) -o $@ $(OBJS) $(INCS) 
 
 $(OBJ_PATH)%.o : $(SRC_PATH)%.cpp
 	mkdir -p $(dir $@)
-	$(CC) $(CPPCFLAGS) $(LIBINCS) -c $< -o $@  $(INCS)
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(LIBINCS) -c $< -o $@  $(INCS)
 
 clean :
 	echo "Cleaning objects and dependence files"
@@ -97,12 +97,6 @@ re : fclean
 	echo "Cleaning executable"
 	make all
 
-test : all
-	./$(NAME)
-
-vtest : all
-	valgrind --leak-check=full ./$(NAME)
-
 ################################################################################
 #####                              Flags                                   #####
 ################################################################################
@@ -112,6 +106,6 @@ sanitize:
 
 -include $(DEPS)
 
-.PHONY : all clean fclean re vtest
+.PHONY : all clean fclean re
 
 .SILENT:
