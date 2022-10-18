@@ -57,6 +57,7 @@ void Error::initMap()
 	_errMap[503] = "Service Unavailable";
 	_errMap[504] = "Gateway Timeout";
 	_errMap[505] = "Version Not Supported";
+	init = 1;
 }
 
 std::string Error::getError(int nbr)
