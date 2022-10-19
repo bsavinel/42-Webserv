@@ -22,6 +22,8 @@ Config::Config(char *config_file)
 				this->servers.push_back(getServerToken(beg, splitted));
 		}
 	}
+	if(!this->checkLocBlock())
+		throw exceptWebserv("Error Config : Location block path should be a directory");
 }
 
 Config::Config(const Config & src)
@@ -61,4 +63,32 @@ void	Config::print_all_conf()
 std::list<Server*> & Config::getServersList()
 {
 	return (servers);
+}
+
+bool	is_dir_path(std::string path)
+{
+	if(path.rfind("/", 0) == std::string::npos)
+		return (0);
+	std::string::iterator lastchar= path.end() - 1;
+	if((*lastchar) != '/' )
+		return(0);
+	else
+		return(1);
+	
+}
+
+bool	Config::checkLocBlock()
+{
+	for (std::list<Server*>::iterator itLstServer = this->getServersList().begin();
+		itLstServer != this->getServersList().end(); itLstServer++)
+	{
+		std::map<std::string, Location*> mapLocation = (*itLstServer)->getLocationsMap();
+		for(std::map<std::string, Location*>::iterator itLoc = mapLocation.begin();
+			itLoc != mapLocation.end(); itLoc++)
+		{
+			if(!is_dir_path(itLoc->first))
+				return(0);
+		}
+	}
+	return (1);
 }

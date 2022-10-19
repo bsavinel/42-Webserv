@@ -19,9 +19,9 @@ class Config
 		Config & operator=(const Config & rhs);
 		~Config();
 
-		void	print_all_conf();
-		std::list<Server*> & getServersList();
-
+		void					print_all_conf();
+		std::list<Server*> &	getServersList();
+		bool					checkLocBlock();
 };
 
 

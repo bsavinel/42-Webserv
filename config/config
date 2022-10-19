@@ -20,7 +20,7 @@ server
 		upload_store /uploads ;
 	}
 
-	location /www/
+	location /w/
 	{
 		allow GET POST DELETE;
 		return 404 /resources/error/404.html;
