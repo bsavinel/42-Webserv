@@ -3,33 +3,7 @@
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <unistd.h>
-#include <sstream>
 #include <iostream>
-
-std::string HttpManager::buildHeader(off_t contentLenght, int statusCode)
-{
-	std::string	header;
-
-	(void)statusCode;
-	header += "HTTP/1.1 200 OK\n"; // TODO voir les image apres
-	if (_request.getUrl().first.find("html") != std::string::npos)
-		header += "Content-Type: text/html\n";
-	else if (_request.getUrl().first.find("css") != std::string::npos)
-		header += "Content-Type: text/css\n";
-	else if (_request.getUrl().first.find("ico") != std::string::npos)
-		header += "Content-Type: image/x-icon\n";
-	if (_request.getUrl().first.compare("/") == 0)
-		header += "Content-Type: text/html\n";
-
-	if (contentLenght > 0)
-	{
-		std::stringstream ss;
-		ss << contentLenght;
-		header += "Content-Length: " + ss.str() + "\n";
-	}
-	header += "\n";
-	return header;
-}
 
 std::string HttpManager::LocalPathFile_get()
 {
@@ -40,7 +14,7 @@ std::string HttpManager::LocalPathFile_get()
 	name_file += _request.getUrl().first;
 	if ('/' == *(--name_file.end()))
 		name_file += _request.getLocation()->getIndexPath();
-	std::cout << "name file :" << name_file << std::endl;
+	std::cout << name_file << std::endl;
 	return name_file;
 }
 
@@ -61,7 +35,7 @@ void	HttpManager::initialize_get()
 		_name_file = LocalPathFile_get();
 		OpenFile_get(_name_file);
 		stat(_name_file.c_str(), &status);
-		_respond = buildHeader(status.st_size, 200);
+		_respond = HeaderRespond(status.st_size, 200, determinateType());
 	}
 	_headerBuild = true;
 }
@@ -85,21 +59,21 @@ void HttpManager::getMethod()
 	canWrite();
 	if (_headerBuild == false)
 	{
-		if (!tryToGetFolder(_request.getUrl().first))
+		//if (!tryToGetFolder(_request.getUrl().first))
 			initialize_get();
 		_headerBuild = true;
 	}
 	else
 	{
 //		std::cout <<"HERE : " << _request.getUrl().first << std::endl;
-		if (tryToGetFolder(_request.getUrl().first))
+		/*if (tryToGetFolder(_request.getUrl().first))
 		{
 			_respond = autoIndex(_request);
-			header = buildHeader(_respond.size(), 200);
+			header = HeaderRespond(_respond.size(), 200, "text/html");
 			_respond = header + _respond;
 			_isEnd = true;
 		}
-		else
+		else*/
 			builRespondGet();
 	}
 	if (_isEnd == true && _file != -1)

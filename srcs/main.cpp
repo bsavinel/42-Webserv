@@ -9,7 +9,9 @@
 #include "Server.hpp"
 #include "Error.hpp"
 #include "HttpRequest.hpp"
+
 void	autoIndex(HttpRequest &request);
+
 
 int main(int ac, char **av)
 {
@@ -33,13 +35,11 @@ int main(int ac, char **av)
 	return(EXIT_SUCCESS);
 }
 
-/*
-int main(void)
-{
-	HttpRequest request;
-	request.setUrl("./data/");
-	autoIndex(request);
-	return 0;
 
-}
-*/
+/*int main(void)
+{
+	{
+	Error init;
+	}
+	std::cout << buildErrorPage(404);
+}*/

@@ -71,22 +71,14 @@ bool	HttpManager::applyMethod()
 {
 	if (!_isEnd)
 	{
-	// std::cout << "================="<<std::endl;
-	// std::cout << _request << std::endl;
-	// std::cout << "================="<<std::endl;
-	// 	std::cout << "++++++++++++++++"<<std::endl;
-	// std::cout << *(_request.getUrl().first.rbegin()) << std::endl;
-	// std::cout << "++++++++++++++++"<<std::endl;
-
-
-	if (_request.getMethod().first == "GET")
-		getMethod();
-	else if (_request.getMethod().first == "POST")
-		postMethod();
-	else if (_request.getMethod().first == "DELETE")
-		deleteMethod();
-	else
-		_isEnd = true;
+		if (_request.getMethod().first == "GET")
+			getMethod();
+		else if (_request.getMethod().first == "POST")
+			postMethod();
+		else if (_request.getMethod().first == "DELETE")
+			deleteMethod();
+		else
+			_isEnd = true;
 	}
 	return _isEnd;
 }
@@ -118,4 +110,16 @@ void	HttpManager::canWrite()
 		_Writeok = true;
 		_modeChange = true;
 	}
+}
+
+std::string HttpManager::determinateType()
+{
+	if (_request.getUrl().first.rfind(".html") == _request.getUrl().first.size() - 5 && _request.getUrl().first.size() > 4)
+		return "text/html";
+	else if (_request.getUrl().first.rfind(".css") == _request.getUrl().first.size() - 4 && _request.getUrl().first.size() >= 4)
+		return  "text/css";
+	else if (_request.getUrl().first.rfind(".ico") == _request.getUrl().first.size() - 4 && _request.getUrl().first.size() >= 4)
+		return "image/x-icon";
+	_errorCode = 415;
+	return "";	
 }
