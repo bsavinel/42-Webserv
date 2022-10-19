@@ -78,11 +78,15 @@ bool	HttpManager::applyMethod()
 	// std::cout << *(_request.getUrl().first.rbegin()) << std::endl;
 	// std::cout << "++++++++++++++++"<<std::endl;
 
-
 	if (_request.getMethod().first == "GET")
 		getMethod();
 	else if (_request.getMethod().first == "POST")
+	{
+		std::cout << "================="<<std::endl;
+		std::cout << _request.getRequest() << std::endl;
+		std::cout << "================="<<std::endl;
 		postMethod();
+	}
 	else if (_request.getMethod().first == "DELETE")
 		deleteMethod();
 	else

@@ -27,6 +27,8 @@ class HttpRequest
 		std::pair<std::string, bool>	getReferer(void) const;
 		std::pair<std::string, bool>	getAcceptEncoding(void) const;
 		std::pair<std::string, bool>	getDnt(void) const;
+		std::pair<std::string, bool>	getContentType(void) const;
+		std::pair<std::string, bool>	getBoundary(void) const;
 
 		Location						*getLocation(void) const;
 		void							setRequest(std::string const & request);
@@ -53,6 +55,8 @@ class HttpRequest
 		std::pair<std::string, bool> 	_Referer;
 		std::pair<std::string, bool> 	_AcceptEncoding;
 		std::pair<std::string, bool> 	_dnt;
+		std::pair<std::string, bool> 	_contentType;
+		std::pair<std::string, bool>	_boundary;
 		//std::string _AcceptLanguage;
 		//std::string _sec_ch_ua;
 		//std::string _sec_ch_ua_mobile;
