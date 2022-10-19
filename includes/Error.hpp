@@ -4,6 +4,7 @@
 # include <string>
 # include <map>
 # include <fcntl.h>
+# include "exceptWebserv.hpp"
 
 class Error
 {

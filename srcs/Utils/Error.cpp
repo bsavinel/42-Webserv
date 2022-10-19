@@ -1,10 +1,15 @@
 #include "Error.hpp"
 
 std::map<int, std::string> Error::_errMap;
+int Error::init = 0;
 
 Error::Error()
 {
-	initMap();
+	if(init == 0)
+	{
+		init = 1;
+		initMap();
+	}
 }
 
 Error::~Error()
@@ -33,7 +38,7 @@ void Error::initMap()
 	_errMap[307] = "Temporary Redirect";
 	_errMap[400] = "Bad Request";
 	_errMap[401] = "Unauthorized";
-	_errMap[402] = "Payment Required";
+	_errMap[402] = "Preturn(_errMap.find(nbr)->second);ayment Required";
 	_errMap[403] = "Forbidden";
 	_errMap[404] = "Not Found";
 	_errMap[405] = "Method Not Allowed";
@@ -59,5 +64,8 @@ void Error::initMap()
 
 std::string Error::getError(int nbr)
 {
-	return(_errMap.find(nbr)->second);
+	std::map<int, std::string>::iterator itfind = _errMap.find(nbr);
+	if(itfind == _errMap.end())
+		throw exceptWebserv("Error : not relative error code found");
+	return(itfind->second);
 }

@@ -18,7 +18,6 @@ int main(int ac, char **av)
 	{
 		try
 		{
-
 			launcher(av[1]);
 		}
 		catch(const exceptWebserv& e)
