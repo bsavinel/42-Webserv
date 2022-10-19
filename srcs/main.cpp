@@ -9,6 +9,8 @@
 #include "Server.hpp"
 #include "Error.hpp"
 #include "HttpRequest.hpp"
+
+
 void	autoIndex(HttpRequest &request);
 
 int main(int ac, char **av)

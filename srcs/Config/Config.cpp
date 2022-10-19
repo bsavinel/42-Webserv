@@ -42,8 +42,6 @@ Config::~Config()
 		delete *it;
 }
 
-
-
 //----------------------------MEMBER FUNCTION--------------------------
 
 void	Config::print_all_conf()

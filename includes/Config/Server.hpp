@@ -6,6 +6,7 @@
 # include <string.h>
 # include <errno.h>
 # include <iostream>
+# include <climits>
 # include "exceptWebserv.hpp"
 # include "Server.hpp"
 

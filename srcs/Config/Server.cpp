@@ -1,12 +1,5 @@
 #include "Server.hpp"
 
-
-// Server::Server(int domain, int service, int protocol, u_long interface, int port,int backlog)
-// : _domain(domain), _service(service), _protocol(protocol), _interface(interface),
-// _port(port), _backlog(backlog), _socket(-1)
-// {
-// }
-
 Server::Server()
 : _domain(AF_INET), _service(SOCK_STREAM), _protocol(0), _interface(INADDR_ANY),
 _backlog(200), _socket(-1), client_max_body_size(0)
@@ -29,8 +22,6 @@ Server & Server::operator=(const Server & rhs)
 		_port = rhs._port;
 		_backlog = rhs._backlog;
 		server_name = rhs.server_name;
-		// error_code = rhs.error_code;
-		// error_path = rhs.error_path;
 		client_max_body_size = rhs.client_max_body_size;
 		locations = rhs.locations;
 		
@@ -40,10 +31,7 @@ Server & Server::operator=(const Server & rhs)
 
 Server::~Server()
 {
-	// 	for(std::map<std::string, Location*>::iterator it = locations.begin(); it != locations.end(); it++)
-	// 	{
-	// 			delete it->second;
-	// 	}
+	
 }
 
 
@@ -94,16 +82,6 @@ const std::string&	Server::getServerName() const
 	return(this->server_name);
 }
 
-// const int&	Server::getErrorCode() const
-// {
-// 	return(this->error_code);
-// }
-
-// const std::string&	Server::getErrorPath() const
-// {
-// 	return(this->error_path);
-// }
-
 const int&	Server::getClientMaxBodySize() const
 {
 	return(this->client_max_body_size);
@@ -131,9 +109,6 @@ void	Server::printConfig()
 	{
 		std::cout << iterr->first << iterr->second << _domain << std::endl;
 	}
-	
-	// std::cout << "error_pages = " << error_code << std::endl;
-	// std::cout << "error_pages = " << error_path << std::endl;
 	std::cout << "client_max_body_size = " << client_max_body_size << std::endl;
 	std::cout << "Domain IP: " << _domain << std::endl;
 	std::cout << "Service : " << _service << std::endl;
@@ -211,11 +186,20 @@ void Server::setConfig(std::vector<std::string>::iterator & it, std::vector<std:
 			int error_num = atoi((*++it).c_str());
 			std::string path_to_file = *++it;
 			this->error_map.insert(std::make_pair(error_num, path_to_file));
-			// this->error_code = atoi((*++it).c_str());
-			// this->error_path = *++it;
 		}
 		else if ((*it).compare("client_max_body_size") == 0 && (*(it + 1)) != ";")
-			this->client_max_body_size = atoi((*++it).c_str());
+		{
+			const char *arg = (*++it).c_str();
+			for(size_t i = 0; i < strlen(arg); i++)
+			{
+				if(!isdigit(arg[i]))
+					throw exceptWebserv("Error Config : client_max_body_size need to be a number between 0 and MAXINT");
+			}
+			ulong conv = atol(arg);
+			if (conv < 0 || conv > INT_MAX)
+				throw exceptWebserv("Error Config : client_max_body_size need to be a number between 0 and MAXINT");
+			this->client_max_body_size = atoi(arg);
+		}
 		it++;
 	}
 }
