@@ -12,6 +12,7 @@ HttpManager::HttpManager(t_socket socketClient)
 	_isEnd = false;
 	_Writeok = false;
 	_headerBuild = false;
+	_errorCode = 0;
 	_file = -1;
 }
 
@@ -24,6 +25,7 @@ HttpManager		&HttpManager::operator=(const HttpManager& rhs)
 {
 	if (this != &rhs)
 	{
+		_errorCode = rhs._errorCode;
 		_server = rhs._server;
         _socketClient = rhs._socketClient;
         _Writeok = rhs._Writeok;
