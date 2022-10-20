@@ -12,20 +12,20 @@ server
 	{
 		allow GET POST DELETE;
 		return 404 /data/error/404.html;
-		root /data/;
+		root ./data/;
 		index ;
-		autoindex on;
+		autoindex off;
 		cgi_pass .php ./www/bin/php-cgi;
-		upload_store /uploads ;
+		upload_store /uploads/ ;
 	}
 
-	location /www/
+	location /www
 	{
 		allow GET POST DELETE;
 		return 404 ./data/error/404.html;
-		root /data/;
+		root ./data/;
 		index index.html;
-		autoindex on;
+		autoindex off;
 		cgi_pass .php ./www/bin/php-cgi;
 		upload_store /uploads/ ;
 	}

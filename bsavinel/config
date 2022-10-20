@@ -5,7 +5,7 @@ server
 	location / 
 	{
 		allow GET POST DELETE;
-		root bsavinel/site/;
+		root ./bsavinel/site/;
 		autoindex on;
 	}
 
@@ -13,7 +13,7 @@ server
 	{
 		index index.html;
 		allow GET POST DELETE;
-		root bsavinel/site/;
+		root ./bsavinel/site/;
 		autoindex on;
 	}
 

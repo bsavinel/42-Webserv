@@ -83,9 +83,6 @@ bool	check_loc_path(std::string path)
 {
 	if(path.rfind("/", 0) == std::string::npos)
 		return (0);
-	std::string::iterator lastchar= path.end() - 1;
-	if((*lastchar) != '/')
-		return(0);
 	else
 		return(1);
 }
