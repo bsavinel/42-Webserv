@@ -11,13 +11,13 @@ server
 
 	location / 
 	{
-		allow GhhhET POST DELETE;
+		allow GET POST DELETE;
 		return 404 /resources/error/404.html;
 		root /resources/;
 		index ;
 		autoindex on;
 		cgi_pass .php ./www/bin/php-cgi;
-		upload_store /uploads ;
+		upload_store /uploads/ ;
 	}
 
 	location /w/
