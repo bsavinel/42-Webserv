@@ -65,6 +65,8 @@ int HttpManager::receive()
 		buffer[i] = 0;
 	if ((ret = recv(_socketClient, buffer, LEN_TO_READ, MSG_DONTWAIT)) == -1)
 		return (-1);
+	std::string buff(buffer);
+	std::cout <<  "BUFFER=" << buff << std::endl <<  "=BUFFER" << std::endl;
 	_request.concatenate(buffer);
 	return (0);
 }
@@ -84,9 +86,9 @@ bool	HttpManager::applyMethod()
 		getMethod();
 	else if (_request.getMethod().first == "POST")
 	{
-	 std::cout << "================="<<std::endl;
-	 std::cout << _request.getRequest() << std::endl;
-	 std::cout << "================="<<std::endl;
+		// std::cout << "================="<<std::endl;
+		// std::cout << _request.getRequest() << std::endl;
+		// std::cout << "================="<<std::endl;
 		postMethod();
 	}
 	else if (_request.getMethod().first == "DELETE")

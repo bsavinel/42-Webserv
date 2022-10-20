@@ -10,7 +10,7 @@
 #include <map>
 #include <fcntl.h>
 
-static void print_status(t_epoll_event event)
+ void print_status(t_epoll_event event)
 {
 	std::cout << "le fd : " << event.data.fd << " a les evenement: ";
 	if (event.events & EPOLLIN)
@@ -43,10 +43,10 @@ void	clientEvent(Epoll &epoll, std::map<t_socket, HttpManager> &stockManager)
 			continue;
 		HttpManager &manager = stockManager.find(it->data.fd)->second;
 
-		print_status(*it);
+//		print_status(*it);
 		if (manager.getIsEnd() || it->events & EPOLLRDHUP || it->events & EPOLLERR)
 		{
-			std::cout << "Fd : " << it->data.fd << " a ete suprimer" << std::endl;
+//			std::cout << "Fd : " << it->data.fd << " a ete suprimer" << std::endl;
 			epoll.deleteClient(it->data.fd);
 			stockManager.erase(it->data.fd);
 			continue ;
@@ -54,10 +54,13 @@ void	clientEvent(Epoll &epoll, std::map<t_socket, HttpManager> &stockManager)
 
 
         if (it->events & EPOLLIN)
-            manager.receive();
-	
+		{
+			std::cout << "receive" << std::endl;
+			manager.receive();
+		}
 		if (manager.getInit() == false)
 			manager.initialize(socketClient.find(it->data.fd)->second);
+
     	manager.applyMethod();
 
 		if (manager.getModeChange() && manager.getWriteOk())
