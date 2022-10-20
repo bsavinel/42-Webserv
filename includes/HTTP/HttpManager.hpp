@@ -77,6 +77,7 @@ class HttpManager
 		/*Post methode*/
 
 		void			postMethod();
+		int				_tmp_upload_fd;
 
 		/*delete methode*/
 

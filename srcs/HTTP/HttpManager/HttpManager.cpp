@@ -13,6 +13,7 @@ HttpManager::HttpManager(t_socket socketClient)
 	_Writeok = false;
 	_headerBuild = false;
 	_file = -1;
+	_tmp_upload_fd = -1;
 }
 
 HttpManager::HttpManager(const HttpManager& rhs)
@@ -36,6 +37,7 @@ HttpManager		&HttpManager::operator=(const HttpManager& rhs)
 		_headerBuild = rhs._headerBuild;
 		_respond = rhs._respond;
         _request = rhs._request;
+		_tmp_upload_fd = rhs._tmp_upload_fd;
 	}
 	return *this;
 }
@@ -82,9 +84,9 @@ bool	HttpManager::applyMethod()
 		getMethod();
 	else if (_request.getMethod().first == "POST")
 	{
-		std::cout << "================="<<std::endl;
-		std::cout << _request.getRequest() << std::endl;
-		std::cout << "================="<<std::endl;
+	 std::cout << "================="<<std::endl;
+	 std::cout << _request.getRequest() << std::endl;
+	 std::cout << "================="<<std::endl;
 		postMethod();
 	}
 	else if (_request.getMethod().first == "DELETE")

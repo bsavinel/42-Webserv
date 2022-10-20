@@ -10,6 +10,7 @@
 static void routine(Epoll &epoll)
 {
 	std::map<t_socket, HttpManager> stockManager;
+
 	while (1)
 	{
 		epoll.wait();

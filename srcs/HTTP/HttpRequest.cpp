@@ -137,14 +137,14 @@ std::pair <std::string, bool> getMultiPartBoundary(std::string contentType)
 	boundary.first.assign(contentType, boundaryPosition, contentType.npos);
 	boundary.second = true;
 
-	std::cout << "boundary = [" << boundary.first << "]" << std::endl;
+//	std::cout << "boundary = [" << boundary.first << "]" << std::endl;
 
 	return boundary;
 }
 
 void	HttpRequest::parser(/*std::string &request*/)
 {
-	std::cout << "REQUEST\n" << _request << std::endl;
+//	std::cout << "REQUEST\n" << _request << std::endl;
 	parseStartLine(_request);
 	_request.erase(0, _request.find('\n') + 1);
 
@@ -161,7 +161,7 @@ void	HttpRequest::parser(/*std::string &request*/)
 		_boundary = getMultiPartBoundary(_contentType.first);
 		_contentType.first.erase(_contentType.first.find(';'), _contentType.first.npos);
 	}
-	_request.erase(0, _request.find("\r\n\r\n") + 1);
+	_request.erase(0, _request.find("\r\n\r\n") + 4);
 }
 
 void	HttpRequest::concatenate(char *str)

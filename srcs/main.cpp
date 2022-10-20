@@ -9,6 +9,7 @@
 #include "Server.hpp"
 #include "Error.hpp"
 #include "HttpRequest.hpp"
+#include "HttpManager.hpp"
 void	autoIndex(HttpRequest &request);
 
 int main(int ac, char **av)
@@ -32,14 +33,3 @@ int main(int ac, char **av)
 		std::cout << "Missing configuration file" << std::endl;
 	return(EXIT_SUCCESS);
 }
-
-/*
-int main(void)
-{
-	HttpRequest request;
-	request.setUrl("./data/");
-	autoIndex(request);
-	return 0;
-
-}
-*/
