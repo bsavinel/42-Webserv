@@ -80,6 +80,7 @@ class HttpManager
 
 		/*Reponse Requete*/
 
+		std::string		ErrorRespond();
 		std::string		_respond;
 		HttpRequest		_request;
 };

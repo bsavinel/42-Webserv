@@ -20,7 +20,5 @@ std::string HeaderRespond(off_t contentLenght, int statusCode, std::string type 
 		header += "Content-Length: " + ss.str() + "\n";
 	}
 	header += "\n";
-	std::cout << "size: " << contentLenght << " " << statusCode << std::endl;
-	std::cout << header << std::endl;
 	return header;
 }

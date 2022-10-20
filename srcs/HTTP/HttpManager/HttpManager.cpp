@@ -1,6 +1,9 @@
 #include "HttpManager.hpp"
 #include <sys/socket.h>
 #include <iostream>
+#include <sstream>
+#include "Error.hpp"
+
 void	autoIndex(HttpRequest &request);
 
 HttpManager::HttpManager(t_socket socketClient)
@@ -69,11 +72,33 @@ int HttpManager::receive()
 	return (0);
 }
 
+std::string	HttpManager::ErrorRespond()
+{
+	std::string errResp;
+	Error err;
+
+	if (_request.getMethod().first == "GET")
+	{
+		errResp = buildErrorPage(_errorCode);
+		errResp.insert(0, HeaderRespond(errResp.size(), _errorCode, "text/html"));
+	}
+	if (_request.getMethod().first == "DELETE")
+	{
+		std::stringstream ss;
+		ss << _errorCode;
+		errResp = "HTTP/1.1 " + ss.str() + " " + err.getError(_errorCode) + "\n\n";
+	}
+	_isEnd = true;
+	return errResp;
+}
+
 bool	HttpManager::applyMethod()
 {
 	if (!_isEnd)
 	{
-		if (_request.getMethod().first == "GET")
+		if (_errorCode != 0)
+			_respond = ErrorRespond();
+		else if (_request.getMethod().first == "GET")
 			getMethod();
 		else if (_request.getMethod().first == "POST")
 			postMethod();
@@ -116,11 +141,11 @@ void	HttpManager::canWrite()
 
 std::string HttpManager::determinateType()
 {
-	if (_request.getUrl().first.rfind(".html") == _request.getUrl().first.size() - 5 && _request.getUrl().first.size() > 4)
+	if (_name_file.rfind(".html") == _name_file.size() - 5 && _name_file.size() > 4)
 		return "text/html";
-	else if (_request.getUrl().first.rfind(".css") == _request.getUrl().first.size() - 4 && _request.getUrl().first.size() >= 4)
+	else if (_name_file.rfind(".css") == _name_file.size() - 4 && _name_file.size() >= 4)
 		return  "text/css";
-	else if (_request.getUrl().first.rfind(".ico") == _request.getUrl().first.size() - 4 && _request.getUrl().first.size() >= 4)
+	else if (_name_file.rfind(".ico") == _name_file.size() - 4 && _name_file.size() >= 4)
 		return "image/x-icon";
 	_errorCode = 415;
 	return "";	

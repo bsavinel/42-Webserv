@@ -14,7 +14,6 @@ std::string HttpManager::LocalPathFile_get()
 	name_file += _request.getUrl().first;
 	if ('/' == *(--name_file.end()))
 		name_file += _request.getLocation()->getIndexPath();
-	std::cout << name_file << std::endl;
 	return name_file;
 }
 
@@ -28,8 +27,10 @@ void	HttpManager::OpenFile_get(std::string &file_name)
 			_errorCode = 403;
 		else if (errno == EFAULT || errno == EMFILE || errno == ENFILE || errno == ENOMEM)
 			_errorCode = 500;
-		else if (errno == EFBIG || errno == EISDIR || errno == ELOOP || errno == ENAMETOOLONG || errno == ENODEV || errno == ENOENT || errno == ETXTBSY)
+		else if (errno == EFBIG || errno == EISDIR || errno == ELOOP || errno == ENAMETOOLONG || errno == ENODEV || errno == ETXTBSY)
 			_errorCode = 400;
+		else if (errno == ENOENT)
+			_errorCode = 404;
 	}
 }
 
@@ -41,11 +42,14 @@ void	HttpManager::initialize_get()
 	{
 		_name_file = LocalPathFile_get();
 		OpenFile_get(_name_file);
-		stat(_name_file.c_str(), &status);
-		if (!S_ISREG(status.st_mode))
+		if (_errorCode == 0)
 		{
-			_errorCode = 400;
-			close(_file);
+			stat(_name_file.c_str(), &status);
+			if (!S_ISREG(status.st_mode))
+			{
+				_errorCode = 400;
+				close(_file);
+			}
 		}
 		if (_errorCode == 0)
 			_respond = HeaderRespond(status.st_size, 200, determinateType());
@@ -92,4 +96,3 @@ void HttpManager::getMethod()
 	if (_isEnd == true && _file != -1)
 		close(_file);
 }
-
