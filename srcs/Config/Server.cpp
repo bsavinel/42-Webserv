@@ -185,6 +185,8 @@ void Server::setConfig(std::vector<std::string>::iterator & it, std::vector<std:
 		{
 			int error_num = atoi((*++it).c_str());
 			std::string path_to_file = *++it;
+			if(!is_file_path(path_to_file))
+				throw exceptWebserv("Error Config : error_pages value should be a path to a file");
 			this->error_map.insert(std::make_pair(error_num, path_to_file));
 		}
 		else if ((*it).compare("client_max_body_size") == 0 && (*(it + 1)) != ";")

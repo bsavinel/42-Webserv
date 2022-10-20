@@ -65,18 +65,6 @@ std::list<Server*> & Config::getServersList()
 	return (servers);
 }
 
-bool	is_dir_path(std::string path)
-{
-	if(path.rfind("/", 0) == std::string::npos)
-		return (0);
-	std::string::iterator lastchar= path.end() - 1;
-	if((*lastchar) != '/' )
-		return(0);
-	else
-		return(1);
-	
-}
-
 bool	is_allowed_method(Location *locBlock)
 {
 	std::vector<std::string> vec = locBlock->getAllowedMethods();
@@ -91,6 +79,17 @@ bool	is_allowed_method(Location *locBlock)
 	return (1);
 }
 
+bool	check_loc_path(std::string path)
+{
+	if(path.rfind("/", 0) == std::string::npos)
+		return (0);
+	std::string::iterator lastchar= path.end() - 1;
+	if((*lastchar) != '/')
+		return(0);
+	else
+		return(1);
+}
+
 bool	Config::checkLocBlock()
 {
 	for (std::list<Server*>::iterator itLstServer = this->getServersList().begin();
@@ -100,8 +99,8 @@ bool	Config::checkLocBlock()
 		for(std::map<std::string, Location*>::iterator itLoc = mapLocation.begin();
 				itLoc != mapLocation.end(); itLoc++)
 		{
-			if(!is_dir_path(itLoc->first))
-				throw exceptWebserv("Error Config : Location block path should be a directory");
+			if(!check_loc_path(itLoc->first))
+				throw exceptWebserv("Error Config : Location block path should start and finish with '/'");
 			if(!is_allowed_method(itLoc->second))
 				throw exceptWebserv("Error Config : Method not recognized, check the allow option");
 		}

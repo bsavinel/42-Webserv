@@ -1,13 +1,15 @@
 #ifndef LOCATION_BLOCK_HPP
 #define LOCATION_BLOCK_HPP
 
-#include <stdlib.h>
-#include <ctype.h>
+# include <stdlib.h>
+# include <ctype.h>
 
-#include <string>
-#include <iostream>
-#include <vector>
-#include <map>
+# include <string>
+# include <iostream>
+# include <vector>
+# include <map>
+
+# include "utils.hpp"
 
 class Location
 {

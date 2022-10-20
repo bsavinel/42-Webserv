@@ -19,5 +19,8 @@ void						remove_comment(std::string & content_file);
 void						remove_nl(std::string & content_file);
 std::vector<std::string>	split_vector(std::string str, std::string delimiter);
 int							checkbrackets(std::vector<std::string>::iterator it, std::vector<std::string> & splitted);
+bool						is_dir_path(std::string path);
+bool						is_file_path(std::string path);
+
 
 #endif

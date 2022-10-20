@@ -47,13 +47,21 @@ void Location::setConfig(std::vector<std::string>::iterator & it, std::vector<st
 			if(tmp)
 			{
 				this->return_code = tmp;
-				this->redirection_path = *++it;
+				std::string path =  *++it;
+				if(!is_file_path(path))
+					throw exceptWebserv("Error Config : return value should be a path to a dir");
+				this->redirection_path = path;
 			}
 			else
 				this->redirection_path = *it;
 		}
 		else if ((*it).compare("root") == 0 && (*(it + 1)) != ";")
+		{
+			std::string path =  *++it;
+			if(!is_dir_path(path))
+				throw exceptWebserv("Error Config : root value should be a path to a dir");
 			this->root_path = *++it;
+		}
 		else if ((*it).compare("index") == 0 && (*(it + 1)) != ";")
 			this->index_path = *++it;
 		else if ((*it).compare("autoindex") == 0)
@@ -62,6 +70,8 @@ void Location::setConfig(std::vector<std::string>::iterator & it, std::vector<st
 				this->autoindex = true;
 			else if((*it).compare("off") == 0)
 				this->autoindex = false;
+			else
+				throw exceptWebserv("Error Config : autoindex should set on \"on\" or \"off\"");
 		}
 		else if ((*it).compare("cgi_pass") == 0 && (*(it + 1)) != ";")
 		{
@@ -69,7 +79,12 @@ void Location::setConfig(std::vector<std::string>::iterator & it, std::vector<st
 			this->cgi_path_to_script = *++it;
 		}
 		else if ((*it).compare("upload_store") == 0 && (*(it + 1)) != ";")
-			this->upload_dir = *++it;
+		{
+			std::string path =  *++it;
+			if(!is_dir_path(path))
+				throw exceptWebserv("Error Config : upload_dir value should be a path to a dir");
+			this->upload_dir = path;
+		}
 		it++;
 	}
 }

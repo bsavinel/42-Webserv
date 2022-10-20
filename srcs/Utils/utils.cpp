@@ -109,3 +109,24 @@ std::vector<std::string> split_vector(std::string str, std::string delimiter)
 	}
 	return(splitted);
 }
+
+bool	is_dir_path(std::string path)
+{
+	if(path.rfind("/", 0) == std::string::npos && path.rfind("./", 0) == std::string::npos)
+		return (0);
+	std::string::iterator lastchar= path.end() - 1;
+	if((*lastchar) != '/')
+		return(0);
+	else
+		return(1);
+}
+
+bool	is_file_path(std::string path)
+{
+	if(path.rfind("/", 0) == std::string::npos && path.rfind("./", 0) == std::string::npos)
+		return (0);
+	std::string::iterator lastchar= path.end() - 1;
+	if(!isalnum(*lastchar))
+		return(0);
+	return (1);
+}
