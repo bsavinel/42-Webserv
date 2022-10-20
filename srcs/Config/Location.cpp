@@ -95,9 +95,9 @@ void	Location::printConfig()
 //----------------------------GETTERS--------------------------
 
 
-std::vector<std::string> Location::getAllowedMethods() const
+const std::vector<std::string> & Location::getAllowedMethods() const
 {
-	return(this->allowed_methods);
+	return(allowed_methods);
 }
 
 
@@ -145,7 +145,4 @@ const std::string&	Location::getLocate() const
 {
 	return locate;
 }
-const Location*				Location::getObjectAdress() const
-{
-	return(this);
-}
+

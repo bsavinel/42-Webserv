@@ -32,7 +32,7 @@ class Location
 		void	setConfig(std::vector<std::string>::iterator & it, std::vector<std::string> & splitted, std::string &loc);
 		void	printConfig();
 
-		std::vector<std::string>	getAllowedMethods() const;
+		const std::vector<std::string>	& getAllowedMethods() const;
 		const int&					getReturnCode() const;
 		const std::string&			getRedirectionPath() const;
 		const std::string&			getRootPath() const;
@@ -42,7 +42,6 @@ class Location
 		const std::string&			getCgiPathToScript() const;
 		const std::string&			getUploadDirectory() const;
 		const std::string&			getLocate() const;
-		const Location*			getObjectAdress() const;
 };
 
 #endif
