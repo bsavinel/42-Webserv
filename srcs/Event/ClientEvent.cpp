@@ -30,49 +30,47 @@ static void print_status(t_epoll_event event)
 
 void	clientEvent(Epoll &epoll, std::map<t_socket, HttpManager> &stockManager)
 {
-	Epoll::stockEventType::iterator				it;
+	Epoll::stockEventType::iterator				it_event;
 	std::map<t_socket, Server> &				socketClient =	epoll.getSockClient();
 	Epoll::stockClientType::iterator			itClient;
-	//std::string stockRequest;
-	//char str[2048];
 
-	for (it = epoll.getAllEvents().begin(); it != epoll.getAllEvents().end(); it++)
+	for (it_event = epoll.getAllEvents().begin(); it_event != epoll.getAllEvents().end(); it_event++)
 	{
-		itClient = socketClient.find(it->data.fd);
+		itClient = socketClient.find(it_event->data.fd);
 		if (itClient == socketClient.end())
 			continue;
-		HttpManager &manager = stockManager.find(it->data.fd)->second;
+		HttpManager &manager = stockManager.find(it_event->data.fd)->second;
 
-		print_status(*it);
-		if (manager.getIsEnd() || it->events & EPOLLRDHUP || it->events & EPOLLERR)
+		print_status(*it_event);
+		if (manager.getIsEnd() || it_event->events & EPOLLRDHUP || it_event->events & EPOLLERR)
 		{
-			std::cout << "Fd : " << it->data.fd << " a ete suprimer" << std::endl;
-			epoll.deleteClient(it->data.fd);
-			stockManager.erase(it->data.fd);
+			std::cout << "Fd : " << it_event->data.fd << " a ete suprimer" << std::endl;
+			epoll.deleteClient(it_event->data.fd);
+			stockManager.erase(it_event->data.fd);
 			continue ;
 		}
 
 
-        if (it->events & EPOLLIN)
-            manager.receive();
+		if (it_event->events & EPOLLIN)
+			manager.receive();
 	
 		if (manager.getInit() == false)
-			manager.initialize(socketClient.find(it->data.fd)->second);
-    	manager.applyMethod();
+			manager.initialize(socketClient.find(it_event->data.fd)->second);
+		manager.applyMethod();
 
 		if (manager.getModeChange() && manager.getWriteOk())
 		{
-			epoll.changeSocket(it->data.fd, EPOLLOUT);
+			epoll.changeSocket(it_event->data.fd, EPOLLOUT);
 			manager.setModeChange(false);
 		}
 
 		if (manager.getModeChange() && manager.getReadOk())
 		{
-			epoll.changeSocket(it->data.fd, EPOLLIN);
+			epoll.changeSocket(it_event->data.fd, EPOLLIN);
 			manager.setModeChange(false);
 		}
 
-		if (it->events & EPOLLOUT)
+		if (it_event->events & EPOLLOUT)
 			manager.sender();
 	}
 }

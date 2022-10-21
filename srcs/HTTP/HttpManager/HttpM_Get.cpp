@@ -9,11 +9,11 @@ std::string HttpManager::LocalPathFile_get()
 {
 	std::string name_file;
 
-	name_file = _request.getLocation()->getRootPath();
-	name_file.erase(--name_file.end());
-	name_file += _request.getUrl().first;
+	name_file = buildLocalPath();
+	std::cout << "localPath: " << name_file << std::endl;
 	if ('/' == *(--name_file.end()))
 		name_file += _request.getLocation()->getIndexPath();
+	std::cout << "namefile: " << name_file << std::endl;
 	return name_file;
 }
 
@@ -82,7 +82,6 @@ void HttpManager::getMethod()
 	}
 	else
 	{
-//		std::cout <<"HERE : " << _request.getUrl().first << std::endl;
 		/*if (tryToGetFolder(_request.getUrl().first))
 		{
 			_respond = autoIndex(_request);

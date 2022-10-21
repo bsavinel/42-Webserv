@@ -44,6 +44,8 @@ class HttpManager
 		Server			_server;
 		t_socket		_socketClient;
 
+		std::string		buildLocalPath();
+
 		/*for outisde chose*/
 		bool			_Writeok;
 		bool			_Readok;

@@ -103,7 +103,8 @@ bool	HttpManager::applyMethod()
 		else if (_request.getMethod().first == "POST")
 			postMethod();
 		else if (_request.getMethod().first == "DELETE")
-			deleteMethod();
+			std::cout << _request.getUrl().first << std::endl;
+			//deleteMethod();
 		else
 			_isEnd = true;
 	}
@@ -115,6 +116,7 @@ void	HttpManager::initialize(const Server &server)
 	if (!_init)
 	{
 		_init = true;
+		std::cout << _request.getRequest();
 		_request.parser();
 		_request.setLocation(_request.findLocation(server));
 	}
@@ -141,12 +143,30 @@ void	HttpManager::canWrite()
 
 std::string HttpManager::determinateType()
 {
-	if (_name_file.rfind(".html") == _name_file.size() - 5 && _name_file.size() > 4)
+	if (_name_file.rfind(".html") == _name_file.size() - 5 && _name_file.size() >= 5)
 		return "text/html";
 	else if (_name_file.rfind(".css") == _name_file.size() - 4 && _name_file.size() >= 4)
 		return  "text/css";
 	else if (_name_file.rfind(".ico") == _name_file.size() - 4 && _name_file.size() >= 4)
 		return "image/x-icon";
+	else if (_name_file.rfind(".png") == _name_file.size() - 4 && _name_file.size() >= 4)
+		return "image/png";
+	else if (_name_file.rfind(".jpeg") == _name_file.size() - 5 && _name_file.size() >= 5)
+		return "image/jpeg";
 	_errorCode = 415;
 	return "";	
+}
+
+std::string HttpManager::buildLocalPath()
+{
+	std::string	localPath;
+	const std::string &locationPath = _request.getLocation()->getLocate();
+	const std::string &UrlPath = _request.getUrl().first;
+	const std::string &RootPath = _request.getLocation()->getRootPath();
+
+	localPath.insert(0, UrlPath, locationPath.size(), UrlPath.size() - locationPath.size());
+	if (localPath[0] == '/')
+		localPath.erase(0, 1);
+	localPath.insert(0, RootPath);
+	return localPath;
 }
