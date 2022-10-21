@@ -103,8 +103,7 @@ bool	HttpManager::applyMethod()
 		else if (_request.getMethod().first == "POST")
 			postMethod();
 		else if (_request.getMethod().first == "DELETE")
-			std::cout << _request.getUrl().first << std::endl;
-			//deleteMethod();
+			deleteMethod();
 		else
 			_isEnd = true;
 	}

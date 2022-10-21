@@ -14,6 +14,7 @@ void	HttpManager::deleteMethod()
 		path_to_remove.erase(--path_to_remove.end());
 		path_to_remove += _request.getUrl().first;
 		exit_code = remove(path_to_remove.c_str());
+		std::cout << "Path to remove: " << path_to_remove << std::endl;
 		if (exit_code == 0)
 			_respond = "HTTP/1.1 204 No Content\n\n";
 		else
@@ -25,6 +26,7 @@ void	HttpManager::deleteMethod()
 			else
 				_respond = "HTTP/1.1 403 Forbidden\n\n";
 		}
+		_headerBuild = true;
 	}
 	else
 		_isEnd = true;

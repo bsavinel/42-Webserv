@@ -10,7 +10,7 @@
 #include <map>
 #include <fcntl.h>
 
-static void print_status(t_epoll_event event)
+/*static void print_status(t_epoll_event event)
 {
 	std::cout << "le fd : " << event.data.fd << " a les evenement: ";
 	if (event.events & EPOLLIN)
@@ -26,7 +26,7 @@ static void print_status(t_epoll_event event)
 	if (event.events & EPOLLHUP)
 		std::cout << "EPOLLHUP";
 	std::cout << std::endl;
-}
+}*/
 
 void	clientEvent(Epoll &epoll, std::map<t_socket, HttpManager> &stockManager)
 {
@@ -41,7 +41,7 @@ void	clientEvent(Epoll &epoll, std::map<t_socket, HttpManager> &stockManager)
 			continue;
 		HttpManager &manager = stockManager.find(it_event->data.fd)->second;
 
-		print_status(*it_event);
+		//print_status(*it_event);
 		if (manager.getIsEnd() || it_event->events & EPOLLRDHUP || it_event->events & EPOLLERR)
 		{
 			std::cout << "Fd : " << it_event->data.fd << " a ete suprimer" << std::endl;
