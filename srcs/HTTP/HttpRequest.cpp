@@ -128,8 +128,23 @@ std::pair <std::string, bool>	HttpRequest::parseHeader(std::string &header, std:
 	return (option);
 }
 
+std::pair <std::string, bool> getMultiPartBoundary(std::string contentType)
+{
+	std::pair <std::string, bool>	boundary;
+	std::size_t boundaryPosition;
+
+	boundaryPosition = contentType.find("=") + 1;
+	boundary.first.assign(contentType, boundaryPosition, contentType.npos);
+	boundary.second = true;
+
+//	std::cout << "boundary = [" << boundary.first << "]" << std::endl;
+
+	return boundary;
+}
+
 void	HttpRequest::parser(/*std::string &request*/)
 {
+//	std::cout << "REQUEST\n" << _request << std::endl;
 	parseStartLine(_request);
 	_request.erase(0, _request.find('\n') + 1);
 
@@ -140,8 +155,13 @@ void	HttpRequest::parser(/*std::string &request*/)
 	_SecFetchDest = parseHeader(_request, "\nSec-Fetch-Dest: ");
 	_Referer = parseHeader(_request, "\nReferer: ");
 	_AcceptEncoding = parseHeader(_request, "\nAccept-Encoding: ");
-
-	_request.erase(0, _request.find("\r\n\r\n") + 1);
+	_contentType = parseHeader(_request, "\nContent-Type: ");
+	if (_contentType.first.find("multipart/form-data") == 0)
+	{
+		_boundary = getMultiPartBoundary(_contentType.first);
+		_contentType.first.erase(_contentType.first.find(';'), _contentType.first.npos);
+	}
+	_request.erase(0, _request.find("\r\n\r\n") + 4);
 }
 
 void	HttpRequest::concatenate(char *str)
@@ -222,23 +242,50 @@ std::pair<std::string, bool> HttpRequest::getDnt(void) const
 	return _dnt;
 }
 
+std::pair<std::string, bool>	HttpRequest::getContentType(void) const
+{
+	return _contentType;
+}
+
+std::pair<std::string, bool> HttpRequest::getBoundary(void) const
+{
+	return _boundary;
+}
+
 Location					*HttpRequest::getLocation(void) const
 {
 	return _location;
 }
 
+
 std::ostream &	operator<<( std::ostream & o, HttpRequest const & rhs)
 {
-	o << rhs.getMethod().first << std::endl;
-	o << rhs.getUrl().first << std::endl; 
-	o << rhs.getHttpVersion().first << std::endl;
-	o << rhs.getConnection().first << std::endl;
-	o << rhs.getAccept().first << std::endl;
-	o << rhs.getSecFetchSite().first << std::endl;
-	o << rhs.getSecFetchMode().first << std::endl;
-	o << rhs.getSecFetchDest().first << std::endl;
-	o << rhs.getReferer().first << std::endl;
-	o << rhs.getAcceptEncoding().first << std::endl;
-	o << rhs.getDnt().first << std::endl;
+
+	if (rhs.getMethod().second == true) 
+		o << rhs.getMethod().first << std::endl;
+	if (rhs.getUrl().second == true) 
+		o << rhs.getUrl().first << std::endl;
+	if (rhs.getHttpVersion().second == true)  
+		o << rhs.getHttpVersion().first << std::endl;
+	if (rhs.getConnection().second == true) 
+		o << rhs.getConnection().first << std::endl;
+	if (rhs.getAccept().second == true) 
+		o << rhs.getAccept().first << std::endl;
+	if (rhs.getSecFetchSite().second == true) 
+		o << rhs.getSecFetchSite().first << std::endl;
+	if (rhs.getSecFetchMode().second == true) 
+		o << rhs.getSecFetchMode().first << std::endl;
+	if (rhs.getSecFetchDest().second == true) 
+		o << rhs.getSecFetchDest().first << std::endl;
+	if (rhs.getReferer().second == true) 
+		o << rhs.getReferer().first << std::endl;
+	if (rhs.getAcceptEncoding().second == true) 
+		o << rhs.getAcceptEncoding().first << std::endl;
+	if (rhs.getDnt().second == true) 
+		o << rhs.getDnt().first << std::endl;
+	if (rhs.getContentType().second == true) 
+		o << rhs.getContentType().first << std::endl;
+	if (rhs.getBoundary().second == true) 
+		o << rhs.getBoundary().first << std::endl;
 	return o;
 }

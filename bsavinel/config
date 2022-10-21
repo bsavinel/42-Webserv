@@ -9,11 +9,12 @@ server
 		autoindex on;
 	}
 
-	location /methode/
+	location /methode
 	{
 		index index.html;
 		allow GET POST DELETE;
 		root ./bsavinel/site/;
+		cgi_pass .php ./www/bin/php-cgi;
 		autoindex on;
 	}
 

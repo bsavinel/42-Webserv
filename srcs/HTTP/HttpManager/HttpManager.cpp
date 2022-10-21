@@ -1,6 +1,7 @@
 #include "HttpManager.hpp"
 #include <sys/socket.h>
 #include <iostream>
+
 void	autoIndex(HttpRequest &request);
 
 HttpManager::HttpManager(t_socket socketClient)
@@ -13,6 +14,7 @@ HttpManager::HttpManager(t_socket socketClient)
 	_Writeok = false;
 	_headerBuild = false;
 	_file = -1;
+	_tmp_upload_fd = -1;
 }
 
 HttpManager::HttpManager(const HttpManager& rhs)
@@ -36,6 +38,7 @@ HttpManager		&HttpManager::operator=(const HttpManager& rhs)
 		_headerBuild = rhs._headerBuild;
 		_respond = rhs._respond;
         _request = rhs._request;
+		_tmp_upload_fd = rhs._tmp_upload_fd;
 	}
 	return *this;
 }
@@ -63,6 +66,8 @@ int HttpManager::receive()
 		buffer[i] = 0;
 	if ((ret = recv(_socketClient, buffer, LEN_TO_READ, MSG_DONTWAIT)) == -1)
 		return (-1);
+	std::string buff(buffer);
+	std::cout <<  "BUFFER=" << buff << std::endl <<  "=BUFFER" << std::endl;
 	_request.concatenate(buffer);
 	return (0);
 }
@@ -78,11 +83,15 @@ bool	HttpManager::applyMethod()
 	// std::cout << *(_request.getUrl().first.rbegin()) << std::endl;
 	// std::cout << "++++++++++++++++"<<std::endl;
 
-
 	if (_request.getMethod().first == "GET")
 		getMethod();
 	else if (_request.getMethod().first == "POST")
+	{
+		// std::cout << "================="<<std::endl;
+		// std::cout << _request.getRequest() << std::endl;
+		// std::cout << "================="<<std::endl;
 		postMethod();
+	}
 	else if (_request.getMethod().first == "DELETE")
 		deleteMethod();
 	else
