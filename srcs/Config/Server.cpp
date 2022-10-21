@@ -197,8 +197,8 @@ void Server::setConfig(std::vector<std::string>::iterator & it, std::vector<std:
 				if(!isdigit(arg[i]))
 					throw exceptWebserv("Error Config : client_max_body_size need to be a number between 0 and MAXINT");
 			}
-			ulong conv = atol(arg);
-			if (conv < 0 || conv > INT_MAX)
+			long conv = atol(arg);
+			if (conv > INT_MAX)
 				throw exceptWebserv("Error Config : client_max_body_size need to be a number between 0 and MAXINT");
 			this->client_max_body_size = atoi(arg);
 		}

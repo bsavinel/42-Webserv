@@ -60,7 +60,7 @@ void Location::setConfig(std::vector<std::string>::iterator & it, std::vector<st
 			std::string path =  *++it;
 			if(!is_dir_path(path))
 				throw exceptWebserv("Error Config : root value should be a path to a dir");
-			this->root_path = *++it;
+			this->root_path = path;
 		}
 		else if ((*it).compare("index") == 0 && (*(it + 1)) != ";")
 			this->index_path = *++it;
