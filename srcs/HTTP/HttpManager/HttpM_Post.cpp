@@ -6,55 +6,66 @@
 #include <fcntl.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <errno.h>
 
 int			g_nb_fd = 0;
 std::string	getNbForFileName( void );
-int openUploadFile( std::string fileName );
+int openUploadFile(  );
 
 
 void	HttpManager::postMethod()
 {
 	std::string nbForFileName;
 	std::string fileName;
-//	int			tmp_upload_fd;
-
-//	std::cout << "_tmp_upload_fd = [" << _tmp_upload_fd << "]" << std::endl;  
-	if (_tmp_upload_fd == -1)
+	int ret = 0;
+	if (_headerBuild == false)
 	{
-		std::cout << "OPEN" << std::endl;
-		nbForFileName	= getNbForFileName();
-		fileName		= "tmpUploadFile_" + nbForFileName;
-		_tmp_upload_fd	= openUploadFile(fileName);
+		if ((_tmp_upload_fd	= openUploadFile()) == -1)
+			return ;
+		_respond =  buildHeader(_respond.size(), 200);
+		_headerBuild = true;
 	}
-	if (_tmp_upload_fd == -1)
+	if (_tmpEnd == false)
 	{
-		perror("failed open: ");
-//		return ;
+		if ((ret = write(_tmp_upload_fd, _request.getRequest().c_str(), _request.getRequest().size())) == -1)
+			std::cout << "PROBLEM WRITE POST" << std::endl;
+		
+		// else if (ret < LEN_TO_READ)
+		// 	canWrite();
 	}
-
-//	unlink(fileName.c_str());
-//	std::cout << "fileName = [" << fileName << "]" << std::endl;  
-	// std::cout << "================="<<std::endl;
-	// std::cout << _request.getRequest() << std::endl;
-	// std::cout << "================="<<std::endl;
-	// _request.getRequest().clear();
-	// if (_request.getRequest().empty() == true)
-	// 	std::cout << "BONJOUR" << std::endl;
-	_isEnd = true;
-	_respond =  buildHeader(_respond.size(), 200);
+	if (_tmpEnd == true)
+	{
+		_isEnd = true;
+		return ;
+	}
+	if (_requestFullyReceive == true)
+	{
+		canWrite();
+		_tmpEnd = true;
+	}
+	_request.getRequest().clear();
+		//Is end = true quand la reponse est envoye
 }
 
-int openUploadFile( std::string fileName )
+int openUploadFile()
 {
-	int			tmp_upload_fd;
+	std::string	fileName;
+	std::string nbForFileName;
+	int			tmp_upload_fd = -1;
 ///	std::string nbForFileName	= getNbForFileName();
 //	std::string fileName		= "tmpUploadFile_" + nbForFileName;
 
-	tmp_upload_fd =  open(fileName.c_str(), O_CREAT | O_RDWR | O_EXCL);
+	do
+	{
+		nbForFileName	= getNbForFileName();
+		fileName		= "tmpUploadFile_" + nbForFileName;
+		tmp_upload_fd =  open(fileName.c_str(), O_CREAT | O_RDWR | O_EXCL, 0777);
 
-//	std::cout << fileName << std::endl;
-//	std::cout << tmp_upload_fd << std::endl;
+	}
+	while ((tmp_upload_fd == -1) && errno == EEXIST);
 
+	if (tmp_upload_fd == -1)
+		perror("failed open: ");
 	return tmp_upload_fd;
 }
 
@@ -62,9 +73,9 @@ std::string getNbForFileName( void )
 {
 	std::string nbForFileName;
 	std::stringstream ss;
-
-	ss << g_nb_fd;
+	static int nb_fd;
+	ss << nb_fd;
 	nbForFileName = ss.str();
-	g_nb_fd++;
+	nb_fd++;
 	return nbForFileName;
 }

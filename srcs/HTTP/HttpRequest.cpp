@@ -156,12 +156,19 @@ void	HttpRequest::parser(/*std::string &request*/)
 	_Referer = parseHeader(_request, "\nReferer: ");
 	_AcceptEncoding = parseHeader(_request, "\nAccept-Encoding: ");
 	_contentType = parseHeader(_request, "\nContent-Type: ");
+	_contentLength = parseHeader(_request, "\nContent-Length: ");
+	if (_contentLength.second == true)
+	{
+		_intContentLength = atoi(_contentLength.first.c_str());
+		std::cout << "_intContentLength" << _intContentLength <<std::endl;
+	}
 	if (_contentType.first.find("multipart/form-data") == 0)
 	{
 		_boundary = getMultiPartBoundary(_contentType.first);
 		_contentType.first.erase(_contentType.first.find(';'), _contentType.first.npos);
 	}
 	_request.erase(0, _request.find("\r\n\r\n") + 4);
+
 }
 
 void	HttpRequest::concatenate(char *str)
@@ -191,7 +198,7 @@ void	HttpRequest::setUrl(std::string const & url)
 	_url.second = true;
 }
 
-std::string	HttpRequest::getRequest(void) const
+std::string	&HttpRequest::getRequest(void)
 {
 	return _request;
 }

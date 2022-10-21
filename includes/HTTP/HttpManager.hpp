@@ -87,6 +87,8 @@ class HttpManager
 
 		std::string		_respond;
 		HttpRequest		_request;
+		bool			_requestFullyReceive;
+		bool			_tmpEnd;
 };
 
 #endif

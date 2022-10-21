@@ -14,7 +14,7 @@ class HttpRequest
 		void							concatenate(char *str);
 		void							erase(int index);
 
-		std::string						getRequest(void) const;
+		std::string						&getRequest(void);
 		std::pair<std::string, bool>	getMethod(void) const;
 		std::pair<std::string, bool>	getUrl(void) const; 
 		std::pair<std::string, bool>	getHttpVersion(void) const;
@@ -57,6 +57,8 @@ class HttpRequest
 		std::pair<std::string, bool> 	_dnt;
 		std::pair<std::string, bool> 	_contentType;
 		std::pair<std::string, bool>	_boundary;
+		std::pair<std::string, bool>	_contentLength;
+		int								_intContentLength;
 		//std::string _AcceptLanguage;
 		//std::string _sec_ch_ua;
 		//std::string _sec_ch_ua_mobile;

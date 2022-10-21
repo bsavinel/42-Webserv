@@ -14,6 +14,8 @@ HttpManager::HttpManager(t_socket socketClient)
 	_headerBuild = false;
 	_file = -1;
 	_tmp_upload_fd = -1;
+	_requestFullyReceive = false;
+	_tmpEnd = false;
 }
 
 HttpManager::HttpManager(const HttpManager& rhs)
@@ -49,11 +51,19 @@ HttpManager::~HttpManager()
 
 void	HttpManager::sender()
 {
+	int ret = 0;
+
 	if (_respond.size() > 0)
 	{
-		send(_socketClient, _respond.c_str(), _respond.size(), MSG_NOSIGNAL);
+//		std::cout << "size:" << _respond.size() << std::endl << "RESPONSE:" << std::endl  << _respond.c_str() << "/RESPONSE" << std::endl;
+		ret = send(_socketClient, _respond.c_str(), _respond.size(), MSG_NOSIGNAL);
+		if (ret == -1)
+			strerror(errno);
+		else
+			std::cout << "ret send:" << ret << std::endl;
 		_respond.clear();
 	}
+
 }
 
 int HttpManager::receive()
@@ -65,9 +75,15 @@ int HttpManager::receive()
 		buffer[i] = 0;
 	if ((ret = recv(_socketClient, buffer, LEN_TO_READ, MSG_DONTWAIT)) == -1)
 		return (-1);
+	if (ret < LEN_TO_READ)
+	{
+		std::cout <<  "Request FULLY READ" << std::endl;
+		_requestFullyReceive = true;
+	}
 	std::string buff(buffer);
-	std::cout <<  "BUFFER=" << buff << std::endl <<  "=BUFFER" << std::endl;
+	std::cout <<  "BUFFER=\n" << buff << "\n=BUFFER" << std::endl;
 	_request.concatenate(buffer);
+//	std::cout <<  "REQUEST=\n" << _request.getRequest().c_str() << "\n=REQUEST" << std::endl;
 	return (0);
 }
 
@@ -75,26 +91,14 @@ bool	HttpManager::applyMethod()
 {
 	if (!_isEnd)
 	{
-	// std::cout << "================="<<std::endl;
-	// std::cout << _request << std::endl;
-	// std::cout << "================="<<std::endl;
-	// 	std::cout << "++++++++++++++++"<<std::endl;
-	// std::cout << *(_request.getUrl().first.rbegin()) << std::endl;
-	// std::cout << "++++++++++++++++"<<std::endl;
-
-	if (_request.getMethod().first == "GET")
-		getMethod();
-	else if (_request.getMethod().first == "POST")
-	{
-		// std::cout << "================="<<std::endl;
-		// std::cout << _request.getRequest() << std::endl;
-		// std::cout << "================="<<std::endl;
-		postMethod();
-	}
-	else if (_request.getMethod().first == "DELETE")
-		deleteMethod();
-	else
-		_isEnd = true;
+		if (_request.getMethod().first == "GET")
+			getMethod();
+		else if (_request.getMethod().first == "POST")
+			postMethod();
+		else if (_request.getMethod().first == "DELETE")
+			deleteMethod();
+		else
+			_isEnd = true;
 	}
 	return _isEnd;
 }

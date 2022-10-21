@@ -11,7 +11,7 @@ std::string HttpManager::buildHeader(off_t contentLenght, int statusCode)
 	std::string	header;
 
 	(void)statusCode;
-	header += "HTTP/1.1 200 OK\n"; // TODO voir les image apres
+	header += "HTTP/1.1 200 OK\r\n"; // TODO voir les image apres
 	if (_request.getUrl().first.find("html") != std::string::npos)
 		header += "Content-Type: text/html\n";
 	else if (_request.getUrl().first.find("css") != std::string::npos)
@@ -25,8 +25,10 @@ std::string HttpManager::buildHeader(off_t contentLenght, int statusCode)
 	{
 		std::stringstream ss;
 		ss << contentLenght;
-		header += "Content-Length: " + ss.str() + "\n";
+		header += "Content-Length: " + ss.str() + "\r\n";
 	}
+	else
+		header += "Content-Length: 0\r\n";
 	header += "\n";
 	return header;
 }
@@ -77,7 +79,7 @@ void HttpManager::builRespondGet()
 	if (nb_char < LEN_TO_READ)
 		_isEnd = true;
 }
-
+ 
 void HttpManager::getMethod()
 {
 	std::string header;

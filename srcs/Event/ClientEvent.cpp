@@ -12,7 +12,7 @@
 
  void print_status(t_epoll_event event)
 {
-	std::cout << "le fd : " << event.data.fd << " a les evenement: ";
+//	std::cout << "le fd : " << event.data.fd << " a les evenement: ";
 	if (event.events & EPOLLIN)
 		std::cout << "EPOLLIN";
 	if (event.events & EPOLLOUT)
@@ -46,7 +46,7 @@ void	clientEvent(Epoll &epoll, std::map<t_socket, HttpManager> &stockManager)
 //		print_status(*it);
 		if (manager.getIsEnd() || it->events & EPOLLRDHUP || it->events & EPOLLERR)
 		{
-//			std::cout << "Fd : " << it->data.fd << " a ete suprimer" << std::endl;
+			std::cout << "Fd : " << it->data.fd << " a ete suprimer" << std::endl;
 			epoll.deleteClient(it->data.fd);
 			stockManager.erase(it->data.fd);
 			continue ;
@@ -55,7 +55,6 @@ void	clientEvent(Epoll &epoll, std::map<t_socket, HttpManager> &stockManager)
 
         if (it->events & EPOLLIN)
 		{
-			std::cout << "receive" << std::endl;
 			manager.receive();
 		}
 		if (manager.getInit() == false)
@@ -76,6 +75,9 @@ void	clientEvent(Epoll &epoll, std::map<t_socket, HttpManager> &stockManager)
 		}
 
 		if (it->events & EPOLLOUT)
+		{
+//			std::cout << "SENDER" << std::endl;
 			manager.sender();
+		}
 	}
 }
