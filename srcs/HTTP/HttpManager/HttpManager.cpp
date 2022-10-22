@@ -77,7 +77,8 @@ int HttpManager::receive()
 		return (-1);
 	if (ret < LEN_TO_READ)
 	{
-		std::cout <<  "Request FULLY READ" << std::endl;
+		std::cout <<  "Request FULLY READ : " << ret << std::endl;
+
 		_requestFullyReceive = true;
 	}
 	std::string buff(buffer);

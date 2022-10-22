@@ -160,7 +160,7 @@ void	HttpRequest::parser(/*std::string &request*/)
 	if (_contentLength.second == true)
 	{
 		_intContentLength = atoi(_contentLength.first.c_str());
-		std::cout << "_intContentLength" << _intContentLength <<std::endl;
+		std::cout << "_intContentLength: " << _intContentLength <<std::endl;
 	}
 	if (_contentType.first.find("multipart/form-data") == 0)
 	{
