@@ -89,6 +89,7 @@ class HttpManager
 		HttpRequest		_request;
 		bool			_requestFullyReceive;
 		bool			_tmpEnd;
+		int				_lenRead;
 };
 
 #endif

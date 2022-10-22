@@ -1,6 +1,7 @@
 #include "HttpManager.hpp"
 #include <sys/socket.h>
 #include <iostream>
+#include <unistd.h>
 void	autoIndex(HttpRequest &request);
 
 HttpManager::HttpManager(t_socket socketClient)
@@ -16,6 +17,7 @@ HttpManager::HttpManager(t_socket socketClient)
 	_tmp_upload_fd = -1;
 	_requestFullyReceive = false;
 	_tmpEnd = false;
+	_lenRead = 0;
 }
 
 HttpManager::HttpManager(const HttpManager& rhs)
@@ -40,6 +42,9 @@ HttpManager		&HttpManager::operator=(const HttpManager& rhs)
 		_respond = rhs._respond;
         _request = rhs._request;
 		_tmp_upload_fd = rhs._tmp_upload_fd;
+		_requestFullyReceive = rhs._requestFullyReceive;
+		_tmpEnd = rhs._tmpEnd;
+		_lenRead = rhs._lenRead;
 	}
 	return *this;
 }
@@ -73,16 +78,20 @@ int HttpManager::receive()
 
 	for (int i = 0; i < LEN_TO_READ + 1; i++)
 		buffer[i] = 0;
+//	usleep(1000);
 	if ((ret = recv(_socketClient, buffer, LEN_TO_READ, MSG_DONTWAIT)) == -1)
 		return (-1);
-	if (ret < LEN_TO_READ)
+	std::cout << "ret = " << ret << std::endl;
+	_lenRead += ret;
+	std::cout << _lenRead << " : " << _request.getContentLength().first;
+	if (_request.getContentLength().second == true &&  _lenRead >= _request.getContentLength().first)
 	{
 		std::cout <<  "Request FULLY READ : " << ret << std::endl;
 
+		std::string buff(buffer);
+		std::cout <<  "BUFFER=\n" << buffer << "\n=BUFFER" << std::endl;
 		_requestFullyReceive = true;
 	}
-	std::string buff(buffer);
-	std::cout <<  "BUFFER=\n" << buff << "\n=BUFFER" << std::endl;
 	_request.concatenate(buffer);
 //	std::cout <<  "REQUEST=\n" << _request.getRequest().c_str() << "\n=REQUEST" << std::endl;
 	return (0);

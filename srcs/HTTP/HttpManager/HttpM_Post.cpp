@@ -18,11 +18,13 @@ void	HttpManager::postMethod()
 	std::string nbForFileName;
 	std::string fileName;
 	int ret = 0;
+
 	if (_headerBuild == false)
 	{
 		if ((_tmp_upload_fd	= openUploadFile()) == -1)
 			return ;
-		_respond =  buildHeader(_respond.size(), 200);
+//		_respond =  buildHeader(_respond.size(), 200);
+		_respond = "HTTP/1.1 204 No Content\n\n";
 		_headerBuild = true;
 	}
 	if (_tmpEnd == false)
@@ -35,6 +37,7 @@ void	HttpManager::postMethod()
 	}
 	if (_tmpEnd == true)
 	{
+	//	_request.getRequest().clear();
 		_isEnd = true;
 		return ;
 	}

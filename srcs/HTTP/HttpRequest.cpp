@@ -159,8 +159,9 @@ void	HttpRequest::parser(/*std::string &request*/)
 	_contentLength = parseHeader(_request, "\nContent-Length: ");
 	if (_contentLength.second == true)
 	{
-		_intContentLength = atoi(_contentLength.first.c_str());
-		std::cout << "_intContentLength: " << _intContentLength <<std::endl;
+		_intContentLength.first = atoi(_contentLength.first.c_str());
+		_intContentLength.second = true;
+		std::cout << "_intContentLength: " << _intContentLength.first <<std::endl;
 	}
 	if (_contentType.first.find("multipart/form-data") == 0)
 	{
@@ -257,6 +258,12 @@ std::pair<std::string, bool>	HttpRequest::getContentType(void) const
 std::pair<std::string, bool> HttpRequest::getBoundary(void) const
 {
 	return _boundary;
+}
+
+
+std::pair<int, bool>	HttpRequest::getContentLength(void) const
+{
+	return _intContentLength;
 }
 
 Location					*HttpRequest::getLocation(void) const
