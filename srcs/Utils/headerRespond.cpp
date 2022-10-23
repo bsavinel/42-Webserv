@@ -3,7 +3,7 @@
 #include <sstream>
 #include <iostream>
 
-std::string HeaderRespond(off_t contentLenght, int statusCode, std::string type = std::string())
+std::string HeaderRespond (off_t contentLenght, int statusCode, std::string type = std::string())
 {
 	std::stringstream ss;
 	std::string	header;

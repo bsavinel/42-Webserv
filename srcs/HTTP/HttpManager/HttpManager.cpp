@@ -77,16 +77,12 @@ std::string	HttpManager::ErrorRespond()
 	std::string errResp;
 	Error err;
 
-	if (_request.getMethod().first == "GET")
+	if (_errorCode == 204)
+		errResp = "HTTP/1.1 204 No Content";
+	else
 	{
 		errResp = buildErrorPage(_errorCode);
 		errResp.insert(0, HeaderRespond(errResp.size(), _errorCode, "text/html"));
-	}
-	if (_request.getMethod().first == "DELETE")
-	{
-		std::stringstream ss;
-		ss << _errorCode;
-		errResp = "HTTP/1.1 " + ss.str() + " " + err.getError(_errorCode) + "\n\n";
 	}
 	_isEnd = true;
 	return errResp;

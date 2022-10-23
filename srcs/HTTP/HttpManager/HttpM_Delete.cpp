@@ -16,15 +16,15 @@ void	HttpManager::deleteMethod()
 		exit_code = remove(path_to_remove.c_str());
 		std::cout << "Path to remove: " << path_to_remove << std::endl;
 		if (exit_code == 0)
-			_respond = "HTTP/1.1 204 No Content\n\n";
+			_errorCode = 204;
 		else
 		{
 			if (errno == ENOENT)
-				_respond = "HTTP/1.1 404 Not Found\n\n";
+				_errorCode = 404;
 			else if (errno == EINVAL || errno == ENAMETOOLONG || errno == ELOOP)
-				_respond = "HTTP/1.1 400 Bad Request\n\n";
+				_errorCode = 400;
 			else
-				_respond = "HTTP/1.1 403 Forbidden\n\n";
+				_errorCode = 403;
 		}
 		_headerBuild = true;
 	}
