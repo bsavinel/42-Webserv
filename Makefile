@@ -28,7 +28,7 @@ SRCS =	Config/Config.cpp					\
 		HTTP/HttpManager/HttpManager.cpp	\
 		HTTP/HttpManager/autoIndex.cpp		\
 		HTTP/HttpRequest.cpp				\
-		Utils/buildErrorPage.cpp			\
+		Utils/builder.cpp					\
 		Utils/Error.cpp						\
 		Utils/exceptWebserv.cpp				\
 		Utils/utils.cpp						\
