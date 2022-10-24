@@ -36,10 +36,11 @@ int main(int ac, char **av)
 }
 
 
-/*int main(void)
-{
-	{
-	Error init;
-	}
-	std::cout << buildErrorPage(404);
-}*/
+// int main(void)
+// {
+// 	std::string path("http://localhost:8080/methode/getfile.html");
+
+	
+
+// 	std::cout << get_file_extension(path) << std::endl;
+// }

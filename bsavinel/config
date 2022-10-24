@@ -11,11 +11,11 @@ server
 		autoindex on;
 	}
 
-	location /methode
+	location /methode/
 	{
 		allow GET POST DELETE;
 		root ./bsavinel/site/methode/;
-		cgi_pass .php ./www/bin/php-cgi;
+		cgi_pass .test ./www/bin/test_cgi;
 		autoindex on;
 	}
 
@@ -23,6 +23,7 @@ server
 	{
 		allow GET POST DELETE;
 		root ./bsavinel/site/methode/test/;
+		cgi_pass .php ./www/bin/php-cgi;
 		autoindex on;
 		return 403 /error/403.html
 	}

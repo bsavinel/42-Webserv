@@ -21,6 +21,7 @@ std::vector<std::string>	split_vector(std::string str, std::string delimiter);
 int							checkbrackets(std::vector<std::string>::iterator it, std::vector<std::string> & splitted);
 bool						is_dir_path(std::string path);
 bool						is_file_path(std::string path);
+std::string					get_file_extension(std::string path);
 
 
 #endif

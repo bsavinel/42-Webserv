@@ -4,11 +4,12 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <iostream>
+#include <utils.hpp>
 
 std::string HttpManager::LocalPathFile_get()
 {
 	std::string name_file;
-
+	
 	name_file = buildLocalPath();
 	std::cout << "localPath: " << name_file << std::endl;
 	if ('/' == *(--name_file.end()))
@@ -39,7 +40,12 @@ void	HttpManager::initialize_get()
 	struct stat status;
 
 	if (1) // ? condition autoindex
-	{
+	{	
+		std::cout << "CGI  URL === " << _request.getUrl().first << std::endl;
+		std::cout << "CGI  extension and path related === " << _request.getLocation()->getCgiFileExtension() << _request.getLocation()->getCgiPathToScript() << std::endl;
+		std::cout << "CGI  URL extension  === " << get_file_extension(_request.getUrl().first) << std::endl;
+		//getURL
+		
 		_name_file = LocalPathFile_get();
 		OpenFile_get(_name_file);
 		if (_errorCode == 0)

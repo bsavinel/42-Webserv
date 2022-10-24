@@ -34,14 +34,14 @@ void	HttpManager::postMethod()
 
 //	unlink(fileName.c_str());
 //	std::cout << "fileName = [" << fileName << "]" << std::endl;  
-	std::cout << "================="<<std::endl;
-	std::cout << _request.getRequest() << std::endl;
-	std::cout << "================="<<std::endl;
+	// std::cout << "================="<<std::endl;
+	// std::cout << _request.getRequest() << std::endl;
+	// std::cout << "================="<<std::endl;
 	// _request.getRequest().clear();
-	// if (_request.getRequest().empty() == true)
-	// 	std::cout << "BONJOUR" << std::endl;
-	_isEnd = true;
-	_respond =  buildHeader(_respond.size(), 200);
+	// // if (_request.getRequest().empty() == true)
+	// // 	std::cout << "BONJOUR" << std::endl;
+	// _isEnd = true;
+	// _respond =  buildHeader(_respond.size(), 200);
 }
 
 int openUploadFile( std::string fileName )

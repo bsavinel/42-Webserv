@@ -45,6 +45,7 @@ class HttpManager
 		t_socket		_socketClient;
 
 		std::string		buildLocalPath();
+		std::string		builCgiPath();
 
 		/*for outisde chose*/
 		bool			_Writeok;

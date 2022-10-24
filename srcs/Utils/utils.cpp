@@ -130,3 +130,18 @@ bool	is_file_path(std::string path)
 		return(0);
 	return (1);
 }
+
+std::string get_file_extension(std::string path)
+{
+	std::string extension;
+			
+	if(path.find('.') != std::string::npos)
+	{
+		std::size_t start = path.find('.');
+		std::size_t nbr_to_cpy = path.size() - start;
+
+		extension = path.substr(start, nbr_to_cpy);
+	}
+
+	return(extension);
+}

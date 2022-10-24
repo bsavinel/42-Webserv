@@ -10,11 +10,7 @@
 #include <map>
 #include <fcntl.h>
 
-<<<<<<< HEAD
- void print_status(t_epoll_event event)
-=======
 /*static void print_status(t_epoll_event event)
->>>>>>> origin/Error_get
 {
 	std::cout << "le fd : " << event.data.fd << " a les evenement: ";
 	if (event.events & EPOLLIN)

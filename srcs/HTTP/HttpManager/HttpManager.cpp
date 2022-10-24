@@ -169,3 +169,17 @@ std::string HttpManager::buildLocalPath()
 	localPath.insert(0, RootPath);
 	return localPath;
 }
+
+std::string HttpManager::builCgiPath()
+{
+	std::string	cgi_path;
+	const std::string &locationPath = _request.getLocation()->getLocate();
+	const std::string &UrlPath = _request.getUrl().first;
+	const std::string &RootPath = _request.getLocation()->getCgiPathToScript();
+
+	cgi_path.insert(0, UrlPath, locationPath.size(), UrlPath.size() - locationPath.size());
+	if (cgi_path[0] == '/')
+		cgi_path.erase(0, 1);
+	cgi_path.insert(0, RootPath);
+	return cgi_path;
+}
