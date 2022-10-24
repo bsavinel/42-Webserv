@@ -8,6 +8,7 @@
 #include <sys/types.h>
 #include "Server.hpp"
 #include <sys/socket.h>
+#include <fstream>
 // TODO metre trois if pour repartir dans la methode adequate
 // TODO changer dans epoll le map des clients, pour lie au manager le fd
 // TODO mettre class Socket dans manager
@@ -41,6 +42,10 @@ class HttpManager
 
 		void				setModeChange(bool modeChange);
 
+	void	postMethodfstream();
+	std::ofstream		openUploadFilefstream();
+std::string getFileName();
+	void parseMultiPart(std::fstream &fstream);
 	private:
 
 		Server			_server;
@@ -78,7 +83,10 @@ class HttpManager
 
 		void			postMethod();
 		int				_tmp_upload_fd;
-
+		std::ifstream	_tmp_upload_i;
+		std::ofstream	_tmp_upload_o;
+		std::fstream	_tmp_upload;
+		std::string 	_tmpFileName;
 		/*delete methode*/
 
 		void			deleteMethod();

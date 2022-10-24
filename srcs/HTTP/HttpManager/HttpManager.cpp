@@ -18,6 +18,8 @@ HttpManager::HttpManager(t_socket socketClient)
 	_requestFullyReceive = false;
 	_tmpEnd = false;
 	_lenRead = 0;
+//	_tmp_upload_i = false;
+//	_tmp_upload_o = false;
 }
 
 HttpManager::HttpManager(const HttpManager& rhs)
@@ -45,6 +47,8 @@ HttpManager		&HttpManager::operator=(const HttpManager& rhs)
 		_requestFullyReceive = rhs._requestFullyReceive;
 		_tmpEnd = rhs._tmpEnd;
 		_lenRead = rhs._lenRead;
+	//	_tmp_upload_i = rhs._tmp_upload_i;
+	//	_tmp_upload_o = rhs._tmp_upload_o;
 	}
 	return *this;
 }
