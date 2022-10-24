@@ -10,8 +10,8 @@
 #include "Error.hpp"
 #include "HttpRequest.hpp"
 
-
 void	autoIndex(HttpRequest &request);
+
 
 int main(int ac, char **av)
 {
@@ -34,3 +34,12 @@ int main(int ac, char **av)
 		std::cout << "Missing configuration file" << std::endl;
 	return(EXIT_SUCCESS);
 }
+
+
+/*int main(void)
+{
+	{
+	Error init;
+	}
+	std::cout << buildErrorPage(404);
+}*/

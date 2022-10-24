@@ -1,6 +1,8 @@
 #include "HttpManager.hpp"
 #include <sys/socket.h>
 #include <iostream>
+#include <sstream>
+#include "Error.hpp"
 
 void	autoIndex(HttpRequest &request);
 
@@ -13,6 +15,7 @@ HttpManager::HttpManager(t_socket socketClient)
 	_isEnd = false;
 	_Writeok = false;
 	_headerBuild = false;
+	_errorCode = 0;
 	_file = -1;
 	_tmp_upload_fd = -1;
 }
@@ -26,6 +29,7 @@ HttpManager		&HttpManager::operator=(const HttpManager& rhs)
 {
 	if (this != &rhs)
 	{
+		_errorCode = rhs._errorCode;
 		_server = rhs._server;
         _socketClient = rhs._socketClient;
         _Writeok = rhs._Writeok;
@@ -72,30 +76,36 @@ int HttpManager::receive()
 	return (0);
 }
 
+std::string	HttpManager::ErrorRespond()
+{
+	std::string errResp;
+	Error err;
+
+	if (_errorCode == 204)
+		errResp = "HTTP/1.1 204 No Content";
+	else
+	{
+		errResp = buildErrorPage(_errorCode);
+		errResp.insert(0, HeaderRespond(errResp.size(), _errorCode, "text/html"));
+	}
+	_isEnd = true;
+	return errResp;
+}
+
 bool	HttpManager::applyMethod()
 {
 	if (!_isEnd)
 	{
-	// std::cout << "================="<<std::endl;
-	// std::cout << _request << std::endl;
-	// std::cout << "================="<<std::endl;
-	// 	std::cout << "++++++++++++++++"<<std::endl;
-	// std::cout << *(_request.getUrl().first.rbegin()) << std::endl;
-	// std::cout << "++++++++++++++++"<<std::endl;
-
-	if (_request.getMethod().first == "GET")
-		getMethod();
-	else if (_request.getMethod().first == "POST")
-	{
-		// std::cout << "================="<<std::endl;
-		// std::cout << _request.getRequest() << std::endl;
-		// std::cout << "================="<<std::endl;
-		postMethod();
-	}
-	else if (_request.getMethod().first == "DELETE")
-		deleteMethod();
-	else
-		_isEnd = true;
+		if (_errorCode != 0)
+			_respond = ErrorRespond();
+		else if (_request.getMethod().first == "GET")
+			getMethod();
+		else if (_request.getMethod().first == "POST")
+			postMethod();
+		else if (_request.getMethod().first == "DELETE")
+			deleteMethod();
+		else
+			_isEnd = true;
 	}
 	return _isEnd;
 }
@@ -105,6 +115,7 @@ void	HttpManager::initialize(const Server &server)
 	if (!_init)
 	{
 		_init = true;
+		std::cout << _request.getRequest();
 		_request.parser();
 		_request.setLocation(_request.findLocation(server));
 	}
@@ -127,4 +138,34 @@ void	HttpManager::canWrite()
 		_Writeok = true;
 		_modeChange = true;
 	}
+}
+
+std::string HttpManager::determinateType()
+{
+	if (_name_file.rfind(".html") == _name_file.size() - 5 && _name_file.size() >= 5)
+		return "text/html";
+	else if (_name_file.rfind(".css") == _name_file.size() - 4 && _name_file.size() >= 4)
+		return  "text/css";
+	else if (_name_file.rfind(".ico") == _name_file.size() - 4 && _name_file.size() >= 4)
+		return "image/x-icon";
+	else if (_name_file.rfind(".png") == _name_file.size() - 4 && _name_file.size() >= 4)
+		return "image/png";
+	else if (_name_file.rfind(".jpeg") == _name_file.size() - 5 && _name_file.size() >= 5)
+		return "image/jpeg";
+	_errorCode = 415;
+	return "";	
+}
+
+std::string HttpManager::buildLocalPath()
+{
+	std::string	localPath;
+	const std::string &locationPath = _request.getLocation()->getLocate();
+	const std::string &UrlPath = _request.getUrl().first;
+	const std::string &RootPath = _request.getLocation()->getRootPath();
+
+	localPath.insert(0, UrlPath, locationPath.size(), UrlPath.size() - locationPath.size());
+	if (localPath[0] == '/')
+		localPath.erase(0, 1);
+	localPath.insert(0, RootPath);
+	return localPath;
 }

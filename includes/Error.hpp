@@ -6,6 +6,8 @@
 # include <fcntl.h>
 # include "exceptWebserv.hpp"
 
+std::string buildErrorPage(int err);
+
 class Error
 {
 	public :

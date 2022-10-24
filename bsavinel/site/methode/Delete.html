@@ -1,7 +1,33 @@
 <body>
 	<h1>Delte page</h1>
 	<a href="/">Go to Menu</a>
-	<form action="/methode/" method="delete" enctype="multipart/form-data">
-		<button type="submit">ne pas toucher, c'est pas marque pour la blague</button>
-	</form>
+	<a data-confirm="Are you sure?" data-method="delete" href="/methode/destroy" rel="nofollow">Delete</a>
+	<button id="delete-button">DELETE</button>
 </body>
+
+<script>
+	class DeleteHTTP {
+	
+	async delete(url) {
+		const response = await fetch(url, {
+			method: 'DELETE',
+			headers: {
+				'Content-type': 'application/json'
+			}
+		});
+		const resData = 'resource deleted...';
+		return resData;
+		}
+	}
+
+	const http = new DeleteHTTP;
+	let button = document.getElementById("delete-button");
+
+	button.addEventListener("click", () => {
+		console.log("clicked");
+		http.delete('http://localhost:8080/methode/Destroy')
+		.then(data => console.log(data))
+		.catch(err => console.log(err))
+	});
+
+</script>
