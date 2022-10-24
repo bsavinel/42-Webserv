@@ -4,7 +4,7 @@
 #include <sstream>
 #include "Error.hpp"
 
-void	autoIndex(HttpRequest &request);
+void	autoIndex(HttpRequest &request, HttpManager &manager);
 
 HttpManager::HttpManager(t_socket socketClient)
 {
@@ -93,7 +93,10 @@ bool	HttpManager::applyMethod()
 	if (!_isEnd)
 	{
 		if (_errorCode != 0)
+		{
+			_respond.clear();
 			_respond = ErrorRespond();
+		}
 		else if (_request.getMethod().first == "GET")
 			getMethod();
 		else if (_request.getMethod().first == "POST")
@@ -111,7 +114,6 @@ void	HttpManager::initialize(const Server &server)
 	if (!_init)
 	{
 		_init = true;
-		std::cout << _request.getRequest();
 		_request.parser();
 		_request.setLocation(_request.findLocation(server));
 	}
@@ -150,18 +152,4 @@ std::string HttpManager::determinateType()
 		return "image/jpeg";
 	_errorCode = 415;
 	return "";	
-}
-
-std::string HttpManager::buildLocalPath()
-{
-	std::string	localPath;
-	const std::string &locationPath = _request.getLocation()->getLocate();
-	const std::string &UrlPath = _request.getUrl().first;
-	const std::string &RootPath = _request.getLocation()->getRootPath();
-
-	localPath.insert(0, UrlPath, locationPath.size(), UrlPath.size() - locationPath.size());
-	if (localPath[0] == '/')
-		localPath.erase(0, 1);
-	localPath.insert(0, RootPath);
-	return localPath;
 }

@@ -35,3 +35,8 @@ void	HttpManager::setModeChange(bool modeChange)
 {
 	_modeChange = modeChange;
 }
+
+void	HttpManager::setErrorCode(int errorCode)
+{
+	_errorCode = errorCode;
+}

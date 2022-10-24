@@ -3,7 +3,7 @@
 #include <iostream>
 #include <dirent.h>
 
-std::string	autoIndex(HttpRequest &request)
+std::string	autoIndex(HttpRequest &request, HttpManager &manager)
 {
 	(void)(request);
 
@@ -13,8 +13,19 @@ std::string	autoIndex(HttpRequest &request)
 	std::string		dirPath;
 	std::string		fileName;
 
-	dirPath		= constructPatchFromLocationBlock(request.getLocation(), request.getUrl().first);
+	dirPath		= buildLocalPath(request);
 	dir			= opendir(dirPath.c_str());
+
+	if (dir == NULL)
+	{
+		if (errno == EACCES)
+			manager.setErrorCode(401);
+		else if (errno == ENOENT || errno == ENOTDIR)
+			manager.setErrorCode(404);
+		else if (errno == EMFILE || errno == ENFILE || errno == ENOMEM)
+			manager.setErrorCode(500);
+		return autoIndexHtmlPage;
+	}
 
 	autoIndexHtmlPage += insertHtmlHeader("\"Auto Index\"");
 
@@ -99,7 +110,7 @@ std::string getParentFolderPath(std::string const & folderPath)
 {
 	std::string		parentFolder(folderPath);
 
-	std::cout << "folderPath : " << folderPath << std::endl;
+	//std::cout << "folderPath : " << folderPath << std::endl;
 	if (*(parentFolder.rbegin()) == '/')
 		parentFolder.erase(parentFolder.length() - 1, 1);
 	parentFolder.erase(parentFolder.find_last_of('/') + 1, parentFolder.npos);

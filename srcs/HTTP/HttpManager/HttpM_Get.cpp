@@ -5,15 +5,23 @@
 #include <unistd.h>
 #include <iostream>
 
+bool	HttpManager::autoIndexRequired()
+{
+	std::string name;
+
+	name = buildLocalPath(_request);
+	if (name[name.size() - 1] == '/' && _request.getLocation()->getAutoPath() && _request.getLocation()->getIndexPath().empty())
+		return true;
+	return false;
+}
+
 std::string HttpManager::LocalPathFile_get()
 {
 	std::string name_file;
 
-	name_file = buildLocalPath();
-	std::cout << "localPath: " << name_file << std::endl;
-	if ('/' == *(--name_file.end()))
+	name_file = buildLocalPath(_request);
+	if (_request.getUrl().first == _request.getLocation()->getLocate())
 		name_file += _request.getLocation()->getIndexPath();
-	std::cout << "namefile: " << name_file << std::endl;
 	return name_file;
 }
 
@@ -76,20 +84,30 @@ void HttpManager::getMethod()
 	canWrite();
 	if (_headerBuild == false)
 	{
-		//if (!tryToGetFolder(_request.getUrl().first))
+		_boolAutoIndex = autoIndexRequired();
+		if (!_boolAutoIndex)
 			initialize_get();
 		_headerBuild = true;
 	}
 	else
 	{
-		/*if (tryToGetFolder(_request.getUrl().first))
+		if (_boolAutoIndex)
 		{
-			_respond = autoIndex(_request);
-			header = HeaderRespond(_respond.size(), 200, "text/html");
-			_respond = header + _respond;
-			_isEnd = true;
+			_respond = autoIndex(_request, *this);
+			if (_errorCode == 0)
+			{
+				header = HeaderRespond(_respond.size(), 200, "text/html");
+				_respond = header + _respond;
+				_isEnd = true;
+			}
+			else
+			{
+				_respond.clear();
+				_respond = ErrorRespond();
+				_isEnd = true;
+			}
 		}
-		else*/
+		else
 			builRespondGet();
 	}
 	if (_isEnd == true && _file != -1)
