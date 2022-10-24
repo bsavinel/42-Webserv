@@ -20,13 +20,13 @@ typedef struct s_multipart_param
 	std::pair<std::string, bool>	contentType;
 }	t_multipart_param;
 
-std::string	getParamBoundary(std::string boundaryHeader)
+t_multipart_param	getParamBoundary(std::string boundaryHeader)
 {
 	t_multipart_param multipart_param;
 	std::string toFind;
-	int startPos;
-	int endPos;
-	int subStrLen;
+	std::string::size_type startPos;
+	std::string::size_type endPos;
+	std::string::size_type subStrLen;
 
 	toFind = "Content-Disposition: ";
 	
@@ -60,6 +60,7 @@ std::string	getParamBoundary(std::string boundaryHeader)
 		multipart_param.contentType.first = boundaryHeader.substr(startPos, subStrLen);
 		multipart_param.contentType.second = true;
 	}
+	return multipart_param;
 }
 
 void HttpManager::parseMultiPart(std::fstream &fstream)
@@ -71,21 +72,36 @@ void HttpManager::parseMultiPart(std::fstream &fstream)
 	std::string BoundaryEndtoFind;	
 	std::string boundaryHeader;
 
+
+
+//	int count = 0;
+
 	BoundaryStartToFind = "--" + _request.getBoundary().first;
 	BoundaryEndtoFind = "--" + _request.getBoundary().first + "--";
 	fstream.seekg(std::fstream::beg);
-	while (fstream.eof())
+	while (fstream.eof() == false)
 	{
 		getline(fstream, str);
-		if (str.find(BoundaryStartToFind))
+		std::cout << "1:" << str << std::endl;
+		getline(fstream, str);
+	//	std::cout << "2:" << str << std::endl;
+		if (str.find(BoundaryStartToFind) != str.npos)
 		{
 			getline(fstream, str);
-			while (str.compare("\n") != 0)
-			{
-				boundaryHeader += str;
-				getline(fstream, str);
-			}
-			multipart_param = getParamBoundary(boundaryHeader);
+			std::cout << "2:"  << str << std::endl;
+			if (str.compare("\r\n") == 0)
+				std::cout << "ALERTE" << std::endl;
+			// while (str.compare("\r") != 0)
+			// {
+			// 	boundaryHeader += str;
+			// 	getline(fstream, str);
+			// std::cout << "3:" << str <<std::endl;
+			// count ++;
+			// if ( count == 4)
+			// 	exit(0);
+			// }
+//			multipart_param = getParamBoundary(boundaryHeader);
+//			std::cout << "contentDisposition" << multipart_param.contentDisposition.first << std::endl;
 		}
 	}
 	std::cout << "str parseMultiPart"<< std::endl;
