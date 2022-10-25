@@ -5,9 +5,10 @@
 # include "define.hpp"
 # include "define.hpp"
 # include "HttpRequest.hpp"
-#include <sys/types.h>
-#include "Server.hpp"
-#include <sys/socket.h>
+# include <sys/types.h>
+# include "Server.hpp"
+# include <sys/socket.h>
+# include <Cgi.hpp>
 
 std::string HeaderRespond(off_t contentLenght, int statusCode, std::string type = std::string());
 
@@ -22,7 +23,7 @@ class HttpManager
 
 		HttpManager			&operator=(const HttpManager& rhs);
 
-		bool				applyMethod();
+		bool				applyMethod(const Server &server);
 		int					receive( void );
 		void				sender();
 		void				initialize(const Server &server);
@@ -34,6 +35,7 @@ class HttpManager
 		const bool			&getReadOk() const;
 		const bool    		&getIsEnd() const;
 		const bool			&getModeChange() const;
+		HttpRequest			&getRequest() const;
 		const std::string	&getResponse() const;
 
 		void				setModeChange(bool modeChange);
@@ -41,11 +43,10 @@ class HttpManager
 	private:
 
 		int				_errorCode;
-		Server			_server;
 		t_socket		_socketClient;
+		Cgi				_cgi;
 
 		std::string		buildLocalPath();
-		std::string		builCgiPath();
 
 		/*for outisde chose*/
 		bool			_Writeok;

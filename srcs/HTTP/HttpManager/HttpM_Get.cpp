@@ -41,11 +41,6 @@ void	HttpManager::initialize_get()
 
 	if (1) // ? condition autoindex
 	{	
-		std::cout << "CGI  URL === " << _request.getUrl().first << std::endl;
-		std::cout << "CGI  extension and path related === " << _request.getLocation()->getCgiFileExtension() << _request.getLocation()->getCgiPathToScript() << std::endl;
-		std::cout << "CGI  URL extension  === " << get_file_extension(_request.getUrl().first) << std::endl;
-		//getURL
-		
 		_name_file = LocalPathFile_get();
 		OpenFile_get(_name_file);
 		if (_errorCode == 0)

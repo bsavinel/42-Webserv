@@ -22,6 +22,8 @@ int							checkbrackets(std::vector<std::string>::iterator it, std::vector<std::
 bool						is_dir_path(std::string path);
 bool						is_file_path(std::string path);
 std::string					get_file_extension(std::string path);
+char						*ft_itoa(int n);
+
 
 
 #endif

@@ -21,6 +21,11 @@ const bool	&HttpManager::getIsEnd() const
 	return _isEnd;
 }
 
+HttpRequest &HttpManager::getRequest() const
+{
+	return _request;
+}
+
 const std::string &HttpManager::getResponse() const
 {
 	return _respond;

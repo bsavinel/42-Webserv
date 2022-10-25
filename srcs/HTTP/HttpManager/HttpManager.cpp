@@ -30,7 +30,6 @@ HttpManager		&HttpManager::operator=(const HttpManager& rhs)
 	if (this != &rhs)
 	{
 		_errorCode = rhs._errorCode;
-		_server = rhs._server;
         _socketClient = rhs._socketClient;
         _Writeok = rhs._Writeok;
 		_Readok = rhs._Readok;
@@ -92,12 +91,21 @@ std::string	HttpManager::ErrorRespond()
 	return errResp;
 }
 
-bool	HttpManager::applyMethod()
+bool	HttpManager::applyMethod(const Server &server)
 {
 	if (!_isEnd)
 	{
 		if (_errorCode != 0)
 			_respond = ErrorRespond();
+		else if(_request.getLocation()->getCgiFileExtension() == get_file_extension(_request.getUrl().first))
+		{
+			std::cout << "______CGI EXECUTION HERE______" << std::endl;
+
+			//retour du cgi --> buff
+			//stocker retour du cgi 
+			//send au client(buff)
+			_isEnd = true;
+		}
 		else if (_request.getMethod().first == "GET")
 			getMethod();
 		else if (_request.getMethod().first == "POST")
@@ -168,18 +176,4 @@ std::string HttpManager::buildLocalPath()
 		localPath.erase(0, 1);
 	localPath.insert(0, RootPath);
 	return localPath;
-}
-
-std::string HttpManager::builCgiPath()
-{
-	std::string	cgi_path;
-	const std::string &locationPath = _request.getLocation()->getLocate();
-	const std::string &UrlPath = _request.getUrl().first;
-	const std::string &RootPath = _request.getLocation()->getCgiPathToScript();
-
-	cgi_path.insert(0, UrlPath, locationPath.size(), UrlPath.size() - locationPath.size());
-	if (cgi_path[0] == '/')
-		cgi_path.erase(0, 1);
-	cgi_path.insert(0, RootPath);
-	return cgi_path;
 }
