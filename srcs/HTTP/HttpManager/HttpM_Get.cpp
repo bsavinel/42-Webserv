@@ -77,7 +77,7 @@ void HttpManager::builRespondGet()
 		_isEnd = true;
 }
 
-void HttpManager::getMethod()
+void HttpManager::getMethod(const Server &server)
 {
 	std::string header;
 
@@ -98,14 +98,13 @@ void HttpManager::getMethod()
 			{
 				header = HeaderRespond(_respond.size(), 200, "text/html");
 				_respond = header + _respond;
-				_isEnd = true;
 			}
 			else
 			{
 				_respond.clear();
-				_respond = ErrorRespond();
-				_isEnd = true;
+				_respond = ErrorRespond(server);
 			}
+			_isEnd = true;
 		}
 		else
 			builRespondGet();

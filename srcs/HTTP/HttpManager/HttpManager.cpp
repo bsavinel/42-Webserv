@@ -72,11 +72,12 @@ int HttpManager::receive()
 	return (0);
 }
 
-std::string	HttpManager::ErrorRespond()
+std::string	HttpManager::ErrorRespond(const Server &server)
 {
 	std::string errResp;
 	Error err;
 
+	(void)server;
 	if (_errorCode == 204)
 		errResp = "HTTP/1.1 204 No Content";
 	else
@@ -88,17 +89,17 @@ std::string	HttpManager::ErrorRespond()
 	return errResp;
 }
 
-bool	HttpManager::applyMethod()
+bool	HttpManager::applyMethod(const Server &server)
 {
 	if (!_isEnd)
 	{
 		if (_errorCode != 0)
 		{
 			_respond.clear();
-			_respond = ErrorRespond();
+			_respond = ErrorRespond(server);
 		}
 		else if (_request.getMethod().first == "GET")
-			getMethod();
+			getMethod(server);
 		else if (_request.getMethod().first == "POST")
 			postMethod();
 		else if (_request.getMethod().first == "DELETE")

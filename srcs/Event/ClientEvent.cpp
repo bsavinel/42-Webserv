@@ -56,7 +56,7 @@ void	clientEvent(Epoll &epoll, std::map<t_socket, HttpManager> &stockManager)
 	
 		if (manager.getInit() == false)
 			manager.initialize(socketClient.find(it_event->data.fd)->second);
-		manager.applyMethod();
+		manager.applyMethod(socketClient.find(it_event->data.fd)->second);
 
 		if (manager.getModeChange() && manager.getWriteOk())
 		{

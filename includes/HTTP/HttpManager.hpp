@@ -22,7 +22,7 @@ class HttpManager
 
 		HttpManager			&operator=(const HttpManager& rhs);
 
-		bool				applyMethod();
+		bool				applyMethod(const Server &server);
 		int					receive( void );
 		void				sender();
 		void				initialize(const Server &server);
@@ -63,7 +63,7 @@ class HttpManager
 		/*Get methode*/
 
 		std::string		LocalPathFile_get();
-		void			getMethod();
+		void			getMethod(const Server &server);
 		void			OpenFile_get(std::string &file_name);
 		void			initialize_get();
 		void			builRespondGet();
@@ -84,7 +84,7 @@ class HttpManager
 
 		/*Reponse Requete*/
 
-		std::string		ErrorRespond();
+		std::string		ErrorRespond(const Server &server);
 		std::string		_respond;
 		HttpRequest		_request;
 };
