@@ -1,7 +1,10 @@
 #include "HttpManager.hpp"
 #include <sys/socket.h>
 #include <iostream>
-void	autoIndex(HttpRequest &request);
+#include <sstream>
+#include "Error.hpp"
+
+void	autoIndex(HttpRequest &request, HttpManager &manager);
 
 HttpManager::HttpManager(t_socket socketClient)
 {
@@ -12,6 +15,7 @@ HttpManager::HttpManager(t_socket socketClient)
 	_isEnd = false;
 	_Writeok = false;
 	_headerBuild = false;
+	_errorCode = 0;
 	_file = -1;
 }
 
@@ -24,6 +28,7 @@ HttpManager		&HttpManager::operator=(const HttpManager& rhs)
 {
 	if (this != &rhs)
 	{
+		_errorCode = rhs._errorCode;
 		_server = rhs._server;
         _socketClient = rhs._socketClient;
         _Writeok = rhs._Writeok;
@@ -67,26 +72,39 @@ int HttpManager::receive()
 	return (0);
 }
 
+std::string	HttpManager::ErrorRespond()
+{
+	std::string errResp;
+	Error err;
+
+	if (_errorCode == 204)
+		errResp = "HTTP/1.1 204 No Content";
+	else
+	{
+		errResp = buildErrorPage(_errorCode);
+		errResp.insert(0, HeaderRespond(errResp.size(), _errorCode, "text/html"));
+	}
+	_isEnd = true;
+	return errResp;
+}
+
 bool	HttpManager::applyMethod()
 {
 	if (!_isEnd)
 	{
-	// std::cout << "================="<<std::endl;
-	// std::cout << _request << std::endl;
-	// std::cout << "================="<<std::endl;
-	// 	std::cout << "++++++++++++++++"<<std::endl;
-	// std::cout << *(_request.getUrl().first.rbegin()) << std::endl;
-	// std::cout << "++++++++++++++++"<<std::endl;
-
-
-	if (_request.getMethod().first == "GET")
-		getMethod();
-	else if (_request.getMethod().first == "POST")
-		postMethod();
-	else if (_request.getMethod().first == "DELETE")
-		deleteMethod();
-	else
-		_isEnd = true;
+		if (_errorCode != 0)
+		{
+			_respond.clear();
+			_respond = ErrorRespond();
+		}
+		else if (_request.getMethod().first == "GET")
+			getMethod();
+		else if (_request.getMethod().first == "POST")
+			postMethod();
+		else if (_request.getMethod().first == "DELETE")
+			deleteMethod();
+		else
+			_isEnd = true;
 	}
 	return _isEnd;
 }
@@ -118,4 +136,20 @@ void	HttpManager::canWrite()
 		_Writeok = true;
 		_modeChange = true;
 	}
+}
+
+std::string HttpManager::determinateType()
+{
+	if (_name_file.rfind(".html") == _name_file.size() - 5 && _name_file.size() >= 5)
+		return "text/html";
+	else if (_name_file.rfind(".css") == _name_file.size() - 4 && _name_file.size() >= 4)
+		return  "text/css";
+	else if (_name_file.rfind(".ico") == _name_file.size() - 4 && _name_file.size() >= 4)
+		return "image/x-icon";
+	else if (_name_file.rfind(".png") == _name_file.size() - 4 && _name_file.size() >= 4)
+		return "image/png";
+	else if (_name_file.rfind(".jpeg") == _name_file.size() - 5 && _name_file.size() >= 5)
+		return "image/jpeg";
+	_errorCode = 415;
+	return "";	
 }

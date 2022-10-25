@@ -8,11 +8,8 @@
 #include <sys/types.h>
 #include "Server.hpp"
 #include <sys/socket.h>
-// TODO metre trois if pour repartir dans la methode adequate
-// TODO changer dans epoll le map des clients, pour lie au manager le fd
-// TODO mettre class Socket dans manager
-// TODO changer ServeurEvent et ClientEvent
-// TODO lie le serveur au fd dans socket
+
+std::string HeaderRespond(off_t contentLenght, int statusCode, std::string type = std::string());
 
 class HttpManager
 {
@@ -40,11 +37,14 @@ class HttpManager
 		const std::string	&getResponse() const;
 
 		void				setModeChange(bool modeChange);
+		void				setErrorCode(int statusCode);
 
 	private:
 
+		int				_errorCode;
 		Server			_server;
 		t_socket		_socketClient;
+
 
 		/*for outisde chose*/
 		bool			_Writeok;
@@ -55,10 +55,9 @@ class HttpManager
 
 		void			canRead();
 		void			canWrite();
-		std::string 	buildHeader(off_t contentLenght, int statusCode);
+		std::string		determinateType();
 
 		/*initialisation*/
-
 
 
 		/*Get methode*/
@@ -67,9 +66,10 @@ class HttpManager
 		void			getMethod();
 		void			OpenFile_get(std::string &file_name);
 		void			initialize_get();
-		void 			buildHeaderGet();
 		void			builRespondGet();
+		bool			autoIndexRequired();
 
+		bool			_boolAutoIndex;
 		int				_file;
 		std::string		_name_file;
 		bool			_headerBuild;
@@ -84,6 +84,7 @@ class HttpManager
 
 		/*Reponse Requete*/
 
+		std::string		ErrorRespond();
 		std::string		_respond;
 		HttpRequest		_request;
 };

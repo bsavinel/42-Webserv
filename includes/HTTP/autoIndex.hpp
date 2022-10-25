@@ -5,7 +5,7 @@
 #include "iostream"
 #include <dirent.h>
 
-std::string	autoIndex(HttpRequest &request);
+std::string	autoIndex(HttpRequest &request, HttpManager &manager);
 int	tryToGetFolder(std::string url);
 int	isRootDirectory(std::string fileName);
 std::string getParentFolderPath(std::string const & folderPath);

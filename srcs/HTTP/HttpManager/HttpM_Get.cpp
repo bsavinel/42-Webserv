@@ -3,44 +3,25 @@
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <unistd.h>
-#include <sstream>
 #include <iostream>
 
-std::string HttpManager::buildHeader(off_t contentLenght, int statusCode)
+bool	HttpManager::autoIndexRequired()
 {
-	std::string	header;
+	std::string name;
 
-	(void)statusCode;
-	header += "HTTP/1.1 200 OK\n"; // TODO voir les image apres
-	if (_request.getUrl().first.find("html") != std::string::npos)
-		header += "Content-Type: text/html\n";
-	else if (_request.getUrl().first.find("css") != std::string::npos)
-		header += "Content-Type: text/css\n";
-	else if (_request.getUrl().first.find("ico") != std::string::npos)
-		header += "Content-Type: image/x-icon\n";
-	if (_request.getUrl().first.compare("/") == 0)
-		header += "Content-Type: text/html\n";
-
-	if (contentLenght > 0)
-	{
-		std::stringstream ss;
-		ss << contentLenght;
-		header += "Content-Length: " + ss.str() + "\n";
-	}
-	header += "\n";
-	return header;
+	name = buildLocalPath(_request);
+	if (name[name.size() - 1] == '/' && _request.getLocation()->getAutoPath() && _request.getLocation()->getIndexPath().empty())
+		return true;
+	return false;
 }
 
 std::string HttpManager::LocalPathFile_get()
 {
 	std::string name_file;
 
-	name_file = _request.getLocation()->getRootPath();
-	name_file.erase(--name_file.end());
-	name_file += _request.getUrl().first;
-	if ('/' == *(--name_file.end()))
+	name_file = buildLocalPath(_request);
+	if (_request.getUrl().first == _request.getLocation()->getLocate())
 		name_file += _request.getLocation()->getIndexPath();
-	std::cout << "name file :" << name_file << std::endl;
 	return name_file;
 }
 
@@ -49,7 +30,16 @@ void	HttpManager::OpenFile_get(std::string &file_name)
 	// TODO check les droits
 	_file = open(file_name.c_str(), O_RDONLY);
 	if (_file < 0)
-		return ;
+	{
+		if (errno == EACCES)
+			_errorCode = 403;
+		else if (errno == EFAULT || errno == EMFILE || errno == ENFILE || errno == ENOMEM)
+			_errorCode = 500;
+		else if (errno == EFBIG || errno == EISDIR || errno == ELOOP || errno == ENAMETOOLONG || errno == ENODEV || errno == ETXTBSY)
+			_errorCode = 400;
+		else if (errno == ENOENT)
+			_errorCode = 404;
+	}
 }
 
 void	HttpManager::initialize_get()
@@ -60,8 +50,17 @@ void	HttpManager::initialize_get()
 	{
 		_name_file = LocalPathFile_get();
 		OpenFile_get(_name_file);
-		stat(_name_file.c_str(), &status);
-		_respond = buildHeader(status.st_size, 200);
+		if (_errorCode == 0)
+		{
+			stat(_name_file.c_str(), &status);
+			if (!S_ISREG(status.st_mode))
+			{
+				_errorCode = 400;
+				close(_file);
+			}
+		}
+		if (_errorCode == 0)
+			_respond = HeaderRespond(status.st_size, 200, determinateType());
 	}
 	_headerBuild = true;
 }
@@ -85,19 +84,28 @@ void HttpManager::getMethod()
 	canWrite();
 	if (_headerBuild == false)
 	{
-		if (!tryToGetFolder(_request.getUrl().first))
+		_boolAutoIndex = autoIndexRequired();
+		if (!_boolAutoIndex)
 			initialize_get();
 		_headerBuild = true;
 	}
 	else
 	{
-//		std::cout <<"HERE : " << _request.getUrl().first << std::endl;
-		if (tryToGetFolder(_request.getUrl().first))
+		if (_boolAutoIndex)
 		{
-			_respond = autoIndex(_request);
-			header = buildHeader(_respond.size(), 200);
-			_respond = header + _respond;
-			_isEnd = true;
+			_respond = autoIndex(_request, *this);
+			if (_errorCode == 0)
+			{
+				header = HeaderRespond(_respond.size(), 200, "text/html");
+				_respond = header + _respond;
+				_isEnd = true;
+			}
+			else
+			{
+				_respond.clear();
+				_respond = ErrorRespond();
+				_isEnd = true;
+			}
 		}
 		else
 			builRespondGet();
@@ -105,4 +113,3 @@ void HttpManager::getMethod()
 	if (_isEnd == true && _file != -1)
 		close(_file);
 }
-
