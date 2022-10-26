@@ -21,7 +21,7 @@ const bool	&HttpManager::getIsEnd() const
 	return _isEnd;
 }
 
-HttpRequest &HttpManager::getRequest() const
+const HttpRequest &HttpManager::getRequest() const
 {
 	return _request;
 }

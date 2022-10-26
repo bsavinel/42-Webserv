@@ -5,7 +5,7 @@ NAME = Webserv
 ################################################################################
 
 CXX			= c++
-CXXFLAGS	= -Wall -Wextra -Werror -std=c++98 -g3
+CXXFLAGS	= -Wall -Wextra -Werror -std=c++98 -g3 -fsanitize=address
 CPPFLAGS	= -MMD
 
 ifeq (sanitize, $(filter sanitize, $(MAKECMDGOALS)))
@@ -33,8 +33,10 @@ SRCS =	Config/Config.cpp					\
 		Utils/exceptWebserv.cpp				\
 		Utils/utils.cpp						\
 		Utils/headerRespond.cpp				\
+		Utils/ft_itoa.cpp					\
 		Epoll.cpp							\
 		launcher.cpp						\
+		Cgi.cpp								\
 		main.cpp
 
 ################################################################################

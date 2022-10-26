@@ -8,19 +8,21 @@
 # include <HttpRequest.hpp>
 # include <stdlib.h>
 
+class HttpManager;
+
 class Cgi
 {
 	private :
-		typedef std::vector<std::string> envVec;
 
-		envVec		_env;
+		char*		_env[];
 		std::string	_request;
 
 	public :
 		Cgi();
 		~Cgi();
 
-		void	initialise_env(HttpManager &manager, const &Server);
+		void	initialise_env(HttpManager &manager, const Server &server);
+		void	printEnv() const;
 };
 
 

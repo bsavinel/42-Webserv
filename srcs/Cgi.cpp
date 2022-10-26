@@ -7,21 +7,58 @@ Cgi::Cgi()
 
 Cgi::~Cgi()
 {
+	int i = 0;
+	int j = 0;
 
+	while (_env[i])
+		i++;
+	while(j <= i)
+		free(_env[j]);
+	free(_env);
+	
 }
 
 void Cgi::initialise_env(HttpManager &manager, const Server &server)
 {
-	_env.insert("SERVER_SOFTWARE=");
-	_env.insert("SERVER_NAME=" + server.getServerName());
-	_env.insert("GATEWAY_INTERFACE=CGI/1.1");
-	_env.insert("SERVER_PROTOCOL=HTTP/1.1");
-	_env.insert("SERVER_PORT=" + ft_itoa(server.getPort()));
-	_env.insert("REQUEST_METHOD=" + manager.getRequest().getMethod().first);
-	_env.insert("PATH_INFO=" + manager.getRequest().getUrl()); // the path to the script, example : methode/index.php
-	_env.insert("PATH_TRANSLATED=" + manager.getRequest().getUrl()); // idem 
-	//_env.insert("SCRIPT_NAME=" + ) // the constructed path to the script /data/www/script.php
-	_env.insert("QUERY_STRING=" + )
+	std::cout << "IM INTO INITIALISZZZZ" << std::endl;
+	std::vector<std::string>	env_var;
+
+	env_var.push_back("SERVER_SOFTWARE=Webserv/1.0");
+	env_var.push_back("SERVER_NAME=" + server.getServerName());
+	env_var.push_back("GATEWAY_INTERFACE=CGI/1.1");
+	env_var.push_back("SERVER_PROTOCOL=HTTP/1.1");
+	env_var.push_back("SERVER_PORT=" + (std::string) ft_itoa(server.getPort()));
+	env_var.push_back("REQUEST_METHOD=" + manager.getRequest().getMethod().first);
+	env_var.push_back("PATH_INFO=" + manager.buildLocalPath()); // the path to the script, example : methode/index.php
+	env_var.push_back("PATH_TRANSLATED=" + manager.buildLocalPath()); // idem 
+	env_var.push_back("SCRIPT_NAME=" + manager.buildLocalPath()); // the constructed path to the script /data/www/script.php
+	env_var.push_back("SCRIPT_FILENAME=" + manager.buildLocalPath()); // the constructed path to the script /data/www/script.php
+	env_var.push_back("QUERY_STRING=" + manager.getRequest().getUrl().first);
+	env_var.push_back("CONTENT_LENGTH=0");
+	
+	std::vector<std::string>::iterator itEnvVar = env_var.begin();
 
 
+	std::cerr << "Before Malloc" << std::endl;
+	std::cerr << "ENV VAR SIZE = " << env_var.size() << std::endl;
+
+	std::cerr << "APRES LE MALLOC = " << env_var.size() << std::endl;
+	int i = 0;
+	while (i < (int) env_var.size())
+	{
+		_env[i] = strdup((*itEnvVar).c_str());
+		itEnvVar++;
+		i++;
+	}
+	_env[i] = NULL;
+}
+
+void	Cgi::printEnv() const
+{
+	int i  = 0;
+	while (_env[i])
+	{
+		std::cout << _env[i] << std::endl;
+		i++;
+	}
 }

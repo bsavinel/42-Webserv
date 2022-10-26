@@ -18,6 +18,7 @@ HttpManager::HttpManager(t_socket socketClient)
 	_errorCode = 0;
 	_file = -1;
 	_tmp_upload_fd = -1;
+	_cgi = new Cgi;
 }
 
 HttpManager::HttpManager(const HttpManager& rhs)
@@ -93,6 +94,7 @@ std::string	HttpManager::ErrorRespond()
 
 bool	HttpManager::applyMethod(const Server &server)
 {
+	(void)server;
 	if (!_isEnd)
 	{
 		if (_errorCode != 0)
@@ -100,10 +102,11 @@ bool	HttpManager::applyMethod(const Server &server)
 		else if(_request.getLocation()->getCgiFileExtension() == get_file_extension(_request.getUrl().first))
 		{
 			std::cout << "______CGI EXECUTION HERE______" << std::endl;
-
+			_cgi->initialise_env(*this, server);
+			_cgi->printEnv();
 			//retour du cgi --> buff
-			//stocker retour du cgi 
-			//send au client(buff)
+			//stocker retour du cgi dans le sender ou le send
+			//le reste se charge d envoyer
 			_isEnd = true;
 		}
 		else if (_request.getMethod().first == "GET")
