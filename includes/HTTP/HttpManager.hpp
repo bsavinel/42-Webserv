@@ -1,11 +1,13 @@
 #ifndef HTTPMANAGER_HPP
 # define HTTPMANAGER_HPP
 
+class HttpManager;
+
 # include <string>
 # include "define.hpp"
 # include "define.hpp"
 # include "HttpRequest.hpp"
-# include <Cgi.hpp>
+# include "Cgi.hpp"
 # include <sys/types.h>
 # include "Server.hpp"
 # include <sys/socket.h>
@@ -13,8 +15,6 @@
 
 
 std::string HeaderRespond(off_t contentLenght, int statusCode, std::string type = std::string());
-
-class Cgi;
 
 class HttpManager
 {
@@ -49,7 +49,7 @@ class HttpManager
 
 		int				_errorCode;
 		t_socket		_socketClient;
-		Cgi				*_cgi;
+		Cgi				_cgi;
 
 
 		/*for outisde chose*/

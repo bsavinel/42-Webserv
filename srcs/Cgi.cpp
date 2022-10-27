@@ -18,7 +18,7 @@ Cgi::~Cgi()
 	
 }
 
-void Cgi::initialise_env(HttpManager &manager, const Server &server)
+void Cgi::initialise_env(HttpRequest &request, const Server &server)
 {
 	std::cout << "IM INTO INITIALISZZZZ" << std::endl;
 	std::vector<std::string>	env_var;
@@ -28,12 +28,12 @@ void Cgi::initialise_env(HttpManager &manager, const Server &server)
 	env_var.push_back("GATEWAY_INTERFACE=CGI/1.1");
 	env_var.push_back("SERVER_PROTOCOL=HTTP/1.1");
 	env_var.push_back("SERVER_PORT=" + (std::string) ft_itoa(server.getPort()));
-	env_var.push_back("REQUEST_METHOD=" + manager.getRequest().getMethod().first);
+	env_var.push_back("REQUEST_METHOD=" + request.getMethod().first);
 	env_var.push_back("PATH_INFO=" + manager.buildLocalPath()); // the path to the script, example : methode/index.php
 	env_var.push_back("PATH_TRANSLATED=" + manager.buildLocalPath()); // idem 
 	env_var.push_back("SCRIPT_NAME=" + manager.buildLocalPath()); // the constructed path to the script /data/www/script.php
 	env_var.push_back("SCRIPT_FILENAME=" + manager.buildLocalPath()); // the constructed path to the script /data/www/script.php
-	env_var.push_back("QUERY_STRING=" + manager.getRequest().getUrl().first);
+	env_var.push_back("QUERY_STRING=" + request.getUrl().first);
 	env_var.push_back("CONTENT_LENGTH=0");
 	
 	std::vector<std::string>::iterator itEnvVar = env_var.begin();
@@ -41,8 +41,10 @@ void Cgi::initialise_env(HttpManager &manager, const Server &server)
 
 	std::cerr << "Before Malloc" << std::endl;
 	std::cerr << "ENV VAR SIZE = " << env_var.size() << std::endl;
-
+	std::cerr << "address : " << &_env << std::endl; 
+	char **tmp = new char*[env_var.size() + 1];
 	std::cerr << "APRES LE MALLOC = " << env_var.size() << std::endl;
+	_env = tmp;
 	int i = 0;
 	while (i < (int) env_var.size())
 	{
