@@ -82,11 +82,15 @@ class HttpManager
 
 		void			deleteMethod();
 
+		/* Redirection management */
+
+		bool			redirectionManage();
+
 		/*Reponse Requete*/
 
 		std::string		ErrorRespond(const Server &server);
 		std::string		buildSimpleErrorResponse();
-		bool			init_error_file(const Server &server, std::string &errResp);
+		bool			init_error_file(const std::string &error_page, std::string &errResp);
 		std::string		_respond;
 		HttpRequest		_request;
 };

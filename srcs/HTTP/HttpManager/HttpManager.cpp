@@ -75,7 +75,16 @@ bool	HttpManager::applyMethod(const Server &server)
 {
 	if (!_isEnd)
 	{
-		if (_errorCode != 0)
+		if (_errorCode == 0 && _request.getLocation()->getReturnCode() != 0)
+		{
+			canWrite();
+			if (!redirectionManage())
+			{
+				_errorCode = _request.getLocation()->getReturnCode();
+				applyMethod(server);
+			}
+		}
+		else if (_errorCode != 0)
 		{
 			_respond.clear();
 			_respond = ErrorRespond(server);
