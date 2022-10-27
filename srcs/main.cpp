@@ -5,17 +5,10 @@
 
 #include "launcher.hpp"
 #include "exceptWebserv.hpp"
-#include "Config.hpp"
-#include "Server.hpp"
 #include "Error.hpp"
-#include "HttpRequest.hpp"
-
-void	autoIndex(HttpRequest &request);
-
 
 int main(int ac, char **av)
 {
-
 	if (ac == 2)
 	{
 		try
@@ -34,13 +27,3 @@ int main(int ac, char **av)
 		std::cout << "Missing configuration file" << std::endl;
 	return(EXIT_SUCCESS);
 }
-
-
-// int main(void)
-// {
-// 	std::string path("http://localhost:8080/methode/getfile.html");
-
-	
-
-// 	std::cout << get_file_extension(path) << std::endl;
-// }

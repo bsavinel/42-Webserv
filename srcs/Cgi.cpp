@@ -7,14 +7,14 @@ Cgi::Cgi()
 
 Cgi::~Cgi()
 {
-	int i = 0;
-	int j = 0;
+	//int i = 0;
+	//int j = 0;
 
-	while (_env[i])
+	/*while (_env[i])
 		i++;
 	while(j <= i)
 		free(_env[j]);
-	free(_env);
+	free(_env);*/
 	
 }
 
@@ -29,10 +29,10 @@ void Cgi::initialise_env(HttpRequest &request, const Server &server)
 	env_var.push_back("SERVER_PROTOCOL=HTTP/1.1");
 	env_var.push_back("SERVER_PORT=" + (std::string) ft_itoa(server.getPort()));
 	env_var.push_back("REQUEST_METHOD=" + request.getMethod().first);
-	env_var.push_back("PATH_INFO=" + manager.buildLocalPath()); // the path to the script, example : methode/index.php
-	env_var.push_back("PATH_TRANSLATED=" + manager.buildLocalPath()); // idem 
-	env_var.push_back("SCRIPT_NAME=" + manager.buildLocalPath()); // the constructed path to the script /data/www/script.php
-	env_var.push_back("SCRIPT_FILENAME=" + manager.buildLocalPath()); // the constructed path to the script /data/www/script.php
+	env_var.push_back("PATH_INFO=" + buildLocalPath(request)); // the path to the script, example : methode/index.php
+	env_var.push_back("PATH_TRANSLATED=" + buildLocalPath(request)); // idem 
+	env_var.push_back("SCRIPT_NAME=" + buildLocalPath(request)); // the constructed path to the script /data/www/script.php
+	env_var.push_back("SCRIPT_FILENAME=" + buildLocalPath(request)); // the constructed path to the script /data/www/script.php
 	env_var.push_back("QUERY_STRING=" + request.getUrl().first);
 	env_var.push_back("CONTENT_LENGTH=0");
 	

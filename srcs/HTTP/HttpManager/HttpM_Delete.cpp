@@ -14,7 +14,6 @@ void	HttpManager::deleteMethod()
 		path_to_remove.erase(--path_to_remove.end());
 		path_to_remove += _request.getUrl().first;
 		exit_code = remove(path_to_remove.c_str());
-		std::cout << "Path to remove: " << path_to_remove << std::endl;
 		if (exit_code == 0)
 			_errorCode = 204;
 		else

@@ -1,5 +1,6 @@
 #include "Error.hpp"
 #include <sstream>
+#include "HttpRequest.hpp"
 
 std::string buildErrorPage(int err)
 {
@@ -22,4 +23,18 @@ std::string buildErrorPage(int err)
 	page += "\n</p>\n";
 	page += "</body>\n";
 	return page;
+}
+
+std::string buildLocalPath(HttpRequest &request)
+{
+	std::string	localPath;
+	const std::string &locationPath = request.getLocation()->getLocate();
+	const std::string &UrlPath = request.getUrl().first;
+	const std::string &RootPath = request.getLocation()->getRootPath();
+
+	localPath.insert(0, UrlPath, locationPath.size(), UrlPath.size() - locationPath.size());
+	if (localPath[0] == '/')
+		localPath.erase(0, 1);
+	localPath.insert(0, RootPath);
+	return localPath;
 }

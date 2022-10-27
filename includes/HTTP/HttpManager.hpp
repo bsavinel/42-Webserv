@@ -43,7 +43,7 @@ class HttpManager
 		const std::string	&getResponse() const;
 
 		void				setModeChange(bool modeChange);
-		std::string			buildLocalPath();
+		void				setErrorCode(int statusCode);
 
 	private:
 
@@ -73,7 +73,9 @@ class HttpManager
 		void			OpenFile_get(std::string &file_name);
 		void			initialize_get();
 		void			builRespondGet();
+		bool			autoIndexRequired();
 
+		bool			_boolAutoIndex;
 		int				_file;
 		std::string		_name_file;
 		bool			_headerBuild;

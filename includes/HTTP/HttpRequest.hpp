@@ -5,6 +5,7 @@
 
 #include <Server.hpp>
 
+
 class HttpRequest
 {
 	public :
@@ -75,5 +76,7 @@ class HttpRequest
 };
 
 std::ostream &	operator<<( std::ostream & o, HttpRequest const & rhs);
+
+std::string buildLocalPath(HttpRequest &request);
 
 #endif

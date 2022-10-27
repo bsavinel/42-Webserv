@@ -10,7 +10,10 @@ server
 		allow GET POST DELETE;
 		root ./bsavinel/site/;
 		index index.html;
+<<<<<<< HEAD
 		cgi_pass .php ./www/bin/php-cgi;
+=======
+>>>>>>> origin/master
 		autoindex on;
 	}
 
@@ -18,7 +21,10 @@ server
 	{
 		allow GET POST DELETE;
 		root ./bsavinel/site/methode/;
+<<<<<<< HEAD
 		cgi_pass .test ./www/bin/test_cgi;
+=======
+>>>>>>> origin/master
 		autoindex on;
 	}
 
