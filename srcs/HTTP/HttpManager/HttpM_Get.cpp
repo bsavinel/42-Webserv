@@ -57,10 +57,11 @@ void	HttpManager::initialize_get()
 			{
 				_errorCode = 400;
 				close(_file);
+				_file = -1;
 			}
 		}
 		if (_errorCode == 0)
-			_respond = HeaderRespond(status.st_size, 200, determinateType());
+			_respond = HeaderRespond(status.st_size, 200, determinateType(_name_file));
 	}
 	_headerBuild = true;
 }

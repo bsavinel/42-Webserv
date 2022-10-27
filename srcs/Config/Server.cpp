@@ -21,10 +21,11 @@ Server & Server::operator=(const Server & rhs)
 		_interface = rhs._interface;
 		_port = rhs._port;
 		_backlog = rhs._backlog;
+		_socket = rhs._socket;
 		server_name = rhs.server_name;
+		error_map = rhs.error_map;
 		client_max_body_size = rhs.client_max_body_size;
 		locations = rhs.locations;
-		
 	}
 	return (*this);
 }
@@ -92,7 +93,7 @@ std::map<std::string, Location*> Server::getLocationsMap() const
 	return(this->locations);
 }
 
-std::map<int, std::string> Server::getErrorMap() const
+const std::map<int, std::string> &Server::getErrorMap() const
 {
 	return(this->error_map);
 }
@@ -107,7 +108,7 @@ void	Server::printConfig()
 	std::cout << "-----Map Error Content------" << std::endl;
 	for(std::map<int, std::string>::iterator iterr = error_map.begin(); iterr != error_map.end(); iterr++)
 	{
-		std::cout << iterr->first << iterr->second << _domain << std::endl;
+		std::cout << iterr->first << iterr->second << std::endl;
 	}
 	std::cout << "client_max_body_size = " << client_max_body_size << std::endl;
 	std::cout << "Domain IP: " << _domain << std::endl;

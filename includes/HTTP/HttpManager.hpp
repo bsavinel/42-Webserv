@@ -55,7 +55,7 @@ class HttpManager
 
 		void			canRead();
 		void			canWrite();
-		std::string		determinateType();
+		std::string		determinateType(const std::string &name_file);
 
 		/*initialisation*/
 
@@ -85,6 +85,8 @@ class HttpManager
 		/*Reponse Requete*/
 
 		std::string		ErrorRespond(const Server &server);
+		std::string		buildSimpleErrorResponse();
+		bool			init_error_file(const Server &server, std::string &errResp);
 		std::string		_respond;
 		HttpRequest		_request;
 };

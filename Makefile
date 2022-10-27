@@ -5,36 +5,37 @@ NAME = Webserv
 ################################################################################
 
 CXX			= c++
-CXXFLAGS	= -Wall -Wextra -Werror -std=c++98 -g3
+CXXFLAGS	= -Wall -Wextra -Werror -std=c++98 -g3 -fsanitize=address
 CPPFLAGS	= -MMD
 
 ifeq (sanitize, $(filter sanitize, $(MAKECMDGOALS)))
-	CPPFLAGS += -fsanitize=address
+	CXXFLAGS += -fsanitize=address
 endif
 
 ################################################################################
 #                               SOURCE FILES                              	   #
 ################################################################################
 
-SRCS =	Config/Config.cpp					\
-		Config/Location.cpp					\
-		Config/Server.cpp					\
-		Event/ClientEvent.cpp				\
-		Event/ServeurEvent.cpp				\
-		HTTP/HttpManager/HttpM_Delete.cpp	\
-		HTTP/HttpManager/HttpM_Get.cpp		\
-		HTTP/HttpManager/HttpM_GetSet.cpp	\
-		HTTP/HttpManager/HttpM_Post.cpp		\
-		HTTP/HttpManager/HttpManager.cpp	\
-		HTTP/HttpManager/autoIndex.cpp		\
-		HTTP/HttpRequest.cpp				\
-		Utils/builder.cpp					\
-		Utils/Error.cpp						\
-		Utils/exceptWebserv.cpp				\
-		Utils/utils.cpp						\
-		Utils/headerRespond.cpp				\
-		Epoll.cpp							\
-		launcher.cpp						\
+SRCS =	Config/Config.cpp						\
+		Config/Location.cpp						\
+		Config/Server.cpp						\
+		Event/ClientEvent.cpp					\
+		Event/ServeurEvent.cpp					\
+		HTTP/HttpManager/autoIndex.cpp			\
+		HTTP/HttpManager/HttpM_Delete.cpp		\
+		HTTP/HttpManager/HttpM_errorResp.cpp	\
+		HTTP/HttpManager/HttpM_Get.cpp			\
+		HTTP/HttpManager/HttpM_GetSet.cpp		\
+		HTTP/HttpManager/HttpM_Post.cpp			\
+		HTTP/HttpManager/HttpManager.cpp		\
+		HTTP/HttpRequest.cpp					\
+		Utils/builder.cpp						\
+		Utils/Error.cpp							\
+		Utils/exceptWebserv.cpp					\
+		Utils/utils.cpp							\
+		Utils/headerRespond.cpp					\
+		Epoll.cpp								\
+		launcher.cpp							\
 		main.cpp
 
 ################################################################################

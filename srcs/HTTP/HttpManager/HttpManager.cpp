@@ -2,7 +2,6 @@
 #include <sys/socket.h>
 #include <iostream>
 #include <sstream>
-#include "Error.hpp"
 
 void	autoIndex(HttpRequest &request, HttpManager &manager);
 
@@ -72,23 +71,6 @@ int HttpManager::receive()
 	return (0);
 }
 
-std::string	HttpManager::ErrorRespond(const Server &server)
-{
-	std::string errResp;
-	Error err;
-
-	(void)server;
-	if (_errorCode == 204)
-		errResp = "HTTP/1.1 204 No Content";
-	else
-	{
-		errResp = buildErrorPage(_errorCode);
-		errResp.insert(0, HeaderRespond(errResp.size(), _errorCode, "text/html"));
-	}
-	_isEnd = true;
-	return errResp;
-}
-
 bool	HttpManager::applyMethod(const Server &server)
 {
 	if (!_isEnd)
@@ -139,18 +121,19 @@ void	HttpManager::canWrite()
 	}
 }
 
-std::string HttpManager::determinateType()
+std::string HttpManager::determinateType(const std::string &name_file)
 {
-	if (_name_file.rfind(".html") == _name_file.size() - 5 && _name_file.size() >= 5)
+	if (name_file.rfind(".html") == name_file.size() - 5 && name_file.size() >= 5)
 		return "text/html";
-	else if (_name_file.rfind(".css") == _name_file.size() - 4 && _name_file.size() >= 4)
+	else if (name_file.rfind(".css") == name_file.size() - 4 && name_file.size() >= 4)
 		return  "text/css";
-	else if (_name_file.rfind(".ico") == _name_file.size() - 4 && _name_file.size() >= 4)
+	else if (name_file.rfind(".ico") == name_file.size() - 4 && name_file.size() >= 4)
 		return "image/x-icon";
-	else if (_name_file.rfind(".png") == _name_file.size() - 4 && _name_file.size() >= 4)
+	else if (name_file.rfind(".png") == name_file.size() - 4 && name_file.size() >= 4)
 		return "image/png";
-	else if (_name_file.rfind(".jpeg") == _name_file.size() - 5 && _name_file.size() >= 5)
+	else if (name_file.rfind(".jpeg") == name_file.size() - 5 && name_file.size() >= 5)
 		return "image/jpeg";
-	_errorCode = 415;
+	if (_errorCode == 0)
+		_errorCode = 415;
 	return "";	
 }

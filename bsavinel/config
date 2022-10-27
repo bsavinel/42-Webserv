@@ -1,6 +1,7 @@
 server 
 {
 	listen 8080;
+	error_pages 404 ./bsavinel/site/404.html;
 
 	location / 
 	{
