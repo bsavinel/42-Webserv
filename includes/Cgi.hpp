@@ -27,7 +27,9 @@ class Cgi
 		void	initialise_env(HttpRequest &manager, const Server &server);
 		void	set_argv();
 		void	printEnv() const;
+		void	printArg() const;
 		void	execute();
+
 };
 
 

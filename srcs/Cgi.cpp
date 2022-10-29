@@ -61,12 +61,35 @@ void	Cgi::printEnv() const
 	}
 }
 
+void	Cgi::printArg() const
+{
+	int i  = 0;
+	while (_arg[i])
+	{
+		std::cout << _arg[i] << std::endl;
+		i++;
+	}
+}
+
 void	Cgi::set_argv()
 {
-	
-	std::cout << retrieve_from_left_till_char(_exec, '/') << std::endl;
+	std::vector<std::string> executable;
 
+	executable.push_back(retrieve_from_left_till_char(_exec, '/'));
+	executable.push_back(_path_to_script);
 
+	std::vector<std::string>::iterator itEnvVar = executable.begin();
+
+	_arg = new char*[executable.size() + 1];
+
+	int i = 0;
+	while (i < (int) executable.size())
+	{
+		_arg[i] = strdup((*itEnvVar).c_str());
+		itEnvVar++;
+		i++;
+	}
+	_arg[i] = NULL;
 }
 
 void Cgi::execute()
