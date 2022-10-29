@@ -2,7 +2,7 @@
 
 Cgi::Cgi()
 {
-
+	_exec = "/usr/bin/php8.1";
 }
 
 Cgi::~Cgi()
@@ -20,8 +20,10 @@ Cgi::~Cgi()
 
 void Cgi::initialise_env(HttpRequest &request, const Server &server)
 {
-	std::cout << "IM INTO INITIALISZZZZ" << std::endl;
 	std::vector<std::string>	env_var;
+	
+	_request = request.getRequest();
+	_path_to_script = buildLocalPath(request);
 
 	env_var.push_back("SERVER_SOFTWARE=Webserv/1.0");
 	env_var.push_back("SERVER_NAME=" + server.getServerName());
@@ -38,13 +40,7 @@ void Cgi::initialise_env(HttpRequest &request, const Server &server)
 	
 	std::vector<std::string>::iterator itEnvVar = env_var.begin();
 
-
-	std::cerr << "Before Malloc" << std::endl;
-	std::cerr << "ENV VAR SIZE = " << env_var.size() << std::endl;
-	std::cerr << "address : " << &_env << std::endl; 
-	char **tmp = new char*[env_var.size() + 1];
-	std::cerr << "APRES LE MALLOC = " << env_var.size() << std::endl;
-	_env = tmp;
+	_env = new char*[env_var.size() + 1];
 	int i = 0;
 	while (i < (int) env_var.size())
 	{
@@ -63,4 +59,17 @@ void	Cgi::printEnv() const
 		std::cout << _env[i] << std::endl;
 		i++;
 	}
+}
+
+void	Cgi::set_argv()
+{
+	
+	std::cout << retrieve_from_left_till_char(_exec, '/') << std::endl;
+
+
+}
+
+void Cgi::execute()
+{
+	execve(_exec.c_str(), _arg, _env);
 }

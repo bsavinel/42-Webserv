@@ -107,6 +107,7 @@ bool	HttpManager::applyMethod(const Server &server)
 			std::cout << "______CGI EXECUTION HERE______" << std::endl;
 			_cgi.initialise_env(_request, server);
 			_cgi.printEnv();
+			_cgi.set_argv();
 			//retour du cgi --> buff
 			//stocker retour du cgi dans le sender ou le send
 			//le reste se charge d envoyer

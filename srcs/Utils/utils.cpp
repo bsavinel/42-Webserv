@@ -145,3 +145,17 @@ std::string get_file_extension(std::string path)
 
 	return(extension);
 }
+
+std::string retrieve_from_left_till_char(std::string path, char c)
+{
+	std::string arg;
+			
+	if(path.find_last_of(c) != std::string::npos)
+	{
+		std::size_t start = path.find_last_of(c) + 1;
+		std::size_t nbr_to_cpy = path.size() - start;
+
+		arg = path.substr(start, nbr_to_cpy);
+	}
+	return(arg);
+}

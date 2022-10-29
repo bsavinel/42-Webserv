@@ -23,7 +23,6 @@ bool						is_dir_path(std::string path);
 bool						is_file_path(std::string path);
 std::string					get_file_extension(std::string path);
 char						*ft_itoa(int n);
-
-
+std::string retrieve_from_left_till_char(std::string path, char c);
 
 #endif
