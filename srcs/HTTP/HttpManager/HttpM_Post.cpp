@@ -72,45 +72,29 @@ void HttpManager::parseMultiPart(std::fstream &fstream)
 	std::string BoundaryEndtoFind;	
 	std::string boundaryHeader;
 
+	BoundaryStartToFind = "--" + _request.getBoundary().first + "\r";
+	BoundaryEndtoFind = "--" + _request.getBoundary().first + "--\r" ;
 
-
-//	int count = 0;
-
-	BoundaryStartToFind = "--" + _request.getBoundary().first;
-	BoundaryEndtoFind = "--" + _request.getBoundary().first + "--";
 	fstream.seekg(std::fstream::beg);
+
 	while (fstream.eof() == false)
 	{
 		getline(fstream, str);
-		std::cout << "1:" << str << std::endl;
-		getline(fstream, str);
-	//	std::cout << "2:" << str << std::endl;
-		if (str.find(BoundaryStartToFind) != str.npos)
+
+		if (str.compare(BoundaryStartToFind) == 0)
 		{
+			std::cout << "Found BoundaryStartToFind" << std::endl;
 			getline(fstream, str);
-			std::cout << "2:"  << str << std::endl;
-			if (str.compare("\r\n") == 0)
-				std::cout << "ALERTE" << std::endl;
-			// while (str.compare("\r") != 0)
-			// {
-			// 	boundaryHeader += str;
-			// 	getline(fstream, str);
-			// std::cout << "3:" << str <<std::endl;
-			// count ++;
-			// if ( count == 4)
-			// 	exit(0);
-			// }
-//			multipart_param = getParamBoundary(boundaryHeader);
-//			std::cout << "contentDisposition" << multipart_param.contentDisposition.first << std::endl;
+			while (str.compare(BoundaryEndtoFind) != 0)
+			{
+				boundaryHeader += str;
+				getline(fstream, str);
+			}
+			std::cout << "Found BoundaryEndtoFind" << std::endl;
+			std::cout << "boundaryHeader" << std::endl;
+			std::cout << boundaryHeader << std::endl;
 		}
 	}
-	std::cout << "str parseMultiPart"<< std::endl;
-
-	std::cout << _request.getBoundary().first << std::endl;
-
-	std::cout << "["<< std::endl;
-	std::cout << str << std::endl;
-	std::cout << "]"<< std::endl;
 }
 
 void	HttpManager::postMethod()

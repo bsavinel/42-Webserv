@@ -135,6 +135,7 @@ std::pair <std::string, bool> getMultiPartBoundary(std::string contentType)
 
 	boundaryPosition = contentType.find("=") + 1;
 	boundary.first.assign(contentType, boundaryPosition, contentType.npos);
+//	boundary.first += "\r";
 	boundary.second = true;
 
 //	std::cout << "boundary = [" << boundary.first << "]" << std::endl;
