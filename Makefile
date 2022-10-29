@@ -5,7 +5,8 @@ NAME = Webserv
 ################################################################################
 
 CXX			= c++
-CXXFLAGS	= -Wall -Wextra -Werror -std=c++98 -g3
+CXXFLAGS	= -Wall -Wextra -std=c++98 -g3
+#-Werror 
 CPPFLAGS	= -MMD
 
 ifeq (sanitize, $(filter sanitize, $(MAKECMDGOALS)))
