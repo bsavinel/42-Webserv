@@ -30,6 +30,12 @@ typedef struct s_multipart_param
 	std::pair<std::string, bool>	contentType;
 }	t_multipart_param;
 
+typedef struct s_process
+{
+	bool	boundaryStart;
+	bool	body;
+	bool	boundaryEnd;
+}	t_process;
 
 void printMultiPartParam(t_multipart_param multipart_param)
 {
@@ -91,33 +97,29 @@ t_multipart_param	getParamBoundary(std::string boundaryHeader)
 	return multipart_param;
 }
 
-std::fstream & safegetline( std::fstream & fstream, std::string & line )
+t_process	createProcess( void )
 {
-    std::string myline;
-    if ( getline( fstream, myline ) ) {
-       if ( myline.size() && myline[myline.size()-1] == '\r' ) {
-           line = myline.substr( 0, myline.size() - 1 );
-       }
-       else {
-           line = myline;
-       }
-    }
-    return fstream;
+	t_process process;
+
+	process.boundaryStart = false;
+	process.body = false;
+	process.boundaryEnd = false;
+
+	return process;
 }
 
 void HttpManager::parseMultiPart(std::fstream &fstream)
 {
 	fstream.seekg(std::fstream::beg);
+
 	t_multipart_param	multipart_param;
+	t_process			process = createProcess();
 	int					multipart_param_is_set = false;
 	std::string			str;
-	std::string			BoundaryStartToFind;
-	std::string			BoundaryEndtoFind;
+	std::string			BoundaryStartToFind = "--" + _request.getBoundary().first + "\r";
+	std::string			BoundaryEndtoFind = "--" + _request.getBoundary().first + "--\r" ;
 	std::string			boundaryHeader;
 	std::string			boundaryBody;
-
-	BoundaryStartToFind = "--" + _request.getBoundary().first + "\r";
-	BoundaryEndtoFind = "--" + _request.getBoundary().first + "--\r" ;
 
 	std::cout << "Start multiparse" << std::endl;
 
@@ -170,7 +172,6 @@ void HttpManager::parseMultiPart(std::fstream &fstream)
 	std::cout << "End multiparse" << std::endl;
 }
 
-
 void	HttpManager::postMethod()
 {
 	std::string nbForFileName;
@@ -187,12 +188,12 @@ void	HttpManager::postMethod()
 	if (_tmpEnd == false)
 	{
 		_tmp_upload << _request.getRequest().c_str();
+		parseMultiPart(_tmp_upload);
 	}
 	if (_tmpEnd == true)
 		_isEnd = true;
 	else if (_requestFullyReceive == true) // Quand la requete est completement recue, on veut que _isEndsoit true au prochain tour de boucle
 	{
-		parseMultiPart(_tmp_upload);
 		canWrite();
 		_tmpEnd = true;
 	}
@@ -255,4 +256,18 @@ int openUploadFile()
 	if (tmp_upload_fd == -1)
 		perror("failed open: ");
 	return tmp_upload_fd;
+}
+
+std::fstream & safegetline( std::fstream & fstream, std::string & line )
+{
+    std::string myline;
+    if ( getline( fstream, myline ) ) {
+       if ( myline.size() && myline[myline.size()-1] == '\r' ) {
+           line = myline.substr( 0, myline.size() - 1 );
+       }
+       else {
+           line = myline;
+       }
+    }
+    return fstream;
 }
