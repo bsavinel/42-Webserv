@@ -94,5 +94,41 @@ void	Cgi::set_argv()
 
 void Cgi::execute()
 {
-	execve(_exec.c_str(), _arg, _env);
+	int pip[2];
+	pid_t pid;
+	char buff[4096];
+
+	if(pipe(pip) == -1)
+		throw exceptWebserv("Error CGI : failed to create a pipe");
+	
+	if((pid = fork()) == -1)
+		throw exceptWebserv("Error CGI : failed to fork");
+	
+	if(pid == 0) 
+	{
+		//Child Process, CGI execution
+		dup2(pip[1], STDOUT_FILENO);
+		close(pip[0]);
+		close(pip[1]);
+		execve(_exec.c_str(), _arg, _env);
+	}
+	else
+	{
+		int nbytes;
+		//Parent Process, read CGI output
+		close(pip[1]);
+		while((nbytes = read(pip[0], buff, sizeof(buff) - 1) > 0))
+		{
+			_output.append(buff);
+			memset(buff, 0, 4096);
+		}
+		if(nbytes == -1)
+			throw exceptWebserv("Error CGI : failed to read output");
+		wait(NULL);
+	}
+}
+
+const std::string&	Cgi::getOutput() const
+{
+	return(_output);
 }

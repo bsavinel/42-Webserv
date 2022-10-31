@@ -1,8 +1,8 @@
 <html>
 	<body>
 		<?php
-		//echo "Hello CGI";
-		phpinfo();
+		echo "Hello CGI";
+		//phpinfo();
 		?>
 	</body>
 </html>

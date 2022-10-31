@@ -6,8 +6,9 @@ class Cgi;
 # include <iostream>
 # include <string>
 # include <vector>
-# include "HttpRequest.hpp"
 # include <stdlib.h>
+# include <sys/wait.h>
+# include "HttpRequest.hpp"
 # include "utils.hpp"
 
 class Cgi
@@ -19,6 +20,7 @@ class Cgi
 		std::string	_exec;
 		char**		_env;
 		std::string	_request;
+		std::string	_output;
 
 	public :
 		Cgi();
@@ -28,6 +30,7 @@ class Cgi
 		void	set_argv();
 		void	printEnv() const;
 		void	printArg() const;
+		const	std::string	&getOutput() const;
 		void	execute();
 
 };

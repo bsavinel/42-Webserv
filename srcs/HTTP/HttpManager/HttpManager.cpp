@@ -110,6 +110,9 @@ bool	HttpManager::applyMethod(const Server &server)
 			_cgi.set_argv();
 			_cgi.printArg();
 			_cgi.execute();
+			std::cout << "_________CGI OUTPUT_________" << std::endl;
+			std::cout << _cgi.getOutput() << std::endl;
+			_respond = _cgi.getOutput();
 			//retour du cgi --> buff
 			//stocker retour du cgi dans le sender ou le send
 			//le reste se charge d envoyer
