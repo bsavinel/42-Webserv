@@ -170,7 +170,6 @@ void	HttpRequest::parser(/*std::string &request*/)
 		_contentType.first.erase(_contentType.first.find(';'), _contentType.first.npos);
 	}
 	_request.erase(0, _request.find("\r\n\r\n") + 4);
-
 }
 
 void	HttpRequest::concatenate(char *str)

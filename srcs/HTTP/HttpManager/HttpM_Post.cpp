@@ -13,6 +13,16 @@ bool exists (const std::string& filename);
 std::string	getNbForFileName( void );
 int openUploadFile( void );
 
+void printAscii(std::string str)
+{
+	std::cout << "---------- ASCII -----------" << std::endl;
+	for (size_t i = 0; i < str.length(); i++)
+		std::cout << (int)str[i] << " ";
+	std::cout << std::endl;
+
+	std::cout << "---------- ASCII END -----------" << std::endl;
+}
+
 typedef struct s_multipart_param
 {
 	std::pair<std::string, bool>	contentDisposition;
@@ -24,21 +34,22 @@ typedef struct s_multipart_param
 void printMultiPartParam(t_multipart_param multipart_param)
 {
 	std::cout << "contentDisposition: " << multipart_param.contentDisposition.first << std::endl;
-	std::cout << "contentType: " << multipart_param.contentType.first << std::endl;
 	std::cout << "fileName: " << multipart_param.fileName.first << std::endl;
+	std::cout << "contentType: " << multipart_param.contentType.first << std::endl;
 }
 
 t_multipart_param	getParamBoundary(std::string boundaryHeader)
 {
 	t_multipart_param multipart_param;
 	std::string toFind;
-	std::string::size_type startPos;
-	std::string::size_type endPos;
-	std::string::size_type subStrLen;
+	std::string::size_type startPos = 0;
+	std::string::size_type endPos = 0;
+	std::string::size_type subStrLen = 0;
 
-	// std::cout << "boundaryHeader/" << std::endl;
+	std::cout << "boundaryHeader/" << std::endl;
 	// std::cout << boundaryHeader << std::endl;
-	// std::cout << "/boundaryHeader" << std::endl;
+	printAscii(boundaryHeader);
+	std::cout << "/boundaryHeader" << std::endl;
 
 	toFind = "Content-Disposition: ";
 	
@@ -51,12 +62,12 @@ t_multipart_param	getParamBoundary(std::string boundaryHeader)
 		multipart_param.contentDisposition.second = true;
 	}
 
-	toFind = "filename=";
+	toFind = "filename=\"";
 
-	if ((subStrLen = boundaryHeader.find(toFind.c_str(), 0)) != boundaryHeader.npos)
+	if ((startPos = boundaryHeader.find(toFind.c_str(), 0)) != boundaryHeader.npos)
 	{
 		startPos = startPos + toFind.length();
-		endPos = boundaryHeader.find("\n", startPos);
+		endPos = boundaryHeader.find("\"", startPos);
 		subStrLen = endPos - startPos;
 		multipart_param.fileName.first = boundaryHeader.substr(startPos, subStrLen);
 		multipart_param.fileName.second = true;
@@ -78,16 +89,6 @@ t_multipart_param	getParamBoundary(std::string boundaryHeader)
 	// std::cout << "/multipart_param" << std::endl;
 
 	return multipart_param;
-}
-
-void printAscii(std::string str)
-{
-	std::cout << "---------- ASCII -----------" << std::endl;
-	for (size_t i = 0; i < str.length(); i++)
-		std::cout << (int)str[i] << " ";
-	std::cout << std::endl;
-
-	std::cout << "---------- ASCII END -----------" << std::endl;
 }
 
 std::fstream & safegetline( std::fstream & fstream, std::string & line )
@@ -148,15 +149,16 @@ void HttpManager::parseMultiPart(std::fstream &fstream)
 			// std::cout << "/boundaryHeader" << std::endl;
 			multipart_param = getParamBoundary(boundaryHeader);
 
-			// std::cout << "multipart_param/" << std::endl;
-			// printMultiPartParam(multipart_param);
-			// std::cout << "/multipart_param" << std::endl;
+			std::cout << "multipart_param/" << std::endl;
+			printMultiPartParam(multipart_param);
+			std::cout << "/multipart_param" << std::endl;
 			
 			while (str.compare(BoundaryEndtoFind) != 0)
 			{
 				boundaryBody += str;
 				getline(fstream, str);
 			}
+			
 		}
 	}
 
