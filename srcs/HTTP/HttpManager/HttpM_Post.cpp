@@ -152,13 +152,18 @@ void HttpManager::parseMultiPart(std::fstream &fstream)
 			std::cout << "multipart_param/" << std::endl;
 			printMultiPartParam(multipart_param);
 			std::cout << "/multipart_param" << std::endl;
+			std::fstream finalFile;
+			std::string fileName = _request.getLocation()->getUploadDirectory() + multipart_param.fileName.first;
+			std::cout << "filename: " << fileName << std::endl;
+			finalFile.open(fileName.c_str(), std::fstream::app | std::fstream::in | std::fstream::out);
 			
 			while (str.compare(BoundaryEndtoFind) != 0)
 			{
-				boundaryBody += str;
+				std::cout << "TEMOIN" << std::endl;
+				finalFile << str.c_str();
+//				boundaryBody += str;
 				getline(fstream, str);
 			}
-			
 		}
 	}
 
@@ -187,7 +192,6 @@ void	HttpManager::postMethod()
 		_isEnd = true;
 	else if (_requestFullyReceive == true) // Quand la requete est completement recue, on veut que _isEndsoit true au prochain tour de boucle
 	{
-
 		parseMultiPart(_tmp_upload);
 		canWrite();
 		_tmpEnd = true;
@@ -244,8 +248,7 @@ int openUploadFile()
 	{
 		nbForFileName	= getNbForFileName();
 		fileName		= dirPath + "tmpUploadFile_" + nbForFileName;
-		tmp_upload_fd =  open(fileName.c_str(), O_CREAT | O_RDWR | O_EXCL, 0777);
-
+		tmp_upload_fd	=  open(fileName.c_str(), O_CREAT | O_RDWR | O_EXCL, 0777);
 	}
 	while ((tmp_upload_fd == -1) && errno == EEXIST);
 

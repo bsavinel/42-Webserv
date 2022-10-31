@@ -7,6 +7,7 @@ server
 		allow GET POST DELETE;
 		root bsavinel/site/;
 		autoindex on;
+		upload_store bsavinel/site/uploads/;
 	}
 
 	location /methode/
@@ -15,6 +16,7 @@ server
 		allow GET POST DELETE;
 		root ./bsavinel/site/;
 		autoindex on;
+		upload_store bsavinel/site/uploads/;
 	}
 
 	location /methode/test/
@@ -23,6 +25,7 @@ server
 		root ./bsavinel/site/;
 		autoindex on;
 		return 403 /error/403.html
+		upload_store bsavinel/site/uploads/;
 	}
 
 }
