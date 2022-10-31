@@ -124,6 +124,7 @@ void Cgi::execute()
 		}
 		if(nbytes == -1)
 			throw exceptWebserv("Error CGI : failed to read output");
+		close(pip[0]);
 		wait(NULL);
 	}
 }
