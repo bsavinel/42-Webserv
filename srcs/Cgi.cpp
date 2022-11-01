@@ -100,10 +100,8 @@ void Cgi::execute()
 
 	if(pipe(pip) == -1)
 		throw exceptWebserv("Error CGI : failed to create a pipe");
-	
 	if((pid = fork()) == -1)
 		throw exceptWebserv("Error CGI : failed to fork");
-	
 	if(pid == 0) 
 	{
 		//Child Process, CGI execution

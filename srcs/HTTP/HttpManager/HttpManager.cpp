@@ -57,8 +57,12 @@ void	HttpManager::sender()
 	if (_respond.size() > 0)
 	{
 		send(_socketClient, _respond.c_str(), _respond.size(), MSG_NOSIGNAL);
+		std::cout <<"SENDER ===" << _respond << std::endl;
 		_respond.clear();
 	}
+	else
+		std::cout <<"IS EMPTYYY" << std::endl;
+
 }
 
 int HttpManager::receive()
@@ -104,19 +108,29 @@ bool	HttpManager::applyMethod(const Server &server)
 		}
 		else if(_request.getLocation()->getCgiFileExtension() == get_file_extension(_request.getUrl().first))
 		{
-			std::cout << "______CGI EXECUTION HERE______" << std::endl;
-			_cgi.initialise_env(_request, server);
-			//_cgi.printEnv();
-			_cgi.set_argv();
-			_cgi.printArg();
-			_cgi.execute();
-			std::cout << "_________CGI OUTPUT_________" << std::endl;
-			std::cout << _cgi.getOutput() << std::endl;
-			_respond = _cgi.getOutput();
-			//retour du cgi --> buff
-			//stocker retour du cgi dans le sender ou le send
-			//le reste se charge d envoyer
-			_isEnd = true;
+			int	all_set = 0;
+			canWrite();
+			if (!all_set)
+			{
+				std::string header; 
+				std::cout << "______CGI EXECUTION HERE______" << std::endl;
+				_cgi.initialise_env(_request, server);
+				//_cgi.printEnv();
+				_cgi.set_argv();
+				_cgi.printArg();
+				_cgi.execute();
+				std::cout << "_________CGI OUTPUT_________" << std::endl;
+				std::cout << _cgi.getOutput() << std::endl;
+				_respond = _cgi.getOutput();
+
+				header = HeaderRespond(_respond.size(), 200, "text/html");
+				_respond = header + _respond;
+				std::cout << "_________CGI RESPOND BUILT_________" << std::endl;
+				std::cout << _respond << std::endl;
+				all_set = 1;
+				_isEnd = true;
+			}
+			
 		}
 		else if (_request.getMethod().first == "GET")
 			getMethod();
