@@ -15,6 +15,21 @@
 // TODO changer ServeurEvent et ClientEvent
 // TODO lie le serveur au fd dans socket
 
+typedef struct s_multipart_param
+{
+	std::pair<std::string, bool>	contentDisposition;
+	std::pair<std::string, bool>	fileName;
+	std::pair<std::string, bool>	contentType;
+}	t_multipart_param;
+
+typedef struct s_process
+{
+	bool	boundaryStart;
+	bool	header;
+	bool	body;
+	bool	boundaryEnd;
+}	t_process;
+
 class HttpManager
 {
 	public:
@@ -98,6 +113,11 @@ std::string getFileName();
 		bool			_requestFullyReceive;
 		bool			_tmpEnd;
 		int				_lenRead;
+
+		/* multipart */
+		std::fstream	_uploaded;
+		t_process		_process;
+		bool			_new_process;
 };
 
 #endif

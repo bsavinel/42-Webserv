@@ -9,20 +9,7 @@
 #include <errno.h>
 #include <fstream>
 
-typedef struct s_multipart_param
-{
-	std::pair<std::string, bool>	contentDisposition;
-	std::pair<std::string, bool>	fileName;
-	std::pair<std::string, bool>	contentType;
-}	t_multipart_param;
 
-typedef struct s_process
-{
-	bool	boundaryStart;
-	bool	header;
-	bool	body;
-	bool	boundaryEnd;
-}	t_process;
 
 void				printAscii(std::string str);
 void				printMultiPartParam(t_multipart_param multipart_param);
@@ -77,25 +64,21 @@ void HttpManager::parseMultiPart(std::fstream &fstream)
 	std::string			str;
 	std::string			boundaryHeader;
 	t_multipart_param	multipart_param;
-	static std::fstream	file;
-
-	static bool			new_process;
-	static t_process	process;
 
 
-	if (new_process == false)
+	if (_new_process == false)
 	{
-		process = createProcess();
-		new_process == true;
+		_process = createProcess();
+		_new_process = true;
 	}
-	if (process.boundaryStart == false)
+	if (_process.boundaryStart == false)
 	{
 		getline(fstream, str);
 		// on trouve un block boundary,
 		if (str.compare(BoundaryStartToFind) == 0)
-			process.boundaryStart == true;
+			_process.boundaryStart = true;
 	}
-	while (fstream.eof() != true && process.boundaryStart == true && process.header == false)
+	while (fstream.eof() != true && _process.boundaryStart == true && _process.header == false)
 	{
 		getline(fstream, str);
 		if ( str.size() && str[str.size()-1] == '\r' )
@@ -106,8 +89,8 @@ void HttpManager::parseMultiPart(std::fstream &fstream)
 		if (str.compare("\r") == 0)
 		{
 			multipart_param = getParamBoundary(boundaryHeader);
-			process.header == true;
-			file.open(multipart_param.fileName.first.c_str(), std::fstream::app | std::fstream::in | std::fstream::out);
+			_process.header = true;
+			_uploaded.open(multipart_param.fileName.first.c_str(), std::fstream::app | std::fstream::in | std::fstream::out);
 		}
 		else
 		{
@@ -115,7 +98,7 @@ void HttpManager::parseMultiPart(std::fstream &fstream)
 			str.clear();
 		}
 	}
-	if (process.header == true)
+	if (_process.header == true)
 	{
 		while (fstream.eof() != true && str.compare(BoundaryEndtoFind) != 0)
 		{
@@ -125,14 +108,14 @@ void HttpManager::parseMultiPart(std::fstream &fstream)
 			else
 				str = str;
 			if (str.compare(BoundaryEndtoFind) != 0)
-				file << str.c_str();
+				_uploaded << str.c_str();
 		}
 	}
 	if (str.compare(BoundaryEndtoFind) == 0)
 	{
-		process.boundaryEnd == true;
-		file.close();
-		new_process = false;
+		_process.boundaryEnd = true;
+		_uploaded.close();
+		_new_process = false;
 	}
 }
 
