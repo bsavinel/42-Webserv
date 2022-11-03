@@ -18,6 +18,7 @@ HttpManager::HttpManager(t_socket socketClient)
 	_requestFullyReceive = false;
 	_tmpEnd = false;
 	_lenRead = 0;
+	_new_process = false;
 //	_tmp_upload_i = false;
 //	_tmp_upload_o = false;
 }
@@ -87,7 +88,7 @@ int HttpManager::receive()
 		return (-1);
 	std::cout << "ret = " << ret << std::endl;
 	_lenRead += ret;
-	std::cout << _lenRead << " : " << _request.getContentLength().first;
+	std::cout << _lenRead << " : " << _request.getContentLength().first << std::endl;
 	if (_request.getContentLength().second == true &&  _lenRead >= _request.getContentLength().first)
 	{
 		std::cout <<  "Request FULLY READ : " << ret << std::endl;
