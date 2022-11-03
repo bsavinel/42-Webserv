@@ -94,6 +94,7 @@ class HttpManager
 		std::string		ErrorRespond();
 		std::string		_respond;
 		HttpRequest		_request;
+		bool			_tmpEnd;
 };
 
 #endif

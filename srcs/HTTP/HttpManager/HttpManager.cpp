@@ -18,6 +18,7 @@ HttpManager::HttpManager(t_socket socketClient)
 	_errorCode = 0;
 	_file = -1;
 	_tmp_upload_fd = -1;
+	_tmpEnd = false;
 	// _cgi = new Cgi;
 }
 
@@ -108,10 +109,11 @@ bool	HttpManager::applyMethod(const Server &server)
 		}
 		else if(_request.getLocation()->getCgiFileExtension() == get_file_extension(_request.getUrl().first))
 		{
-			int	all_set = 0;
-			canWrite();
-			if (!all_set)
+			if (_tmpEnd == true)
+				_isEnd = true;
+			else if (!_tmpEnd)
 			{
+				canWrite();
 				std::string header; 
 				std::cout << "______CGI EXECUTION HERE______" << std::endl;
 				_cgi.initialise_env(_request, server);
@@ -127,10 +129,8 @@ bool	HttpManager::applyMethod(const Server &server)
 				_respond = header + _respond;
 				std::cout << "_________CGI RESPOND BUILT_________" << std::endl;
 				std::cout << _respond << std::endl;
-				all_set = 1;
-				_isEnd = true;
+				_tmpEnd = true;
 			}
-			
 		}
 		else if (_request.getMethod().first == "GET")
 			getMethod();
@@ -153,7 +153,6 @@ void	HttpManager::initialize(const Server &server)
 		_request.setLocation(_request.findLocation(server));
 	}
 }
-
 
 void	HttpManager::canRead()
 {
