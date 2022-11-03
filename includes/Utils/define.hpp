@@ -15,7 +15,7 @@ typedef struct epoll_event t_epoll_event;
  *	Define
  */
 
-# define LEN_TO_READ 1000
+# define LEN_TO_READ 80
 # define DIR_PATH_TMP_UPLOAD_FILE "./bsavinel/site/tmpFilePost/tmpUploadFile_"
 
  /*

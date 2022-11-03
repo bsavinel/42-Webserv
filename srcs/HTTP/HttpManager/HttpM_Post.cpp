@@ -58,6 +58,7 @@ void	HttpManager::postMethod()
 		_isEnd = true;
 	else if (_requestFullyReceive == true) // Quand la requete est completement recue, on veut que _isEndsoit true au prochain tour de boucle
 	{
+		std::cout << "FINISH" << std::endl;
 		canWrite();
 		_tmpEnd = true;
 	}
