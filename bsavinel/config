@@ -28,7 +28,7 @@ server
 		root ./bsavinel/site/methode/test/;
 		cgi_pass .php ./www/bin/php-cgi;
 		autoindex on;
-		return 606 /error/403.html
+		return 403 /error/403.html
 	}
 
 }

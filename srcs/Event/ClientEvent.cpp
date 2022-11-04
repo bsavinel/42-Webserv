@@ -10,23 +10,23 @@
 #include <map>
 #include <fcntl.h>
 
-static void print_status(t_epoll_event event)
-{
-	std::cout << "le fd : " << event.data.fd << " a les evenement: ";
-	if (event.events & EPOLLIN)
-		std::cout << "EPOLLIN";
-	if (event.events & EPOLLOUT)
-		std::cout << "EPOLLOUT";
-	if (event.events & EPOLLONESHOT)
-		std::cout << "EPOLLONESHOT";
-	if (event.events & EPOLLEXCLUSIVE)
-		std::cout << "EPOLLEXCLUSIVE";
-	if (event.events & EPOLLERR)
-		std::cout << "EPOLLERR";
-	if (event.events & EPOLLHUP)
-		std::cout << "EPOLLHUP";
-	std::cout << std::endl;
-}
+// static void print_status(t_epoll_event event)
+// {
+// 	std::cout << "le fd : " << event.data.fd << " a les evenement: ";
+// 	if (event.events & EPOLLIN)
+// 		std::cout << "EPOLLIN";
+// 	if (event.events & EPOLLOUT)
+// 		std::cout << "EPOLLOUT";
+// 	if (event.events & EPOLLONESHOT)
+// 		std::cout << "EPOLLONESHOT";
+// 	if (event.events & EPOLLEXCLUSIVE)
+// 		std::cout << "EPOLLEXCLUSIVE";
+// 	if (event.events & EPOLLERR)
+// 		std::cout << "EPOLLERR";
+// 	if (event.events & EPOLLHUP)
+// 		std::cout << "EPOLLHUP";
+// 	std::cout << std::endl;
+// }
 
 void	clientEvent(Epoll &epoll, std::map<t_socket, HttpManager> &stockManager)
 {
@@ -41,10 +41,10 @@ void	clientEvent(Epoll &epoll, std::map<t_socket, HttpManager> &stockManager)
 			continue;
 		HttpManager &manager = stockManager.find(it_event->data.fd)->second;
 
-		print_status(*it_event);
+		//print_status(*it_event);
 		if (manager.getIsEnd() || it_event->events & EPOLLRDHUP || it_event->events & EPOLLERR)
 		{
-			std::cout << "Fd : " << it_event->data.fd << " a ete suprimer" << std::endl;
+			//std::cout << "Fd : " << it_event->data.fd << " a ete suprimer" << std::endl;
 			epoll.deleteClient(it_event->data.fd);
 			stockManager.erase(it_event->data.fd);
 			continue ;

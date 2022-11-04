@@ -19,7 +19,6 @@ HttpManager::HttpManager(t_socket socketClient)
 	_file = -1;
 	_tmp_upload_fd = -1;
 	_tmpEnd = false;
-	// _cgi = new Cgi;
 }
 
 HttpManager::HttpManager(const HttpManager& rhs)
@@ -58,12 +57,8 @@ void	HttpManager::sender()
 	if (_respond.size() > 0)
 	{
 		send(_socketClient, _respond.c_str(), _respond.size(), MSG_NOSIGNAL);
-		std::cout <<"SENDER ===" << _respond << std::endl;
 		_respond.clear();
 	}
-	else
-		std::cout <<"IS EMPTYYY" << std::endl;
-
 }
 
 int HttpManager::receive()
@@ -76,7 +71,7 @@ int HttpManager::receive()
 	if ((ret = recv(_socketClient, buffer, LEN_TO_READ, MSG_DONTWAIT)) == -1)
 		return (-1);
 	std::string buff(buffer);
-	std::cout <<  "BUFFER=" << buff << std::endl <<  "=BUFFER" << std::endl;
+	//std::cout <<  "___________BUFFER RECEIVE___________" <<std::endl << buff << std::endl <<  "___________END BUFFER RECEIVE___________" << std::endl;
 	_request.concatenate(buffer);
 	return (0);
 }
@@ -108,9 +103,13 @@ void	HttpManager::launch_cgi(HttpRequest &_request, const Server &server)
 		_cgi.initialise_env(_request, server);
 		_cgi.set_argv();
 		_cgi.execute();
+		_respond.clear();
+		_cgi.manage_output();
+		std::cout <<"CGI OUT PUT = " << std::endl << _cgi.getOutput() << std::endl;
 		_respond = _cgi.getOutput();
 		header = HeaderRespond(_respond.size(), 200, "text/html");
 		_respond = header + _respond;
+		std::cout << "RESPOND CGI =" << std::endl << _respond << std::endl;
 		_tmpEnd = true;
 	}
 }

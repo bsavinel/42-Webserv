@@ -32,6 +32,7 @@ class Cgi
 		void	printArg() const;
 		const	std::string	&getOutput() const;
 		void	execute();
+		void	manage_output();
 
 };
 

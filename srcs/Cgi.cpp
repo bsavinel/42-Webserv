@@ -2,7 +2,8 @@
 
 Cgi::Cgi()
 {
-	_exec = "/usr/bin/php8.1";
+	_exec = "/usr/bin/php-cgi";
+	_output.clear();
 }
 
 Cgi::~Cgi()
@@ -37,6 +38,8 @@ void Cgi::initialise_env(HttpRequest &request, const Server &server)
 	env_var.push_back("SCRIPT_FILENAME=" + buildLocalPath(request)); // the constructed path to the script /data/www/script.php
 	env_var.push_back("QUERY_STRING=" + request.getUrl().first);
 	env_var.push_back("CONTENT_LENGTH=0");
+	env_var.push_back("REDIRECT_STATUS=200");
+
 	
 	std::vector<std::string>::iterator itEnvVar = env_var.begin();
 
@@ -118,6 +121,7 @@ void Cgi::execute()
 			_output.append(buff);
 			memset(buff, 0, 4096);
 		}
+
 		if(nbytes == -1)
 			throw exceptWebserv("Error CGI : failed to read output");
 		close(pip[0]);
@@ -125,7 +129,14 @@ void Cgi::execute()
 	}
 }
 
-const std::string&	Cgi::getOutput() const
+void	Cgi::manage_output()
 {
+	size_t ret;
+	if ((ret = _output.find("\r\n\r\n")) != std::string::npos) 
+		_output.erase(0, ret);
+}
+
+const std::string&	Cgi::getOutput() const
+{	
 	return(_output);
 }
