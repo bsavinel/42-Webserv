@@ -184,6 +184,8 @@ void Server::setConfig(std::vector<std::string>::iterator & it, std::vector<std:
 		else if ((*it).compare("error_pages") == 0 && (*(it + 1)) != ";")
 		{
 			int error_num = atoi((*++it).c_str());
+			if(!check_existing_error_code(error_num))
+				throw exceptWebserv("Error Config : error_code does not exist");
 			std::string path_to_file = *++it;
 			if(!is_file_path(path_to_file))
 				throw exceptWebserv("Error Config : error_pages value should be a path to a file");

@@ -28,6 +28,7 @@ class HttpManager
 		HttpManager			&operator=(const HttpManager& rhs);
 
 		bool				applyMethod(const Server &server);
+		void				launch_cgi(HttpRequest &_request, const Server &server);
 		int					receive( void );
 		void				sender();
 		void				initialize(const Server &server);

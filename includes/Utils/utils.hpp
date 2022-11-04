@@ -8,6 +8,7 @@
 
 #include <string>
 #include <vector>
+#include <list>
 #include <algorithm>
 
 #include "exceptWebserv.hpp"
@@ -23,6 +24,8 @@ bool						is_dir_path(std::string path);
 bool						is_file_path(std::string path);
 std::string					get_file_extension(std::string path);
 char						*ft_itoa(int n);
-std::string retrieve_from_left_till_char(std::string path, char c);
+std::string					retrieve_from_left_till_char(std::string path, char c);
+bool						check_existing_error_code(int nbr);
+
 
 #endif

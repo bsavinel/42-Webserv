@@ -159,3 +159,61 @@ std::string retrieve_from_left_till_char(std::string path, char c)
 	}
 	return(arg);
 }
+
+bool	check_existing_error_code(int nbr)
+{
+	std::list<int> error_code;
+	error_code.push_back(100);
+	error_code.push_back(101);
+	error_code.push_back(200);
+	error_code.push_back(201);
+	error_code.push_back(202);
+	error_code.push_back(203);
+	error_code.push_back(204);
+	error_code.push_back(205);
+	error_code.push_back(206);
+	error_code.push_back(300);
+	error_code.push_back(301);
+	error_code.push_back(302);
+	error_code.push_back(303);
+	error_code.push_back(304);
+	error_code.push_back(305);
+	error_code.push_back(306);
+	error_code.push_back(307);
+	error_code.push_back(400);
+	error_code.push_back(401);
+	error_code.push_back(402);
+	error_code.push_back(403);
+	error_code.push_back(404);
+	error_code.push_back(405);
+	error_code.push_back(406);
+	error_code.push_back(407);
+	error_code.push_back(408);
+	error_code.push_back(409);
+	error_code.push_back(410);
+	error_code.push_back(411);
+	error_code.push_back(412);
+	error_code.push_back(413);
+	error_code.push_back(414);
+	error_code.push_back(415);
+	error_code.push_back(416);
+	error_code.push_back(417);
+	error_code.push_back(500);
+	error_code.push_back(501);
+	error_code.push_back(502);
+	error_code.push_back(503);
+	error_code.push_back(504);
+	error_code.push_back(505);
+
+	std::list<int>::iterator it = error_code.begin();
+	std::list<int>::iterator ite = error_code.end();
+
+	while (it != ite)
+	{
+		if(*it == nbr)
+			return (1);
+		it++;
+	}
+	return (0);
+	
+}

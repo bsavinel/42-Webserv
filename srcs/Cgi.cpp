@@ -79,9 +79,7 @@ void	Cgi::set_argv()
 	executable.push_back(_path_to_script);
 
 	std::vector<std::string>::iterator itEnvVar = executable.begin();
-
 	_arg = new char*[executable.size() + 1];
-
 	int i = 0;
 	while (i < (int) executable.size())
 	{

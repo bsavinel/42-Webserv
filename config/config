@@ -2,7 +2,7 @@ server
 {
 	listen 8080;
 	server_name ;#OPTIONNAL
-	error_pages 404 ./data/error/404.html;
+	error_pages 3 ./data/error/404.html;
 	error_pages 403 ./data/error/403.html;
 	client_max_body_size 2000;
 	error_pages 401 ./data/error/401.html;
@@ -11,7 +11,7 @@ server
 	location /
 	{
 		allow GET POST DELETE;
-		return 404 /data/error/404.html;
+		return  /data/error/404.html;
 		root ./data/;
 		index ;
 		autoindex off;

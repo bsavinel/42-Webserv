@@ -97,6 +97,24 @@ std::string	HttpManager::ErrorRespond()
 	return errResp;
 }
 
+void	HttpManager::launch_cgi(HttpRequest &_request, const Server &server)
+{
+	if (_tmpEnd == true)
+		_isEnd = true;
+	else if (!_tmpEnd)
+	{
+		canWrite();
+		std::string header; 
+		_cgi.initialise_env(_request, server);
+		_cgi.set_argv();
+		_cgi.execute();
+		_respond = _cgi.getOutput();
+		header = HeaderRespond(_respond.size(), 200, "text/html");
+		_respond = header + _respond;
+		_tmpEnd = true;
+	}
+}
+
 bool	HttpManager::applyMethod(const Server &server)
 {
 	(void)server;
@@ -108,30 +126,7 @@ bool	HttpManager::applyMethod(const Server &server)
 			_respond = ErrorRespond();
 		}
 		else if(_request.getLocation()->getCgiFileExtension() == get_file_extension(_request.getUrl().first))
-		{
-			if (_tmpEnd == true)
-				_isEnd = true;
-			else if (!_tmpEnd)
-			{
-				canWrite();
-				std::string header; 
-				std::cout << "______CGI EXECUTION HERE______" << std::endl;
-				_cgi.initialise_env(_request, server);
-				//_cgi.printEnv();
-				_cgi.set_argv();
-				_cgi.printArg();
-				_cgi.execute();
-				std::cout << "_________CGI OUTPUT_________" << std::endl;
-				std::cout << _cgi.getOutput() << std::endl;
-				_respond = _cgi.getOutput();
-
-				header = HeaderRespond(_respond.size(), 200, "text/html");
-				_respond = header + _respond;
-				std::cout << "_________CGI RESPOND BUILT_________" << std::endl;
-				std::cout << _respond << std::endl;
-				_tmpEnd = true;
-			}
-		}
+			launch_cgi(_request, server);
 		else if (_request.getMethod().first == "GET")
 			getMethod();
 		else if (_request.getMethod().first == "POST")

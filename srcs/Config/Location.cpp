@@ -47,6 +47,8 @@ void Location::setConfig(std::vector<std::string>::iterator & it, std::vector<st
 			if(tmp)
 			{
 				this->return_code = tmp;
+				if(!check_existing_error_code(tmp))
+					throw exceptWebserv("Error Config : return code does not exist");
 				std::string path =  *++it;
 				if(!is_file_path(path))
 					throw exceptWebserv("Error Config : return value should be a path to a dir");
