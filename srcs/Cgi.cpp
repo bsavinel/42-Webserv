@@ -2,8 +2,6 @@
 
 Cgi::Cgi()
 {
-	_exec = "/usr/bin/php-cgi";
-	_output.clear();
 }
 
 Cgi::~Cgi()
@@ -125,7 +123,8 @@ void Cgi::execute()
 		if(nbytes == -1)
 			throw exceptWebserv("Error CGI : failed to read output");
 		close(pip[0]);
-		wait(NULL);
+		waitpid(pid, NULL, WNOHANG);
+		//check si le processus est termine 
 	}
 }
 
@@ -139,4 +138,9 @@ void	Cgi::manage_output()
 const std::string&	Cgi::getOutput() const
 {	
 	return(_output);
+}
+
+void	Cgi::set_path_cgi(std::string path)
+{
+	_exec = path;
 }

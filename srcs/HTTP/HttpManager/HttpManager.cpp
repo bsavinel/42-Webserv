@@ -101,6 +101,7 @@ void	HttpManager::launch_cgi(HttpRequest &_request, const Server &server)
 		canWrite();
 		std::string header; 
 		_cgi.initialise_env(_request, server);
+		_cgi.set_path_cgi(_request.getLocation()->getCgiPathToScript());
 		_cgi.set_argv();
 		_cgi.execute();
 		_respond.clear();

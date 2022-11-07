@@ -27,6 +27,7 @@ class Cgi
 		~Cgi();
 
 		void	initialise_env(HttpRequest &manager, const Server &server);
+		void	set_path_cgi(std::string path);
 		void	set_argv();
 		void	printEnv() const;
 		void	printArg() const;

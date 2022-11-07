@@ -6,11 +6,10 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>CGI test file</title>
 </head>
+
 <body>
 	<?php
-		$date = date('d-m-y h:i:s');
-		echo $date;
-		echo "Hello World";
+		phpinfo();
 	?>
-	</body>
+</body>
 </html>
