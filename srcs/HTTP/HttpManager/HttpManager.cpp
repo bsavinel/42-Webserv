@@ -29,17 +29,17 @@ HttpManager		&HttpManager::operator=(const HttpManager& rhs)
 	{
 		_errorCode = rhs._errorCode;
 		_server = rhs._server;
-        _socketClient = rhs._socketClient;
-        _Writeok = rhs._Writeok;
+		_socketClient = rhs._socketClient;
+		_Writeok = rhs._Writeok;
 		_Readok = rhs._Readok;
 		_modeChange = rhs._modeChange;
-        _init = rhs._init;
+		_init = rhs._init;
 		_isEnd = rhs._isEnd;
 		_file = rhs._file;
 		_name_file = rhs._name_file;
 		_headerBuild = rhs._headerBuild;
 		_respond = rhs._respond;
-        _request = rhs._request;
+		_request = rhs._request;
 	}
 	return *this;
 }

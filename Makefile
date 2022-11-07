@@ -27,6 +27,7 @@ SRCS =	Config/Config.cpp						\
 		HTTP/HttpManager/HttpM_Get.cpp			\
 		HTTP/HttpManager/HttpM_GetSet.cpp		\
 		HTTP/HttpManager/HttpM_Post.cpp			\
+		HTTP/HttpManager/HttpM_redir.cpp		\
 		HTTP/HttpManager/HttpManager.cpp		\
 		HTTP/HttpRequest.cpp					\
 		Utils/builder.cpp						\
@@ -79,10 +80,9 @@ NO_COLOR		=	\033[m
 
 all	: 
 	echo "$(BLUE)" Compilation in progress... "$(NO_COLOR)"
-	make $(NAME) && echo "$(GREEN)" $(NAME) -- Compilation complete ! "$(NO_COLOR)" || echo "$(RED)" $(NAME) -- Compilation Failed "$(NO_COLOR)"
+	make $(NAME) --no-print-directory && echo "$(GREEN)" $(NAME) -- Compilation complete ! "$(NO_COLOR)" || echo "$(RED)" $(NAME) -- Compilation Failed "$(NO_COLOR)"
 
 $(NAME) : $(OBJS)
-	echo "Linking $(NAME)"
 	$(CXX) $(CXXFLAGS) $(LIBINCS) -o $@ $(OBJS) $(INCS) 
 
 $(OBJ_PATH)%.o : $(SRC_PATH)%.cpp
@@ -98,7 +98,7 @@ fclean : clean
 
 re : fclean 
 	echo "Cleaning executable"
-	make all
+	make all --no-print-directory
 
 ################################################################################
 #####                              Flags                                   #####

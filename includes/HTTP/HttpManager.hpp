@@ -35,9 +35,12 @@ class HttpManager
 		const bool    		&getIsEnd() const;
 		const bool			&getModeChange() const;
 		const std::string	&getResponse() const;
+		const HttpRequest	&getClassRequest() const;
 
 		void				setModeChange(bool modeChange);
 		void				setErrorCode(int statusCode);
+		void				setIsEnd(bool IsEnd);
+		void				setInit(bool init);
 
 	private:
 
