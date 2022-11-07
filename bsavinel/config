@@ -16,6 +16,7 @@ server
 		allow GET POST DELETE;
 		root ./bsavinel/site/methode/;
 		autoindex on;
+		return 404 ./dfgsfdgs;
 	}
 
 	location /methode/test/
@@ -23,7 +24,6 @@ server
 		allow GET POST DELETE;
 		root ./bsavinel/site/methode/test/;
 		autoindex on;
-		return 403 /error/403.html
 	}
 
 }

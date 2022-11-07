@@ -8,6 +8,7 @@ void	autoIndex(HttpRequest &request, HttpManager &manager);
 HttpManager::HttpManager(t_socket socketClient)
 {
 	_socketClient = socketClient;
+	_RedirectionStart = false;
 	_Readok = true;
 	_modeChange = false;
 	_init = false;
@@ -27,6 +28,7 @@ HttpManager		&HttpManager::operator=(const HttpManager& rhs)
 {
 	if (this != &rhs)
 	{
+		_RedirectionStart = rhs._RedirectionStart;
 		_errorCode = rhs._errorCode;
 		_server = rhs._server;
 		_socketClient = rhs._socketClient;
@@ -68,6 +70,7 @@ int HttpManager::receive()
 	if ((ret = recv(_socketClient, buffer, LEN_TO_READ, MSG_DONTWAIT)) == -1)
 		return (-1);
 	_request.concatenate(buffer);
+	//std::cout << buffer << std::endl;
 	return (0);
 }
 
@@ -79,10 +82,8 @@ bool	HttpManager::applyMethod(const Server &server)
 		{
 			canWrite();
 			if (!redirectionManage())
-			{
 				_errorCode = _request.getLocation()->getReturnCode();
-				applyMethod(server);
-			}
+			return _isEnd;
 		}
 		else if (_errorCode != 0)
 		{

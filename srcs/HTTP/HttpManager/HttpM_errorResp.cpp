@@ -6,7 +6,9 @@ std::string	HttpManager::buildSimpleErrorResponse()
 {
 	std::string errResp;
 
-	if (_errorCode == 204)
+	if (_errorCode == 0)
+		return errResp;
+	else if (_errorCode == 204)
 		errResp = "HTTP/1.1 204 No Content\n\n";
 	else
 	{
@@ -24,10 +26,12 @@ bool	HttpManager::init_error_file(const std::string &error_page, std::string &er
 	stat(error_page.c_str(), &status);
 	if (_file < 0 || !S_ISREG(status.st_mode))
 	{
-		errResp = buildSimpleErrorResponse();
-		_isEnd = true;
 		if (_file >= 0)
 			close(_file);
+		if (_errorCode == 0)
+			return false;
+		_isEnd = true;
+		errResp = buildSimpleErrorResponse();
 		return false;
 	}
 	std::string type_file = determinateType(error_page);

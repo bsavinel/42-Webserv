@@ -88,6 +88,7 @@ class HttpManager
 		/* Redirection management */
 
 		bool			redirectionManage();
+		bool			_RedirectionStart;
 
 		/*Reponse Requete*/
 

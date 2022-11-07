@@ -2,6 +2,7 @@
 
 Location::Location() : autoindex(false)
 {
+	return_code = 0;
 }
 
 Location::Location(const Location & src)
