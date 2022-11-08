@@ -213,5 +213,5 @@ bool	HttpManager::check_if_method_authorized()
 			return (1);
 		itMethod++;
 	}
-	return (0)	
+	return (0);
 }
