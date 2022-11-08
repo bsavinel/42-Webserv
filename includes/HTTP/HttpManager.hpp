@@ -28,6 +28,7 @@ class HttpManager
 		HttpManager			&operator=(const HttpManager& rhs);
 
 		bool				applyMethod(const Server &server);
+		bool				check_if_method_authorized();
 		void				launch_cgi(HttpRequest &_request, const Server &server);
 		int					receive( void );
 		void				sender();

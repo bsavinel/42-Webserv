@@ -133,11 +133,14 @@ bool	HttpManager::applyMethod(const Server &server)
 	(void)server;
 	if (!_isEnd)
 	{
+
 		if (_errorCode != 0)
 		{
 			_respond.clear();
 			_respond = ErrorRespond();
 		}
+		else if(!check_if_method_authorized())
+			_errorCode = 405;
 		else if(_request.getLocation()->getCgiFileExtension() == get_file_extension(_request.getUrl().first))
 			launch_cgi(_request, server);
 		else if (_request.getMethod().first == "GET")
@@ -196,5 +199,19 @@ std::string HttpManager::determinateType()
 	else if (_name_file.rfind(".jpeg") == _name_file.size() - 5 && _name_file.size() >= 5)
 		return "image/jpeg";
 	_errorCode = 415;
-	return "";	
+	return "";
+}
+
+bool	HttpManager::check_if_method_authorized()
+{
+	std::vector<std::string>::const_iterator itMethod = _request.getLocation()->getAllowedMethods().begin();
+	std::vector<std::string>::const_iterator iteMethod = _request.getLocation()->getAllowedMethods().end();
+
+	while (itMethod != iteMethod)
+	{
+		if(_request.getMethod().first == (*itMethod))
+			return (1);
+		itMethod++;
+	}
+	return (0)	
 }
