@@ -6,6 +6,7 @@ class Cgi;
 # include <iostream>
 # include <string>
 # include <vector>
+# include <ctime>
 # include <stdlib.h>
 # include <sys/wait.h>
 # include "HttpRequest.hpp"
@@ -21,6 +22,9 @@ class Cgi
 		char**		_env;
 		std::string	_request;
 		std::string	_output;
+		time_t		_start;
+		time_t		_end;
+
 
 	public :
 		Cgi();
@@ -32,6 +36,7 @@ class Cgi
 		void	printEnv() const;
 		void	printArg() const;
 		const	std::string	&getOutput() const;
+		const	std::string &getScriptPath() const;
 		void	execute();
 		void	manage_output();
 

@@ -93,9 +93,9 @@ void	Cgi::set_argv()
 
 void Cgi::execute()
 {
-	int pip[2];
-	pid_t pid;
-	char buff[4096];
+	int		pip[2];
+	pid_t	pid;
+	char	buff[4096];
 
 	if(pipe(pip) == -1)
 		throw exceptWebserv("Error CGI : failed to create a pipe");
@@ -119,12 +119,10 @@ void Cgi::execute()
 			_output.append(buff);
 			memset(buff, 0, 4096);
 		}
-
 		if(nbytes == -1)
 			throw exceptWebserv("Error CGI : failed to read output");
 		close(pip[0]);
-		waitpid(pid, NULL, WNOHANG);
-		//check si le processus est termine 
+		waitpid(pid, NULL, 0);
 	}
 }
 
@@ -143,4 +141,9 @@ const std::string&	Cgi::getOutput() const
 void	Cgi::set_path_cgi(std::string path)
 {
 	_exec = path;
+}
+
+const std::string&	Cgi::getScriptPath() const
+{
+	return(_path_to_script);
 }

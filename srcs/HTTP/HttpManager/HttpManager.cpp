@@ -103,15 +103,27 @@ void	HttpManager::launch_cgi(HttpRequest &_request, const Server &server)
 		_cgi.initialise_env(_request, server);
 		_cgi.set_path_cgi(_request.getLocation()->getCgiPathToScript());
 		_cgi.set_argv();
-		_cgi.execute();
-		_respond.clear();
-		_cgi.manage_output();
-		std::cout <<"CGI OUT PUT = " << std::endl << _cgi.getOutput() << std::endl;
-		_respond = _cgi.getOutput();
-		header = HeaderRespond(_respond.size(), 200, "text/html");
-		_respond = header + _respond;
-		std::cout << "RESPOND CGI =" << std::endl << _respond << std::endl;
-		_tmpEnd = true;
+		if(open(_cgi.getScriptPath().c_str(), O_RDONLY) == -1)
+		{
+			std::cout << "FILE DOESNT EXIST" << std::endl;
+			_errorCode = 404;
+			_respond = ErrorRespond();
+			std::cout << "RESPOND ERROR =" << std::endl << _respond << std::endl;
+			_tmpEnd = true;
+		}
+		else
+		{
+			_cgi.execute();
+			_respond.clear();
+			_cgi.manage_output();
+			//std::cout <<"CGI OUT PUT = " << std::endl << _cgi.getOutput() << std::endl;
+			_respond = _cgi.getOutput();
+			header = HeaderRespond(_respond.size(), 200, "text/html");
+			_respond = header + _respond;
+			_tmpEnd = true;
+		}
+		//std::cout << "RESPOND CGI =" << std::endl << _respond << std::endl;
+		
 	}
 }
 
@@ -130,7 +142,10 @@ bool	HttpManager::applyMethod(const Server &server)
 		else if (_request.getMethod().first == "GET")
 			getMethod();
 		else if (_request.getMethod().first == "POST")
+		{
+			std::cout << _request.getRequest() << std::endl;
 			postMethod();
+		}
 		else if (_request.getMethod().first == "DELETE")
 			deleteMethod();
 		else
