@@ -7,6 +7,7 @@ void	autoIndex(HttpRequest &request, HttpManager &manager);
 
 HttpManager::HttpManager(t_socket socketClient)
 {
+	_goodRequest = false;
 	_socketClient = socketClient;
 	_RedirectionStart = false;
 	_Readok = true;
@@ -28,6 +29,7 @@ HttpManager		&HttpManager::operator=(const HttpManager& rhs)
 {
 	if (this != &rhs)
 	{
+		_goodRequest = rhs._goodRequest;
 		_RedirectionStart = rhs._RedirectionStart;
 		_errorCode = rhs._errorCode;
 		_server = rhs._server;
@@ -78,7 +80,12 @@ bool	HttpManager::applyMethod(const Server &server)
 {
 	if (!_isEnd)
 	{
-		if (_errorCode == 0 && _request.getLocation()->getReturnCode() != 0)
+		if (_goodRequest == false)
+		{
+			_goodRequest = true;
+            canWrite();
+		}
+		else if (_errorCode == 0 && _request.getLocation()->getReturnCode() != 0)
 		{
 			canWrite();
 			if (!redirectionManage())
@@ -109,9 +116,27 @@ void	HttpManager::initialize(const Server &server)
 		_init = true;
 		_request.parser();
 		_request.setLocation(_request.findLocation(server));
+		//_goodRequest = checkRequest(server);
 	}
 }
 
+bool	HttpManager::checkRequest(const Server &server)
+{
+	(void)server;
+	if (_request.getHttpVersion().first != "HTTP/1.1")
+		_errorCode = 505;
+	else if (_request.getMethod().first != "GET" ||
+			_request.getMethod().first != "POST" || 
+			_request.getMethod().first != "DELETE")
+		_errorCode = 501;
+	/*else if (_request.getLocation()->getAllowedMethods().find(_request.getMethod()) == _request.getLocation()->getAllowedMethods().end())
+		_errorCode = 405;*/
+	/*else if (_request.getContentLenght().second == true && _request.getContentLenght().first > server.getClientMaxBodySize())
+		_errorCode = 413*/
+	else
+		return true; 
+	return false;
+}
 
 void	HttpManager::canRead()
 {

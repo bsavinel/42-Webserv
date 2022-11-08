@@ -62,6 +62,8 @@ class HttpManager
 
 		/*initialisation*/
 
+		bool			_goodRequest;
+		bool			checkRequest(const Server &server);
 
 		/*Get methode*/
 
