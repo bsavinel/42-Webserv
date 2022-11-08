@@ -1,5 +1,6 @@
 #include "HttpManager.hpp"
 #include <sys/socket.h>
+#include <sys/stat.h>
 #include <iostream>
 #include <sstream>
 #include "Error.hpp"
@@ -94,6 +95,8 @@ std::string	HttpManager::ErrorRespond()
 
 void	HttpManager::launch_cgi(HttpRequest &_request, const Server &server)
 {
+	struct stat _status;
+
 	if (_tmpEnd == true)
 		_isEnd = true;
 	else if (!_tmpEnd)
@@ -103,12 +106,10 @@ void	HttpManager::launch_cgi(HttpRequest &_request, const Server &server)
 		_cgi.initialise_env(_request, server);
 		_cgi.set_path_cgi(_request.getLocation()->getCgiPathToScript());
 		_cgi.set_argv();
-		if(open(_cgi.getScriptPath().c_str(), O_RDONLY) == -1)
+		stat(_cgi.getScriptPath().c_str(), &_status);
+		if(errno == ENOENT)
 		{
-			std::cout << "FILE DOESNT EXIST" << std::endl;
 			_errorCode = 404;
-			_respond = ErrorRespond();
-			std::cout << "RESPOND ERROR =" << std::endl << _respond << std::endl;
 			_tmpEnd = true;
 		}
 		else
