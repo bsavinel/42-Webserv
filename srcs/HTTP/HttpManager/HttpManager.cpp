@@ -55,10 +55,14 @@ HttpManager::~HttpManager()
 
 void	HttpManager::sender()
 {
+	int ret;
+
 	if (_respond.size() > 0)
 	{
-		send(_socketClient, _respond.c_str(), _respond.size(), MSG_NOSIGNAL);
+		ret = send(_socketClient, _respond.c_str(), _respond.size(), MSG_NOSIGNAL);
 		_respond.clear();
+		if (ret == -1)
+			_isEnd = true;
 	}
 }
 
@@ -69,8 +73,12 @@ int HttpManager::receive()
 
 	for (int i = 0; i < LEN_TO_READ + 1; i++)
 		buffer[i] = 0;
-	if ((ret = recv(_socketClient, buffer, LEN_TO_READ, MSG_DONTWAIT)) == -1)
-		return (-1);
+	ret = recv(_socketClient, buffer, LEN_TO_READ, MSG_DONTWAIT);
+	if (ret == -1)
+	{
+		_isEnd = true;
+		return -1;
+	}
 	_request.concatenate(buffer);
 	//std::cout << buffer << std::endl;
 	return (0);
@@ -116,17 +124,17 @@ void	HttpManager::initialize(const Server &server)
 		_init = true;
 		_request.parser();
 		_request.setLocation(_request.findLocation(server));
-		//_goodRequest = checkRequest(server);
+		_goodRequest = checkRequest(server);
 	}
 }
 
 bool	HttpManager::checkRequest(const Server &server)
 {
 	(void)server;
-	if (_request.getHttpVersion().first != "HTTP/1.1")
+	if (_request.getHttpVersion().first != "HTTP/1.1\r" && _request.getHttpVersion().first != "HTTP/1.1")
 		_errorCode = 505;
-	else if (_request.getMethod().first != "GET" ||
-			_request.getMethod().first != "POST" || 
+	else if (_request.getMethod().first != "GET" &&
+			_request.getMethod().first != "POST" && 
 			_request.getMethod().first != "DELETE")
 		_errorCode = 501;
 	/*else if (_request.getLocation()->getAllowedMethods().find(_request.getMethod()) == _request.getLocation()->getAllowedMethods().end())
