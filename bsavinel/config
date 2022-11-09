@@ -8,6 +8,7 @@ server
 		allow GET POST DELETE;
 		root ./bsavinel/site/;
 		index index.html;
+		cgi_pass .php /usr/bin/php-cgi;
 		autoindex on;
 	}
 
@@ -15,14 +16,15 @@ server
 	{
 		allow GET POST DELETE;
 		root ./bsavinel/site/methode/;
+		cgi_pass .php  /usr/bin/php-cgi;
 		autoindex on;
-		return 404 ./dfgsfdgs;
 	}
 
 	location /methode/test/
 	{
 		allow GET POST DELETE;
 		root ./bsavinel/site/methode/test/;
+		cgi_pass .php  /usr/bin/php-cgi;
 		autoindex on;
 	}
 

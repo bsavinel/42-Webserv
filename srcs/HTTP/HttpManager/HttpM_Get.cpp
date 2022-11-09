@@ -4,6 +4,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <iostream>
+#include <utils.hpp>
 
 bool	HttpManager::autoIndexRequired()
 {
@@ -47,7 +48,7 @@ void	HttpManager::initialize_get()
 	struct stat status;
 
 	if (1) // ? condition autoindex
-	{
+	{	
 		_name_file = LocalPathFile_get();
 		OpenFile_get(_name_file);
 		if (_errorCode == 0)

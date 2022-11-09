@@ -1,5 +1,6 @@
 #include "Error.hpp"
 #include <sstream>
+#include <sys/time.h>
 #include "HttpRequest.hpp"
 
 std::string buildErrorPage(int err)
@@ -37,4 +38,13 @@ std::string buildLocalPath(HttpRequest &request)
 		localPath.erase(0, 1);
 	localPath.insert(0, RootPath);
 	return localPath;
+}
+
+size_t	give_time(void)
+{
+	struct timeval	time;
+
+	if (gettimeofday(&time, NULL) == -1)
+		return (-1);
+	return ((size_t)time.tv_sec);
 }

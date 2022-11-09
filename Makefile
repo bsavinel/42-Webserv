@@ -33,8 +33,10 @@ SRCS =	Config/Config.cpp						\
 		Utils/builder.cpp						\
 		Utils/Error.cpp							\
 		Utils/exceptWebserv.cpp					\
-		Utils/utils.cpp							\
 		Utils/headerRespond.cpp					\
+		Utils/ft_itoa.cpp						\
+		Utils/utils.cpp							\
+		Cgi.cpp									\
 		Epoll.cpp								\
 		launcher.cpp							\
 		main.cpp

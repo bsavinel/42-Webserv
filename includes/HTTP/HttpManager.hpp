@@ -1,13 +1,18 @@
 #ifndef HTTPMANAGER_HPP
 # define HTTPMANAGER_HPP
 
+class HttpManager;
+
 # include <string>
 # include "define.hpp"
 # include "define.hpp"
 # include "HttpRequest.hpp"
-#include <sys/types.h>
-#include "Server.hpp"
-#include <sys/socket.h>
+# include "Cgi.hpp"
+# include <sys/types.h>
+# include "Server.hpp"
+# include <sys/socket.h>
+
+
 
 std::string HeaderRespond(off_t contentLenght, int statusCode, std::string type = std::string());
 
@@ -23,6 +28,8 @@ class HttpManager
 		HttpManager			&operator=(const HttpManager& rhs);
 
 		bool				applyMethod(const Server &server);
+		bool				check_if_method_authorized();
+		void				launch_cgi(HttpRequest &_request, const Server &server);
 		int					receive( void );
 		void				sender();
 		void				initialize(const Server &server);
@@ -34,6 +41,7 @@ class HttpManager
 		const bool			&getReadOk() const;
 		const bool    		&getIsEnd() const;
 		const bool			&getModeChange() const;
+		const HttpRequest	&getRequest() const;
 		const std::string	&getResponse() const;
 		const HttpRequest	&getClassRequest() const;
 
@@ -45,8 +53,13 @@ class HttpManager
 	private:
 
 		int				_errorCode;
-		Server			_server;
 		t_socket		_socketClient;
+
+		/* CGI */
+		Cgi				_cgi;
+		bool			_firstPassage;
+		bool			_proccess_fini;
+
 
 
 		/*for outisde chose*/
@@ -82,6 +95,7 @@ class HttpManager
 		/*Post methode*/
 
 		void			postMethod();
+		int				_tmp_upload_fd;
 
 		/*delete methode*/
 
@@ -99,6 +113,7 @@ class HttpManager
 		bool			init_error_file(const std::string &error_page, std::string &errResp);
 		std::string		_respond;
 		HttpRequest		_request;
+		bool			_tmpEnd;
 };
 
 #endif
