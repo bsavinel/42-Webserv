@@ -41,7 +41,7 @@ bool	HttpManager::init_error_file(const std::string &error_page, std::string &er
 		_isEnd = true;
 		return false;
 	}
-	errResp = HeaderRespond(status.st_size, 200, type_file);
+	errResp = HeaderRespond(status.st_size, _errorCode, type_file);
 	return true;
 }
 
@@ -55,9 +55,13 @@ std::string	HttpManager::ErrorRespond(const Server &server)
 	canWrite();
 	if (server.getErrorMap().find(_errorCode) != server.getErrorMap().end())
 	{
+		std::cout << "ICI" << _errorCode << std::endl;
+
 		if (_file == -1)
             if (!init_error_file((*server.getErrorMap().find(_errorCode)).second, errResp))
 				return errResp;
+		std::cout << "ap" << _errorCode << std::endl;
+
 		nb_char = read(_file, buffer, LEN_TO_READ);
 		if (nb_char > 0)
 			errResp.insert(errResp.size(), &buffer[0], nb_char);
@@ -69,6 +73,8 @@ std::string	HttpManager::ErrorRespond(const Server &server)
 	}
 	else
 	{
+		std::cout << "la" << _errorCode << std::endl;
+
 		errResp = buildSimpleErrorResponse();
 		_isEnd = true;
 	}

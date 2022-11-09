@@ -13,16 +13,16 @@ std::string buildErrorPage(int err)
 
 	page += "<!DOCTYPE html>\n";
 	page += "<html lang=\"en\">\n";
-	page += "<html>\n";
-	page += "<body>\n";
-	page += "<h1 style=\"text-align:center\">\n";
+	page += "\t<body>\n";
+	page += "\t\t<h1 style=\"text-align:center\">";
 	page += ss.str();
-	page += "\n</h1>\n";
-	page += "<hr>\n";
-	page += "<p style=\"text-align:center\">\n";
+	page += "</h1>\n";
+	page += "\t\t<hr>\n";
+	page += "\t\t<p style=\"text-align:center\">";
 	page += allErr.getError(err);
-	page += "\n</p>\n";
-	page += "</body>\n";
+	page += "</p>\n";
+	page += "\t</body>\n";
+	page += "</html>\n";
 	return page;
 }
 

@@ -194,6 +194,7 @@ bool	HttpManager::applyMethod(const Server &server)
 		else if (_errorCode != 0)
 		{
 			_respond.clear();
+			std::cout << "ICI" << _errorCode << std::endl;
 			_respond = ErrorRespond(server);
 		}
 		else if(!check_if_method_authorized())

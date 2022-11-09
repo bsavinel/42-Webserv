@@ -10,6 +10,7 @@ void	HttpManager::deleteMethod()
 	canWrite();
 	if (_headerBuild == false)
 	{
+		std::cout << "coucou" << std::endl;
 		path_to_remove = _request.getLocation()->getRootPath();
 		path_to_remove.erase(--path_to_remove.end());
 		path_to_remove += _request.getUrl().first;
@@ -26,6 +27,7 @@ void	HttpManager::deleteMethod()
 				_errorCode = 403;
 		}
 		_headerBuild = true;
+		std::cout << "code erreur :" << _errorCode << std::endl;
 	}
 	else
 		_isEnd = true;
