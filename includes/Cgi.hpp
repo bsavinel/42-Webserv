@@ -22,23 +22,27 @@ class Cgi
 		char**		_env;
 		std::string	_request;
 		std::string	_output;
-		time_t		_start;
+		size_t		_start;
 		time_t		_end;
+		pid_t		_pid;
+		int			_pip[2];
 
 
 	public :
 		Cgi();
 		~Cgi();
 
-		void	initialise_env(HttpRequest &manager, const Server &server);
-		void	set_path_cgi(std::string path);
-		void	set_argv();
-		void	printEnv() const;
-		void	printArg() const;
-		const	std::string	&getOutput() const;
-		const	std::string &getScriptPath() const;
-		void	execute();
-		void	manage_output();
+		int					feedOutput();
+		void				initialise_env(HttpRequest &manager, const Server &server);
+		void				set_path_cgi(std::string path);
+		void				set_argv();
+		void				printEnv() const;
+		void				printArg() const;
+		const				std::string	&getOutput() const;
+		const				std::string &getScriptPath() const;
+		void				execute();
+		void				manage_output();
+		void				cutOutput(int len);
 
 };
 

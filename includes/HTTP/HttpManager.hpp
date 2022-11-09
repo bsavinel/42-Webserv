@@ -51,7 +51,12 @@ class HttpManager
 
 		int				_errorCode;
 		t_socket		_socketClient;
+
+		/* CGI */
 		Cgi				_cgi;
+		bool			_firstPassage;
+		bool			_proccess_fini;
+
 
 
 		/*for outisde chose*/

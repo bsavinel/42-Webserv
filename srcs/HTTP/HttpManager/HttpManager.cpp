@@ -20,6 +20,8 @@ HttpManager::HttpManager(t_socket socketClient)
 	_file = -1;
 	_tmp_upload_fd = -1;
 	_tmpEnd = false;
+	_firstPassage = false;
+	_proccess_fini = false;
 }
 
 HttpManager::HttpManager(const HttpManager& rhs)
@@ -31,6 +33,8 @@ HttpManager		&HttpManager::operator=(const HttpManager& rhs)
 {
 	if (this != &rhs)
 	{
+		_proccess_fini = rhs._proccess_fini;
+		_firstPassage = rhs._firstPassage;
 		_errorCode = rhs._errorCode;
         _socketClient = rhs._socketClient;
         _Writeok = rhs._Writeok;
@@ -114,14 +118,46 @@ void	HttpManager::launch_cgi(HttpRequest &_request, const Server &server)
 		}
 		else
 		{
-			_cgi.execute();
-			_respond.clear();
-			_cgi.manage_output();
-			//std::cout <<"CGI OUT PUT = " << std::endl << _cgi.getOutput() << std::endl;
-			_respond = _cgi.getOutput();
-			header = HeaderRespond(_respond.size(), 200, "text/html");
-			_respond = header + _respond;
-			_tmpEnd = true;
+			if (_firstPassage == false)
+			{
+				_firstPassage = true;
+				_cgi.execute();
+			}
+			else
+			{
+				_respond.clear();
+				if (_proccess_fini == false)
+				{
+					int retfo;
+					retfo = _cgi.feedOutput();
+					if (retfo == 1)
+					{
+						std::cout << _cgi.getOutput().size() << std::endl;
+						_respond = HeaderRespond(_cgi.getOutput().size(), 200, "text/html");
+						_proccess_fini = true;
+						//std::cout <<"CGI OUT PUT = " << std::endl << _cgi.getOutput() << std::endl;
+					}
+					else if (retfo == -1)
+						_errorCode = 408;
+				}
+				else
+				{
+					if (_respond.size() > LEN_TO_READ)
+					{
+						_respond.insert(_respond.size(), _cgi.getOutput(), 0, LEN_TO_READ);
+						_cgi.cutOutput(LEN_TO_READ);
+					}
+					else
+					{
+						_respond.insert(_respond.size(), _cgi.getOutput(), 0, _cgi.getOutput().size());
+						_cgi.cutOutput(_cgi.getOutput().size());
+					}
+					if (_cgi.getOutput().size() == 0)
+					{
+						_isEnd = true; // peut mem directement is end
+					}
+				}
+			}
 		}
 		//std::cout << "RESPOND CGI =" << std::endl << _respond << std::endl;
 		
