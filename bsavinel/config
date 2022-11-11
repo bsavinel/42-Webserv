@@ -1,6 +1,6 @@
 server 
 {
-	listen ;
+	listen 8080;
 	error_pages 404 ./rlejizetj;
 	error_pages 304 ./rlejizetj;
 	error_pages 407 ./rlejizetj;
@@ -25,7 +25,6 @@ server
 		root ./bsavinel/site/methode/test/;
 		cgi_pass .php  /usr/bin/php-cgi;
 		autoindex on;
-		return 403 /error/403.html
 	}
 
 }

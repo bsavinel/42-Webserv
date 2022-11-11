@@ -3,7 +3,7 @@
 #include <sstream>
 #include <iostream>
 
-std::string HeaderRespond (off_t contentLenght, int statusCode, std::string type = std::string())
+std::string HeaderRespond (off_t contentLenght, int statusCode, std::string type = std::string() /*std::string &cookie = std::string()*/)
 {
 	std::stringstream ss;
 	std::string	header;
@@ -19,6 +19,8 @@ std::string HeaderRespond (off_t contentLenght, int statusCode, std::string type
 		ss << contentLenght;
 		header += "Content-Length: " + ss.str() + "\n";
 	}
+	// if (!cookie.empty())
+	// 	header += cookie;
 	header += "\n";
 	return header;
 }

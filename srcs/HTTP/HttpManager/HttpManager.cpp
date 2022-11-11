@@ -3,13 +3,14 @@
 #include <sys/stat.h>
 #include <iostream>
 #include <sstream>
-#include "Error.hpp"
 
 void	autoIndex(HttpRequest &request, HttpManager &manager);
 
 HttpManager::HttpManager(t_socket socketClient)
 {
+	_goodRequest = false;
 	_socketClient = socketClient;
+	_RedirectionStart = false;
 	_Readok = true;
 	_modeChange = false;
 	_init = false;
@@ -20,6 +21,8 @@ HttpManager::HttpManager(t_socket socketClient)
 	_file = -1;
 	_tmp_upload_fd = -1;
 	_tmpEnd = false;
+	_firstPassage = false;
+	_proccess_fini = false;
 }
 
 HttpManager::HttpManager(const HttpManager& rhs)
@@ -31,12 +34,16 @@ HttpManager		&HttpManager::operator=(const HttpManager& rhs)
 {
 	if (this != &rhs)
 	{
+		_goodRequest = rhs._goodRequest;
+		_RedirectionStart = rhs._RedirectionStart;
+		_socketClient = rhs._socketClient;
+		_Writeok = rhs._Writeok;
+		_proccess_fini = rhs._proccess_fini;
+		_firstPassage = rhs._firstPassage;
 		_errorCode = rhs._errorCode;
-        _socketClient = rhs._socketClient;
-        _Writeok = rhs._Writeok;
 		_Readok = rhs._Readok;
 		_modeChange = rhs._modeChange;
-        _init = rhs._init;
+		_init = rhs._init;
 		_isEnd = rhs._isEnd;
 		_file = rhs._file;
 		_name_file = rhs._name_file;
@@ -55,10 +62,14 @@ HttpManager::~HttpManager()
 
 void	HttpManager::sender()
 {
+	int ret;
+
 	if (_respond.size() > 0)
 	{
-		send(_socketClient, _respond.c_str(), _respond.size(), MSG_NOSIGNAL);
+		ret = send(_socketClient, _respond.c_str(), _respond.size(), MSG_NOSIGNAL);
 		_respond.clear();
+		if (ret == -1)
+			_isEnd = true;
 	}
 }
 
@@ -69,15 +80,18 @@ int HttpManager::receive()
 
 	for (int i = 0; i < LEN_TO_READ + 1; i++)
 		buffer[i] = 0;
-	if ((ret = recv(_socketClient, buffer, LEN_TO_READ, MSG_DONTWAIT)) == -1)
-		return (-1);
-	std::string buff(buffer);
-	//std::cout <<  "___________BUFFER RECEIVE___________" <<std::endl << buff << std::endl <<  "___________END BUFFER RECEIVE___________" << std::endl;
+	ret = recv(_socketClient, buffer, LEN_TO_READ, MSG_DONTWAIT);
+	if (ret == -1)
+	{
+		_isEnd = true;
+		return -1;
+	}
 	_request.concatenate(buffer);
+	std::cout << buffer << std::endl;
 	return (0);
 }
 
-std::string	HttpManager::ErrorRespond()
+/*std::string	HttpManager::ErrorRespond()
 {
 	std::string errResp;
 	Error err;
@@ -91,7 +105,7 @@ std::string	HttpManager::ErrorRespond()
 	}
 	_isEnd = true;
 	return errResp;
-}
+}*/
 
 void	HttpManager::launch_cgi(HttpRequest &_request, const Server &server)
 {
@@ -114,14 +128,48 @@ void	HttpManager::launch_cgi(HttpRequest &_request, const Server &server)
 		}
 		else
 		{
-			_cgi.execute();
-			_respond.clear();
-			_cgi.manage_output();
-			std::cout <<"CGI OUT PUT = " << std::endl << _cgi.getOutput() << std::endl;
-			_respond = _cgi.getOutput();
-			header = HeaderRespond(_respond.size(), 200, "text/html");
-			_respond = header + _respond;
-			_tmpEnd = true;
+			if (_firstPassage == false)
+			{
+				_firstPassage = true;
+				_cgi.execute();
+			}
+			else
+			{
+				_respond.clear();
+				if (_proccess_fini == false)
+				{
+					int retfo;
+					retfo = _cgi.feedOutput();
+					if (retfo == 1)
+					{
+						std::cout << _cgi.getOutput().size() << std::endl;
+						_respond = HeaderRespond(_cgi.getOutput().size(), 200, "text/html");
+						_proccess_fini = true;
+						std::cout <<"CGI OUT PUT = " << std::endl << _cgi.getOutput() << std::endl;
+						std::cout << std::endl;
+						std::cout <<"RESPOND= " << std::endl << _respond << std::endl;
+					}
+					else if (retfo == -1)
+						_errorCode = 408;
+				}
+				else
+				{
+					if (_respond.size() > LEN_TO_READ)
+					{
+						_respond.insert(_respond.size(), _cgi.getOutput(), 0, LEN_TO_READ);
+						_cgi.cutOutput(LEN_TO_READ);
+					}
+					else
+					{
+						_respond.insert(_respond.size(), _cgi.getOutput(), 0, _cgi.getOutput().size());
+						_cgi.cutOutput(_cgi.getOutput().size());
+					}
+					if (_cgi.getOutput().size() == 0)
+					{
+						_isEnd = true; // peut mem directement is end
+					}
+				}
+			}
 		}
 		//std::cout << "RESPOND CGI =" << std::endl << _respond << std::endl;
 		
@@ -133,11 +181,23 @@ bool	HttpManager::applyMethod(const Server &server)
 	(void)server;
 	if (!_isEnd)
 	{
-
-		if (_errorCode != 0)
+		if (_goodRequest == false)
+		{
+			_goodRequest = true;
+            canWrite();
+		}
+		else if (_errorCode == 0 && _request.getLocation()->getReturnCode() != 0)
+		{
+			canWrite();
+			if (!redirectionManage())
+				_errorCode = _request.getLocation()->getReturnCode();
+			return _isEnd;
+		}
+		else if (_errorCode != 0)
 		{
 			_respond.clear();
-			_respond = ErrorRespond();
+			std::cout << "ICI" << _errorCode << std::endl;
+			_respond = ErrorRespond(server);
 		}
 		else if(!check_if_method_authorized())
 			_errorCode = 405;
@@ -147,7 +207,7 @@ bool	HttpManager::applyMethod(const Server &server)
 				launch_cgi(_request, server);
 			}
 		else if (_request.getMethod().first == "GET")
-			getMethod();
+			getMethod(server);
 		else if (_request.getMethod().first == "POST")
 		{
 			std::cout << _request.getRequest() << std::endl;
@@ -168,7 +228,26 @@ void	HttpManager::initialize(const Server &server)
 		_init = true;
 		_request.parser();
 		_request.setLocation(_request.findLocation(server));
+		_goodRequest = checkRequest(server);
 	}
+}
+
+bool	HttpManager::checkRequest(const Server &server)
+{
+	(void)server;
+	if (_request.getHttpVersion().first != "HTTP/1.1\r" && _request.getHttpVersion().first != "HTTP/1.1")
+		_errorCode = 505;
+	else if (_request.getMethod().first != "GET" &&
+			_request.getMethod().first != "POST" && 
+			_request.getMethod().first != "DELETE")
+		_errorCode = 501;
+	/*else if (_request.getLocation()->getAllowedMethods().find(_request.getMethod()) == _request.getLocation()->getAllowedMethods().end())
+		_errorCode = 405;*/
+	/*else if (_request.getContentLenght().second == true && _request.getContentLenght().first > server.getClientMaxBodySize())
+		_errorCode = 413*/
+	else
+		return true; 
+	return false;
 }
 
 void	HttpManager::canRead()
@@ -189,19 +268,20 @@ void	HttpManager::canWrite()
 	}
 }
 
-std::string HttpManager::determinateType()
+std::string HttpManager::determinateType(const std::string &name_file)
 {
-	if (_name_file.rfind(".html") == _name_file.size() - 5 && _name_file.size() >= 5)
+	if (name_file.rfind(".html") == name_file.size() - 5 && name_file.size() >= 5)
 		return "text/html";
-	else if (_name_file.rfind(".css") == _name_file.size() - 4 && _name_file.size() >= 4)
+	else if (name_file.rfind(".css") == name_file.size() - 4 && name_file.size() >= 4)
 		return  "text/css";
-	else if (_name_file.rfind(".ico") == _name_file.size() - 4 && _name_file.size() >= 4)
+	else if (name_file.rfind(".ico") == name_file.size() - 4 && name_file.size() >= 4)
 		return "image/x-icon";
-	else if (_name_file.rfind(".png") == _name_file.size() - 4 && _name_file.size() >= 4)
+	else if (name_file.rfind(".png") == name_file.size() - 4 && name_file.size() >= 4)
 		return "image/png";
-	else if (_name_file.rfind(".jpeg") == _name_file.size() - 5 && _name_file.size() >= 5)
+	else if (name_file.rfind(".jpeg") == name_file.size() - 5 && name_file.size() >= 5)
 		return "image/jpeg";
-	_errorCode = 415;
+	if (_errorCode == 0)
+		_errorCode = 415;
 	return "";
 }
 

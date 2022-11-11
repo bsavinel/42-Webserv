@@ -58,10 +58,11 @@ void	HttpManager::initialize_get()
 			{
 				_errorCode = 400;
 				close(_file);
+				_file = -1;
 			}
 		}
 		if (_errorCode == 0)
-			_respond = HeaderRespond(status.st_size, 200, determinateType());
+			_respond = HeaderRespond(status.st_size, 200, determinateType(_name_file));
 	}
 	_headerBuild = true;
 }
@@ -78,7 +79,7 @@ void HttpManager::builRespondGet()
 		_isEnd = true;
 }
 
-void HttpManager::getMethod()
+void HttpManager::getMethod(const Server &server)
 {
 	std::string header;
 
@@ -99,14 +100,13 @@ void HttpManager::getMethod()
 			{
 				header = HeaderRespond(_respond.size(), 200, "text/html");
 				_respond = header + _respond;
-				_isEnd = true;
 			}
 			else
 			{
 				_respond.clear();
-				_respond = ErrorRespond();
-				_isEnd = true;
+				_respond = ErrorRespond(server);
 			}
+			_isEnd = true;
 		}
 		else
 			builRespondGet();

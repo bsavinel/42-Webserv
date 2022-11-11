@@ -14,7 +14,7 @@ class HttpManager;
 
 
 
-std::string HeaderRespond(off_t contentLenght, int statusCode, std::string type = std::string());
+std::string HeaderRespond(off_t contentLenght, int statusCode, std::string type = std::string() /*std::string &cookie = std::string()*/);
 
 class HttpManager
 {
@@ -43,15 +43,23 @@ class HttpManager
 		const bool			&getModeChange() const;
 		const HttpRequest	&getRequest() const;
 		const std::string	&getResponse() const;
+		const HttpRequest	&getClassRequest() const;
 
 		void				setModeChange(bool modeChange);
 		void				setErrorCode(int statusCode);
+		void				setIsEnd(bool IsEnd);
+		void				setInit(bool init);
 
 	private:
 
 		int				_errorCode;
 		t_socket		_socketClient;
+
+		/* CGI */
 		Cgi				_cgi;
+		bool			_firstPassage;
+		bool			_proccess_fini;
+
 
 
 		/*for outisde chose*/
@@ -63,15 +71,17 @@ class HttpManager
 
 		void			canRead();
 		void			canWrite();
-		std::string		determinateType();
+		std::string		determinateType(const std::string &name_file);
 
 		/*initialisation*/
 
+		bool			_goodRequest;
+		bool			checkRequest(const Server &server);
 
 		/*Get methode*/
 
 		std::string		LocalPathFile_get();
-		void			getMethod();
+		void			getMethod(const Server &server);
 		void			OpenFile_get(std::string &file_name);
 		void			initialize_get();
 		void			builRespondGet();
@@ -91,9 +101,16 @@ class HttpManager
 
 		void			deleteMethod();
 
+		/* Redirection management */
+
+		bool			redirectionManage();
+		bool			_RedirectionStart;
+
 		/*Reponse Requete*/
 
-		std::string		ErrorRespond();
+		std::string		ErrorRespond(const Server &server);
+		std::string		buildSimpleErrorResponse();
+		bool			init_error_file(const std::string &error_page, std::string &errResp);
 		std::string		_respond;
 		HttpRequest		_request;
 		bool			_tmpEnd;

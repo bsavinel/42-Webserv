@@ -1,4 +1,6 @@
 #include "Cgi.hpp"
+#include "define.hpp"
+#include <signal.h>
 
 Cgi::Cgi()
 {
@@ -93,44 +95,67 @@ void	Cgi::set_argv()
 
 void Cgi::execute()
 {
-	int		pip[2];
-	pid_t	pid;
-	char	buff[4096];
-
-	if(pipe(pip) == -1)
+	if(pipe(_pip) == -1)
 		throw exceptWebserv("Error CGI : failed to create a pipe");
-	if((pid = fork()) == -1)
+	if((_pid = fork()) == -1)
 		throw exceptWebserv("Error CGI : failed to fork");
-	if(pid == 0) 
+	if(_pid == 0) 
 	{
 		//Child Process, CGI execution
-		dup2(pip[1], STDOUT_FILENO);
-		close(pip[0]);
-		close(pip[1]);
+		dup2(_pip[1], STDOUT_FILENO);
+		close(_pip[0]);
+		close(_pip[1]);
 		execve(_exec.c_str(), _arg, _env);
 	}
 	else
 	{
-		int nbytes;
-		//Parent Process, read CGI output
-		close(pip[1]);
-		while((nbytes = read(pip[0], buff, sizeof(buff) - 1) > 0))
-		{
-			_output.append(buff);
-			memset(buff, 0, 4096);
-		}
-		if(nbytes == -1)
-			throw exceptWebserv("Error CGI : failed to read output");
-		close(pip[0]);
-		waitpid(pid, NULL, 0);
+		_start = give_time();
+		close(_pip[1]);
 	}
 }
 
+/*retour 0 process non fini
+ retour 1 process fini
+ retour -1 process timeout*/
+
+int	Cgi::feedOutput()
+{
+	char	buff[LEN_TO_READ + 1];
+	int		nbytes;
+
+	if (give_time() > _start + 15)
+	{
+		kill(_pid, SIGKILL);
+		return -1;
+	}
+	memset(buff, 0, LEN_TO_READ);
+	nbytes = read(_pip[0], buff, LEN_TO_READ);
+	_output.insert(_output.size(), buff, nbytes);
+	if(nbytes == -1)
+		throw exceptWebserv("Error CGI : failed to read output");
+	if (waitpid(_pid, NULL, WNOHANG) == _pid)
+	{
+		memset(buff, 0, LEN_TO_READ);
+		while((nbytes = read(_pip[0], buff, LEN_TO_READ) > 0))
+		{
+			_output.insert(0, buff, nbytes);
+			memset(buff, 0, 4096);
+		}
+		manage_output();
+		close(_pip[0]);
+		return 1;
+	}
+	return 0;
+}
+
+
 void	Cgi::manage_output()
 {
-	// size_t ret;
-// 	if ((ret = _output.find("\r\n\r\n")) != std::string::npos) 
-// 		_output.erase(0, ret);
+	size_t	ret;
+
+	if ((ret = _output.find("\r\n\r\n")) != std::string::npos) 
+		_output.erase(0, ret);
+
 }
 
 const std::string&	Cgi::getOutput() const
@@ -146,4 +171,9 @@ void	Cgi::set_path_cgi(std::string path)
 const std::string&	Cgi::getScriptPath() const
 {
 	return(_path_to_script);
+}
+
+void	Cgi::cutOutput(int len)
+{
+	_output.erase(0, len);
 }

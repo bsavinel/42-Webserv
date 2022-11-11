@@ -36,6 +36,11 @@ const bool	&HttpManager::getModeChange() const
 	return _modeChange;
 }
 
+const HttpRequest	&HttpManager::getClassRequest() const
+{
+	return _request;
+}
+
 void	HttpManager::setModeChange(bool modeChange)
 {
 	_modeChange = modeChange;
@@ -44,4 +49,14 @@ void	HttpManager::setModeChange(bool modeChange)
 void	HttpManager::setErrorCode(int errorCode)
 {
 	_errorCode = errorCode;
+}
+
+void	HttpManager::setIsEnd(bool isEnd)
+{
+	_isEnd = isEnd;
+}
+
+void	HttpManager::setInit(bool init)
+{
+	_init = init;
 }
