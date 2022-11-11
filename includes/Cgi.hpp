@@ -26,7 +26,7 @@ class Cgi
 		time_t						_end;
 		pid_t						_pid;
 		int							_pip[2];
-		std::vector<std::string>	cookies;
+		std::vector<std::string>	_cookies;
 
 	public :
 		Cgi();

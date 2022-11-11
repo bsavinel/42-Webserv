@@ -132,11 +132,43 @@ int	Cgi::feedOutput()
 			_output.insert(0, buff, nbytes);
 			memset(buff, 0, 4096);
 		}
-		manage_output();
+		store_cookies();
+		//manage_output();
 		close(_pip[0]);
 		return 1;
 	}
 	return 0;
+}
+
+
+void	Cgi::store_cookies()
+{
+	std::string	line;
+	int i = 1;
+	int	start_position_of_line = 0;
+	int end_position_of_line = _output.find('\n');
+	int end_of_header = _output.find("\r\n\r\n");
+
+	std::cout << "POSITION END_OF_HEADER " << end_of_header << line << std::endl;
+	
+	while (end_position_of_line < end_of_header)
+	{
+		line = _output.substr(start_position_of_line, end_position_of_line);
+		std::cout << "END POSITION NEXT LINE " << end_position_of_line << std::endl;
+		
+		std::cout << "LINE n" << i << " " << line << std::endl;
+		if(line.find("Set-Cookie:") != std::string::npos)
+		{
+			std::cout << "-----FOUND COOKIES" <<std::endl;
+			_cookies.push_back(line);
+		}
+		start_position_of_line = end_position_of_line + 1;
+		end_position_of_line = _output.find('\n', start_position_of_line);
+		if(end_position_of_line >= end_of_header)
+			end_position_of_line = end_of_header;
+		std::cout << "END POSITION NEXT LINE " << end_position_of_line << std::endl;
+		i++;
+	}
 }
 
 void	Cgi::manage_output()
@@ -145,7 +177,6 @@ void	Cgi::manage_output()
 
 	if ((ret = _output.find("\r\n\r\n")) != std::string::npos) 
 		_output.erase(0, ret);
-
 }
 
 const std::string&	Cgi::getOutput() const
