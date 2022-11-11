@@ -117,7 +117,7 @@ void	HttpManager::launch_cgi(HttpRequest &_request, const Server &server)
 			_cgi.execute();
 			_respond.clear();
 			_cgi.manage_output();
-			//std::cout <<"CGI OUT PUT = " << std::endl << _cgi.getOutput() << std::endl;
+			std::cout <<"CGI OUT PUT = " << std::endl << _cgi.getOutput() << std::endl;
 			_respond = _cgi.getOutput();
 			header = HeaderRespond(_respond.size(), 200, "text/html");
 			_respond = header + _respond;
@@ -142,7 +142,10 @@ bool	HttpManager::applyMethod(const Server &server)
 		else if(!check_if_method_authorized())
 			_errorCode = 405;
 		else if(_request.getLocation()->getCgiFileExtension() == get_file_extension(_request.getUrl().first))
-			launch_cgi(_request, server);
+			{
+				std::cout << "REQUEST = " << _request << std::endl;
+				launch_cgi(_request, server);
+			}
 		else if (_request.getMethod().first == "GET")
 			getMethod();
 		else if (_request.getMethod().first == "POST")

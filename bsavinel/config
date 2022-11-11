@@ -1,6 +1,6 @@
 server 
 {
-	listen 7070;
+	listen ;
 	error_pages 404 ./rlejizetj;
 	error_pages 304 ./rlejizetj;
 	error_pages 407 ./rlejizetj;
@@ -8,10 +8,7 @@ server
 	location / 
 	{
 		allow GET POST DELETE;
-		root ./bsavinel/site/;
-		index index.html;
-		cgi_pass .php /usr/bin/php-cgi;
-		autoindex on;
+		root ./bsavinel/site/;index ; cgi_pass .php /usr/bin/php-cgi; autoindex on;
 	}
 
 	location /methode/

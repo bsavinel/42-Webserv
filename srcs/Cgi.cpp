@@ -128,9 +128,9 @@ void Cgi::execute()
 
 void	Cgi::manage_output()
 {
-	size_t ret;
-	if ((ret = _output.find("\r\n\r\n")) != std::string::npos) 
-		_output.erase(0, ret);
+	// size_t ret;
+// 	if ((ret = _output.find("\r\n\r\n")) != std::string::npos) 
+// 		_output.erase(0, ret);
 }
 
 const std::string&	Cgi::getOutput() const
