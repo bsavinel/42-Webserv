@@ -40,6 +40,7 @@ class Cgi
 		void				manage_output();
 		void				cutOutput(int len);
 		void				store_cookies();
+		void				free_argenv();
 
 
 		// ----------------------

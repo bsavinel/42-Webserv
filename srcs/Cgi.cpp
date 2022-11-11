@@ -8,15 +8,6 @@ Cgi::Cgi()
 
 Cgi::~Cgi()
 {
-	//int i = 0;
-	//int j = 0;
-
-	/*while (_env[i])
-		i++;
-	while(j <= i)
-		free(_env[j]);
-	free(_env);*/
-	
 }
 
 void Cgi::initialise_env(HttpRequest &request, const Server &server)
@@ -148,7 +139,6 @@ int	Cgi::feedOutput()
 	return 0;
 }
 
-
 void	Cgi::manage_output()
 {
 	size_t	ret;
@@ -176,4 +166,20 @@ const std::string&	Cgi::getScriptPath() const
 void	Cgi::cutOutput(int len)
 {
 	_output.erase(0, len);
+}
+
+void	Cgi::free_argenv()
+{
+	int i = 0;
+
+	while(_arg[i])
+	{
+		free(_arg[i]);
+	}
+	free(_arg);
+	while(_env[i])
+	{
+		free(_env[i]);
+	}
+	free(_env);
 }
