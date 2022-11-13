@@ -1,0 +1,82 @@
+server 
+{
+	listen 8080;
+	server_name allIn;
+	client_max_body_size 8000;
+	error_pages 404 ./resources/error/404.html;
+
+	location /
+	{
+		allow GET POST;
+		root ./serverConfig/allIn/;
+		index login.html;
+		cgi_pass .php ./serverConfig/allIn/cgi/;
+		upload_store  ./serverConfig/allIn/uploads/;
+	}
+
+	location /count/
+	{
+		allow GET POST DELETE;
+		root ./serverConfig/allIn/count/;
+		upload_store  ./serverConfig/allIn/AllInAcount/;
+	}
+
+	location /image/
+	{
+		allow GET;
+		root ./serverConfig/allIn/image/;
+	}
+}
+
+server 
+{
+	listen 8081;
+	server_name jetoi;
+
+	location / 
+	{
+		allow GET;
+		root ./serverConfig/jetoi/;
+		index index.html;
+	}
+
+	location /empreinte_carbone/
+	{
+		allow GET POST DELETE;
+		root ./serverConfig/jetoi/empreinte_carbone/;
+		return 404 ./serverConfig/jetoi/empreinte_carbone/not_access.html;
+	}
+
+	location /image/
+	{
+		allow GET;
+		root ./serverConfig/allIn/image/;
+	}
+}
+
+server
+{
+	listen 7070;
+	server_name lautreport;
+
+	location /
+	{
+		allow GET;
+		index index.html;
+		root ./serverConfig/lautreport/
+	}
+#metre ,une page html dans methode, pour post un fichier et pour delete le fichier
+	location /methode/
+	{
+		allow GET POST DELETE;
+		autoindex off;
+		root ./serverConfig/lautreport/methode/
+		upload_store ./serverConfig/lautreport/methode/;
+	}
+
+	location /image/
+	{
+		allow GET;
+		root ./serverConfig/lautreport/image/;
+	}
+}
