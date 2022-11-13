@@ -89,6 +89,7 @@ void	Epoll::changeSocket(t_socket const & sock, uint32_t mask_event)
 
 void	Epoll::wait()
 {
+	_AllEvents.clear();
 	_AllEvents.resize(_sockClient.size() + _sockServ.size());
 	epoll_wait(_instance, _AllEvents.data(), _sockClient.size() + _sockServ.size(), -1);
 	// TODO  resize a fin de event vca r NULL mais la fin

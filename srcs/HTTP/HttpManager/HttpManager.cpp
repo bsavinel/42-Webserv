@@ -194,7 +194,6 @@ bool	HttpManager::applyMethod(const Server &server)
 		else if (_errorCode != 0)
 		{
 			_respond.clear();
-			std::cout << "ICI" << _errorCode << std::endl;
 			_respond = ErrorRespond(server);
 		}
 		else if(!check_if_method_authorized())
@@ -236,9 +235,10 @@ bool	HttpManager::checkRequest(const Server &server)
 			_request.getMethod().first != "POST" && 
 			_request.getMethod().first != "DELETE")
 		_errorCode = 501;
-	/*else if (_request.getLocation()->getAllowedMethods().find(_request.getMethod()) == _request.getLocation()->getAllowedMethods().end())
-		_errorCode = 405;*/
-	/*else if (_request.getContentLenght().second == true && _request.getContentLenght().first > server.getClientMaxBodySize())
+	else if (!check_if_method_authorized())
+		_errorCode = 405;
+	/*else if (server.getClientMaxBodySize() != -1 && 
+				(_request.getContentLenght().second == true && _request.getContentLenght().first > server.getClientMaxBodySize()))
 		_errorCode = 413*/
 	else
 		return true; 
@@ -275,6 +275,8 @@ std::string HttpManager::determinateType(const std::string &name_file)
 		return "image/png";
 	else if (name_file.rfind(".jpeg") == name_file.size() - 5 && name_file.size() >= 5)
 		return "image/jpeg";
+	else if (name_file.rfind(".jpg") == name_file.size() - 4 && name_file.size() >= 4)
+		return "image/jpg";
 	if (_errorCode == 0)
 		_errorCode = 415;
 	return "";	

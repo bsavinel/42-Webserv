@@ -17,7 +17,6 @@ static void routine(Epoll &epoll)
 		serverEvent(epoll, stockManager);
 		clientEvent(epoll, stockManager);
 	}
-	std::cout << "ICI ?????" << std::endl;
 }
 
 bool	check_server_port(Config &configuration)
@@ -59,9 +58,4 @@ void launcher(char *av)
 		itServer++;
 	}
 	routine(epoll);
-	std::cerr << "sortie de laubncher" << std::endl;
-	std::cerr << "sortie de laubncher" << std::endl;
-	std::cerr << "sortie de laubncher" << std::endl;
-	std::cerr << "sortie de laubncher" << std::endl;
-
 }
