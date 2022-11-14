@@ -14,7 +14,7 @@ class HttpManager;
 
 
 
-std::string HeaderRespond(off_t contentLenght, int statusCode, std::string type = std::string() /*std::string &cookie = std::string()*/);
+std::string HeaderRespond (off_t contentLenght, int statusCode, std::string type = std::string(), std::vector<std::string> cookies = std::vector<std::string>());
 
 class HttpManager
 {

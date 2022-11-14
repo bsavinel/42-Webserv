@@ -145,7 +145,8 @@ void HttpManager::launch_cgi(HttpRequest &_request, const Server &server)
 					if (retfo == 1)
 					{
 						std::cout << _cgi.getOutput().size() << std::endl;
-						_respond = HeaderRespond(_cgi.getOutput().size(), 200, "text/html");
+						_respond = HeaderRespond(_cgi.getOutput().size(), 200, "text/html", _cgi.getCookies());
+						 std::cout << "RESPOND CGI =" << std::endl << _respond << std::endl;
 						_proccess_fini = true;
 						std::cout << "CGI OUT PUT = " << std::endl
 								  << _cgi.getOutput() << std::endl;

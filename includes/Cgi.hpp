@@ -54,8 +54,9 @@ class Cgi
 		// |		GETTERS		|
 		// ----------------------
 
-		const				std::string	&getOutput() const;
-		const				std::string &getScriptPath() const;
+		const std::string				&getOutput() const;
+		const std::string				&getScriptPath() const;
+		const std::vector<std::string>	&getCookies() const;
 
 };
 
