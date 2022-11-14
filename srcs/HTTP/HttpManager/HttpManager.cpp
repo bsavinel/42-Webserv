@@ -124,6 +124,7 @@ void	HttpManager::initialize(const Server &server)
 	{
 		_init = true;
 		_request.parser();
+//		std::cout << _request << std::endl;
 		_request.setLocation(_request.findLocation(server));
 	}
 }

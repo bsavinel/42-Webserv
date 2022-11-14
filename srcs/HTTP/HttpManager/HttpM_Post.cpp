@@ -18,7 +18,7 @@ t_process			createProcess( void );
 // void				HttpManager::parseMultiPart(std::fstream &fstream);
 // void				HttpManager::postMethod();
 bool				file_exist (const std::string& name);
-// std::string			HttpManager::getFileName();
+// std::string		HttpManager::getFileName();
 std::string			getNbForFileName( void );
 bool				exists (const std::string& filename);
 int					openUploadFile();
@@ -44,12 +44,13 @@ void	HttpManager::postMethod()
 	if (_tmpEnd == false)
 	{
 		std::cout << "_request/" << std::endl;
-		std::cout << _request.getRequest() << std::endl;
+//		std::cout << _request.getRequest() << std::endl;
+		printAscii(_request.getRequest().c_str());
 		std::cout << "/_request" << std::endl;
 		std::cout << "-1" << std::endl;
 		_tmp_upload << _request.getRequest().c_str();
 		
-		if (count >=1)
+		if (count >= 1)
 			parseMultiPart(_tmp_upload);
 //			exit (0);
 		count++;
@@ -88,10 +89,10 @@ void HttpManager::parseMultiPart(std::fstream &fstream)
 	{
 		std::cout << "0" << std::endl;
 		getline(fstream, str);
-		// if ( str.size() && str[str.size()-1] == '\r' )
-		// 	str = str.substr( 0, str.size() - 1 );
-		// else
-		// 	str = str;
+		if ( str.size() && str[str.size()-1] == '\r' )
+			str = str.substr( 0, str.size() - 1 );
+		else
+			str = str;
 		std::cout << "HEEEEEERRRRRREEE : " << str << std::endl;
 //		usleep(100000);
 		// exit (0);

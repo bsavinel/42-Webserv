@@ -29,6 +29,7 @@ class HttpRequest
 		std::pair<std::string, bool>	getDnt(void) const;
 		std::pair<std::string, bool>	getContentType(void) const;
 		std::pair<std::string, bool>	getBoundary(void) const;
+		std::pair<std::string, bool>	getCookie(void) const;
 		std::pair<int, bool>			getContentLength(void) const;
 
 		Location						*getLocation(void) const;
@@ -60,6 +61,7 @@ class HttpRequest
 		std::pair<std::string, bool>	_boundary;
 		std::pair<std::string, bool>	_contentLength;
 		std::pair<int, bool>	_intContentLength;
+		std::pair<std::string, bool>	_cookie;
 		//std::string _AcceptLanguage;
 		//std::string _sec_ch_ua;
 		//std::string _sec_ch_ua_mobile;

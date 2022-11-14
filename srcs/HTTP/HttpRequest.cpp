@@ -158,6 +158,7 @@ void	HttpRequest::parser(/*std::string &request*/)
 	_AcceptEncoding = parseHeader(_request, "\nAccept-Encoding: ");
 	_contentType = parseHeader(_request, "\nContent-Type: ");
 	_contentLength = parseHeader(_request, "\nContent-Length: ");
+	_cookie = parseHeader(_request, "\nCookie: ");
 	if (_contentLength.second == true)
 	{
 		_intContentLength.first = atoi(_contentLength.first.c_str());
@@ -266,6 +267,11 @@ std::pair<int, bool>	HttpRequest::getContentLength(void) const
 	return _intContentLength;
 }
 
+std::pair<std::string, bool>	HttpRequest::getCookie(void) const
+{
+	return _cookie;
+}
+
 Location					*HttpRequest::getLocation(void) const
 {
 	return _location;
@@ -301,5 +307,7 @@ std::ostream &	operator<<( std::ostream & o, HttpRequest const & rhs)
 		o << rhs.getContentType().first << std::endl;
 	if (rhs.getBoundary().second == true) 
 		o << rhs.getBoundary().first << std::endl;
+	if (rhs.getCookie().second == true) 
+		o << rhs.getCookie().first << std::endl;
 	return o;
 }
