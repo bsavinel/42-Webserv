@@ -142,26 +142,34 @@ std::pair <std::string, bool> getMultiPartBoundary(std::string contentType)
 	return boundary;
 }
 
-void	HttpRequest::parser(/*std::string &request*/)
+void    HttpRequest::parser(/*std::string &request*/)
 {
-//	std::cout << "REQUEST\n" << _request << std::endl;
-	parseStartLine(_request);
-	_request.erase(0, _request.find('\n') + 1);
+//    std::cout << "REQUEST\n" << _request << std::endl;
+    parseStartLine(_request);
+    _request.erase(0, _request.find('\n') + 1);
 
-	_Connection = parseHeader(_request, "\nConnection: ");
-	_Accept = parseHeader(_request, "\nAccept: ");
-	_SecFetchSite = parseHeader(_request, "\nSec-Fetch-Site: ");
-	_SecFetchMode = parseHeader(_request, "\nSec-Fetch-Mode: ");
-	_SecFetchDest = parseHeader(_request, "\nSec-Fetch-Dest: ");
-	_Referer = parseHeader(_request, "\nReferer: ");
-	_AcceptEncoding = parseHeader(_request, "\nAccept-Encoding: ");
-	_contentType = parseHeader(_request, "\nContent-Type: ");
-	if (_contentType.first.find("multipart/form-data") == 0)
-	{
-		_boundary = getMultiPartBoundary(_contentType.first);
-		_contentType.first.erase(_contentType.first.find(';'), _contentType.first.npos);
-	}
-	_request.erase(0, _request.find("\r\n\r\n") + 4);
+    _Connection = parseHeader(_request, "\nConnection: ");
+    _Accept = parseHeader(_request, "\nAccept: ");
+    _SecFetchSite = parseHeader(_request, "\nSec-Fetch-Site: ");
+    _SecFetchMode = parseHeader(_request, "\nSec-Fetch-Mode: ");
+    _SecFetchDest = parseHeader(_request, "\nSec-Fetch-Dest: ");
+    _Referer = parseHeader(_request, "\nReferer: ");
+    _AcceptEncoding = parseHeader(_request, "\nAccept-Encoding: ");
+    _contentType = parseHeader(_request, "\nContent-Type: ");
+    _contentLength = parseHeader(_request, "\nContent-Length: ");
+    _cookie = parseHeader(_request, "\nCookie: ");
+    if (_contentLength.second == true)
+    {
+        _intContentLength.first = atoi(_contentLength.first.c_str());
+        _intContentLength.second = true;
+        std::cout << "_intContentLength: " << _intContentLength.first <<std::endl;
+    }
+    if (_contentType.first.find("multipart/form-data") == 0)
+    {
+        _boundary = getMultiPartBoundary(_contentType.first);
+        _contentType.first.erase(_contentType.first.find(';'), _contentType.first.npos);
+    }
+    _request.erase(0, _request.find("\r\n\r\n") + 4);
 }
 
 void	HttpRequest::concatenate(char *str)
@@ -257,6 +265,11 @@ Location					*HttpRequest::getLocation(void) const
 	return _location;
 }
 
+std::pair<std::string, bool>	HttpRequest::getCookie(void) const
+{
+	return _cookie;
+}
+
 
 std::ostream &	operator<<( std::ostream & o, HttpRequest const & rhs)
 {
@@ -287,5 +300,7 @@ std::ostream &	operator<<( std::ostream & o, HttpRequest const & rhs)
 		o << rhs.getContentType().first << std::endl;
 	if (rhs.getBoundary().second == true) 
 		o << rhs.getBoundary().first << std::endl;
+	if (rhs.getCookie().second == true) 
+        o << rhs.getCookie().first << std::endl;
 	return o;
 }

@@ -30,7 +30,7 @@ void Cgi::initialise_env(HttpRequest &request, const Server &server)
 	env_var.push_back("QUERY_STRING=" + request.getUrl().first);
 	env_var.push_back("CONTENT_LENGTH=0");
 	env_var.push_back("REDIRECT_STATUS=200");
-	env_var.push_back("HTTP_COOKIE=" + buildLocalPath(request));
+	env_var.push_back("HTTP_COOKIE=" + request.getCookie().first);
 
 	
 	std::vector<std::string>::iterator itEnvVar = env_var.begin();

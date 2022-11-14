@@ -18,8 +18,14 @@ if(!isset($_COOKIE[$cookie_name]))
 	echo "Cookie named '" . $cookie_name . "' is not set!";
 	} else {
 	echo "Cookie '" . $cookie_name . "' is set!<br>";
-	echo "Value is: " . $_COOKIE[$cookie_name];
+	echo "Value is: " . $_COOKIE[$cookie_name] ." <br>";
 	}
+	if(!isset($_COOKIE[$test_cookie2_name])) {
+		echo "Ca pue si tu lis ca<br>";
+		} else {
+		echo "Si tu lis cette phrase, t es bien<br>";
+		echo "Value is: " . $_COOKIE[$test_cookie2_name];
+		}
 ?>
 </body>
 </html>
