@@ -51,6 +51,9 @@
 		"random": "cpp",
 		"fstream": "cpp",
 		"ranges": "cpp",
-		"sstream": "cpp"
+		"sstream": "cpp",
+		"complex": "cpp",
+		"cstring": "cpp",
+		"cinttypes": "cpp"
 	}
 }
