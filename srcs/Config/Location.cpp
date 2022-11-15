@@ -59,16 +59,16 @@ void Location::setConfig(std::vector<std::string>::iterator & it, std::vector<st
 			else
 				this->redirection_path = *it;
 		}
-		else if ((*it).compare("root") == 0 && (*(it + 1)) != ";")
+		else if ((*it).compare("root") == 0 && (*(it + 1)) != ";" && (*(it + 2)) == ";")
 		{
 			std::string path =  *++it;
 			if(!is_dir_path(path))
 				throw exceptWebserv("Error Config : root value should be a path to a dir");
 			this->root_path = path;
 		}
-		else if ((*it).compare("index") == 0 && (*(it + 1)) != ";")
+		else if ((*it).compare("index") == 0 && (*(it + 1)) != ";" && (*(it + 2)) == ";")
 			this->index_path = *++it;
-		else if ((*it).compare("autoindex") == 0)
+		else if ((*it).compare("autoindex") == 0 && (*(it + 2)) == ";")
 		{
 			if ((*++it).compare("on") == 0)
 				this->autoindex = true;
@@ -77,12 +77,15 @@ void Location::setConfig(std::vector<std::string>::iterator & it, std::vector<st
 			else
 				throw exceptWebserv("Error Config : autoindex should set on \"on\" or \"off\"");
 		}
-		else if ((*it).compare("cgi_pass") == 0 && (*(it + 1)) != ";")
+		else if ((*it).compare("cgi_pass") == 0 && (*(it + 1)) != ";" && (*(it + 3)) == ";")
 		{
 			this->cgi_file_extension = *++it;
-			this->cgi_path_to_script = *++it;
+			std::string path =  *++it;
+			if(!is_file_path(path))
+				throw exceptWebserv("Error Config : cgi path value should be a path to a binary file");
+			this->cgi_path_to_script = path;
 		}
-		else if ((*it).compare("upload_store") == 0 && (*(it + 1)) != ";")
+		else if ((*it).compare("upload_store") == 0 && (*(it + 1)) != ";" && (*(it + 2)) == ";")
 		{
 			std::string path =  *++it;
 			if(!is_dir_path(path))
@@ -92,7 +95,6 @@ void Location::setConfig(std::vector<std::string>::iterator & it, std::vector<st
 		else if (*it != ";")
 		{
 			std::cout << "VALUE NOT COMPATIBLE = " << *it << " NXT  = " << *(it +1) << std::endl;
-			
 			throw exceptWebserv ("Error Config : LOCATION option not compatible");
 		}
 		it++;

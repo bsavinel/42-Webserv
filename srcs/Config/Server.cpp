@@ -179,11 +179,11 @@ void Server::setConfig(std::vector<std::string>::iterator & it, std::vector<std:
 				this->locations.insert(std::make_pair(path_loc, new_loc));
 			}
 		}
-		else if ((*it).compare("listen") == 0 && (*(it + 1)) != ";")
+		else if ((*it).compare("listen") == 0 && (*(it + 1)) != ";" && (*(it + 2)) == ";")
 			this->_port = atoi(((*++it).c_str()));
-		else if ((*it).compare("server_name") == 0 && (*(it + 1)) != ";")
+		else if ((*it).compare("server_name") == 0 && (*(it + 1)) != ";" && (*(it + 2)) == ";")
 			this->server_name = *++it;
-		else if ((*it).compare("error_pages") == 0 && (*(it + 1)) != ";")
+		else if ((*it).compare("error_pages") == 0 && (*(it + 1)) != ";" && (*(it + 3)) == ";")
 		{
 			int error_num = atoi((*++it).c_str());
 			if(!check_existing_error_code(error_num))
@@ -193,7 +193,7 @@ void Server::setConfig(std::vector<std::string>::iterator & it, std::vector<std:
 				throw exceptWebserv("Error Config : error_pages value should be a path to a file");
 			this->error_map.insert(std::make_pair(error_num, path_to_file));
 		}
-		else if ((*it).compare("client_max_body_size") == 0 && (*(it + 1)) != ";")
+		else if ((*it).compare("client_max_body_size") == 0 && (*(it + 1)) != ";" && (*(it + 2)) == ";" )
 		{
 			const char *arg = (*++it).c_str();
 			for(size_t i = 0; i < strlen(arg); i++)
