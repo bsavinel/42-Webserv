@@ -10,6 +10,7 @@
 #include <fstream>
 
 // probleme quand LEN_TO_READ est trop petit pour lire toute la requete
+// la len indique dans le header de la requete et la len du BODY de la requete
 
 
 void				printAscii(std::string str);
