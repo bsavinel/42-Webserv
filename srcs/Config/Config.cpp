@@ -1,6 +1,6 @@
 #include "Config.hpp"
 
-static Server* getServerToken(std::vector<std::string>::iterator & it, std::vector<std::string> & splitted)
+Server* getServerToken(std::vector<std::string>::iterator & it, std::vector<std::string> & splitted)
 {
 	Server *server = new Server();
 	server->setConfig(it, splitted);
@@ -39,8 +39,13 @@ Config & Config::operator=(const Config & rhs)
 
 Config::~Config()
 {
+	std::cout << " Dans le destructor" << std::endl;
+
 	for (std::list<Server*>::iterator it = this->servers.begin(); it != this->servers.end(); it++)
+	{
 		delete *it;
+		std::cout << " INto the boucle delete" << std::endl;
+	}
 }
 
 	// ------------------------------------------------------------------------------------------
@@ -74,13 +79,6 @@ void	Config::print_all_conf()
 		(*it)->printConfig();
 	}
 }
-
-
-
-
-
-
-
 
 
 	// ------------------------------------------------------------------------------------------

@@ -32,11 +32,18 @@ Server & Server::operator=(const Server & rhs)
 
 Server::~Server()
 {
+	std::map<std::string, Location*>::iterator it;
+	it = locations.begin();
+	if(locations.empty())
+	{
+		while (it != locations.end())
+		{
+			if(it->second)
+				delete	it->second;
+			it++;
+		}
+	}
 }
-
-
-
-
 
 void Server::launch()
 {
