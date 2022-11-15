@@ -8,15 +8,6 @@ Cgi::Cgi()
 
 Cgi::~Cgi()
 {
-	//int i = 0;
-	//int j = 0;
-
-	/*while (_env[i])
-		i++;
-	while(j <= i)
-		free(_env[j]);
-	free(_env);*/
-	
 }
 
 void Cgi::initialise_env(HttpRequest &request, const Server &server)
@@ -39,6 +30,7 @@ void Cgi::initialise_env(HttpRequest &request, const Server &server)
 	env_var.push_back("QUERY_STRING=" + request.getUrl().first);
 	env_var.push_back("CONTENT_LENGTH=0");
 	env_var.push_back("REDIRECT_STATUS=200");
+	env_var.push_back("HTTP_COOKIE=" + request.getCookie().first);
 
 	
 	std::vector<std::string>::iterator itEnvVar = env_var.begin();
@@ -141,12 +133,45 @@ int	Cgi::feedOutput()
 			_output.insert(0, buff, nbytes);
 			memset(buff, 0, 4096);
 		}
+		store_cookies();
 		manage_output();
+		close(_pip[0]);
 		return 1;
 	}
 	return 0;
 }
 
+
+void	Cgi::store_cookies()
+{
+	std::string	line;
+	int i = 1;
+	int	start_position_of_line = 0;
+	int end_position_of_line = _output.find("\r\n");
+	int end_of_header = _output.find("\r\n\r\n");
+
+	std::cout<< std::endl<< std::endl<< std::endl<< std::endl << "POSITION END_OF_HEADER " << end_of_header << line << std::endl;
+	std::cout << _output.size() << std::endl;
+	while (end_position_of_line < end_of_header)
+	{
+		line = _output.substr(start_position_of_line, end_position_of_line - start_position_of_line);
+		std::cout << "END POSITION LINE " << end_position_of_line<< "start  POSITION LINE " << start_position_of_line << std::endl;
+		std::cout << "LINE n" << i << " " << line << std::endl;
+		
+		if(line.find("Set-Cookie:") != std::string::npos)
+		{
+			std::cout << "-----FOUND COOKIES" <<std::endl;
+			_cookies.push_back(line);
+		}
+		start_position_of_line = end_position_of_line + 2;
+		end_position_of_line = _output.find("\r\n", start_position_of_line);
+		if(end_position_of_line >= end_of_header)
+			end_position_of_line = end_of_header;
+		std::cout << "END POSITION NEXT LINE " << end_position_of_line << std::endl << "########################################################################" << std::endl;
+		i++;
+	}
+	std::cout<< std::endl<< std::endl<< std::endl;
+}
 
 void	Cgi::manage_output()
 {
@@ -154,7 +179,6 @@ void	Cgi::manage_output()
 
 	if ((ret = _output.find("\r\n\r\n")) != std::string::npos) 
 		_output.erase(0, ret);
-	close(_pip[0]);
 }
 
 const std::string&	Cgi::getOutput() const
@@ -175,4 +199,25 @@ const std::string&	Cgi::getScriptPath() const
 void	Cgi::cutOutput(int len)
 {
 	_output.erase(0, len);
+}
+
+const std::vector<std::string>	& Cgi::getCookies() const
+{
+	return(_cookies);
+}
+
+void	Cgi::free_argenv()
+{
+	int i = 0;
+
+	while(_arg[i])
+	{
+		free(_arg[i]);
+	}
+	free(_arg);
+	while(_env[i])
+	{
+		free(_env[i]);
+	}
+	free(_env);
 }

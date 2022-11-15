@@ -4,7 +4,7 @@
 #include <iostream>
 #include <sstream>
 
-void	autoIndex(HttpRequest &request, HttpManager &manager);
+void autoIndex(HttpRequest &request, HttpManager &manager);
 
 HttpManager::HttpManager(t_socket socketClient)
 {
@@ -25,12 +25,12 @@ HttpManager::HttpManager(t_socket socketClient)
 	_proccess_fini = false;
 }
 
-HttpManager::HttpManager(const HttpManager& rhs)
+HttpManager::HttpManager(const HttpManager &rhs)
 {
 	*this = rhs;
 }
 
-HttpManager		&HttpManager::operator=(const HttpManager& rhs)
+HttpManager &HttpManager::operator=(const HttpManager &rhs)
 {
 	if (this != &rhs)
 	{
@@ -49,7 +49,7 @@ HttpManager		&HttpManager::operator=(const HttpManager& rhs)
 		_name_file = rhs._name_file;
 		_headerBuild = rhs._headerBuild;
 		_respond = rhs._respond;
-        _request = rhs._request;
+		_request = rhs._request;
 		_tmp_upload_fd = rhs._tmp_upload_fd;
 	}
 	return *this;
@@ -57,10 +57,9 @@ HttpManager		&HttpManager::operator=(const HttpManager& rhs)
 
 HttpManager::~HttpManager()
 {
-
 }
 
-void	HttpManager::sender()
+void HttpManager::sender()
 {
 	int ret;
 
@@ -87,7 +86,7 @@ int HttpManager::receive()
 		return -1;
 	}
 	_request.concatenate(buffer);
-	//std::cout << buffer << std::endl;
+	std::cout << buffer << std::endl;
 	return (0);
 }
 
@@ -107,21 +106,24 @@ int HttpManager::receive()
 	return errResp;
 }*/
 
-void	HttpManager::launch_cgi(HttpRequest &_request, const Server &server)
+void HttpManager::launch_cgi(HttpRequest &_request, const Server &server)
 {
 	struct stat _status;
 
 	if (_tmpEnd == true)
+	{
+		_cgi.free_argenv();
 		_isEnd = true;
+	}
 	else if (!_tmpEnd)
 	{
 		canWrite();
-		std::string header; 
+		std::string header;
 		_cgi.initialise_env(_request, server);
 		_cgi.set_path_cgi(_request.getLocation()->getCgiPathToScript());
 		_cgi.set_argv();
 		stat(_cgi.getScriptPath().c_str(), &_status);
-		if(errno == ENOENT)
+		if (errno == ENOENT)
 		{
 			_errorCode = 404;
 			_tmpEnd = true;
@@ -143,9 +145,14 @@ void	HttpManager::launch_cgi(HttpRequest &_request, const Server &server)
 					if (retfo == 1)
 					{
 						std::cout << _cgi.getOutput().size() << std::endl;
-						_respond = HeaderRespond(_cgi.getOutput().size(), 200, "text/html");
+						_respond = HeaderRespond(_cgi.getOutput().size(), 200, "text/html", _cgi.getCookies());
+						 std::cout << "RESPOND CGI =" << std::endl << _respond << std::endl;
 						_proccess_fini = true;
-						//std::cout <<"CGI OUT PUT = " << std::endl << _cgi.getOutput() << std::endl;
+						std::cout << "CGI OUT PUT = " << std::endl
+								  << _cgi.getOutput() << std::endl;
+						std::cout << std::endl;
+						std::cout << "RESPOND= " << std::endl
+								  << _respond << std::endl;
 					}
 					else if (retfo == -1)
 						_errorCode = 408;
@@ -169,12 +176,11 @@ void	HttpManager::launch_cgi(HttpRequest &_request, const Server &server)
 				}
 			}
 		}
-		//std::cout << "RESPOND CGI =" << std::endl << _respond << std::endl;
-		
+		// std::cout << "RESPOND CGI =" << std::endl << _respond << std::endl;
 	}
 }
 
-bool	HttpManager::applyMethod(const Server &server)
+bool HttpManager::applyMethod(const Server &server)
 {
 	(void)server;
 	if (!_isEnd)
@@ -182,7 +188,7 @@ bool	HttpManager::applyMethod(const Server &server)
 		if (_goodRequest == false)
 		{
 			_goodRequest = true;
-            canWrite();
+			canWrite();
 		}
 		else if (_errorCode == 0 && _request.getLocation()->getReturnCode() != 0)
 		{
@@ -197,10 +203,13 @@ bool	HttpManager::applyMethod(const Server &server)
 			std::cout << "ICI" << _errorCode << std::endl;
 			_respond = ErrorRespond(server);
 		}
-		else if(!check_if_method_authorized())
+		else if (!check_if_method_authorized())
 			_errorCode = 405;
-		else if(_request.getLocation()->getCgiFileExtension() == get_file_extension(_request.getUrl().first))
+		else if (_request.getLocation()->getCgiFileExtension() == get_file_extension(_request.getUrl().first))
+		{
+			std::cout << "REQUEST = " << _request << std::endl;
 			launch_cgi(_request, server);
+		}
 		else if (_request.getMethod().first == "GET")
 			getMethod(server);
 		else if (_request.getMethod().first == "POST")
@@ -216,7 +225,7 @@ bool	HttpManager::applyMethod(const Server &server)
 	return _isEnd;
 }
 
-void	HttpManager::initialize(const Server &server)
+void HttpManager::initialize(const Server &server)
 {
 	if (!_init)
 	{
@@ -227,25 +236,25 @@ void	HttpManager::initialize(const Server &server)
 	}
 }
 
-bool	HttpManager::checkRequest(const Server &server)
+bool HttpManager::checkRequest(const Server &server)
 {
 	(void)server;
 	if (_request.getHttpVersion().first != "HTTP/1.1\r" && _request.getHttpVersion().first != "HTTP/1.1")
 		_errorCode = 505;
 	else if (_request.getMethod().first != "GET" &&
-			_request.getMethod().first != "POST" && 
-			_request.getMethod().first != "DELETE")
+			 _request.getMethod().first != "POST" &&
+			 _request.getMethod().first != "DELETE")
 		_errorCode = 501;
 	/*else if (_request.getLocation()->getAllowedMethods().find(_request.getMethod()) == _request.getLocation()->getAllowedMethods().end())
 		_errorCode = 405;*/
 	/*else if (_request.getContentLenght().second == true && _request.getContentLenght().first > server.getClientMaxBodySize())
 		_errorCode = 413*/
 	else
-		return true; 
+		return true;
 	return false;
 }
 
-void	HttpManager::canRead()
+void HttpManager::canRead()
 {
 	if (_Readok == false)
 	{
@@ -254,7 +263,7 @@ void	HttpManager::canRead()
 	}
 }
 
-void	HttpManager::canWrite()
+void HttpManager::canWrite()
 {
 	if (_Writeok == false)
 	{
@@ -268,7 +277,7 @@ std::string HttpManager::determinateType(const std::string &name_file)
 	if (name_file.rfind(".html") == name_file.size() - 5 && name_file.size() >= 5)
 		return "text/html";
 	else if (name_file.rfind(".css") == name_file.size() - 4 && name_file.size() >= 4)
-		return  "text/css";
+		return "text/css";
 	else if (name_file.rfind(".ico") == name_file.size() - 4 && name_file.size() >= 4)
 		return "image/x-icon";
 	else if (name_file.rfind(".png") == name_file.size() - 4 && name_file.size() >= 4)
@@ -277,17 +286,17 @@ std::string HttpManager::determinateType(const std::string &name_file)
 		return "image/jpeg";
 	if (_errorCode == 0)
 		_errorCode = 415;
-	return "";	
+	return "";
 }
 
-bool	HttpManager::check_if_method_authorized()
+bool HttpManager::check_if_method_authorized()
 {
 	std::vector<std::string>::const_iterator itMethod = _request.getLocation()->getAllowedMethods().begin();
 	std::vector<std::string>::const_iterator iteMethod = _request.getLocation()->getAllowedMethods().end();
 
 	while (itMethod != iteMethod)
 	{
-		if(_request.getMethod().first == (*itMethod))
+		if (_request.getMethod().first == (*itMethod))
 			return (1);
 		itMethod++;
 	}

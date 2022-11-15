@@ -1,15 +1,14 @@
 server 
 {
 	listen 8080;
-	error_pages 404 ./bsavinel/site/404.html;
+	error_pages 404 ./rlejizetj;
+	error_pages 304 ./rlejizetj;
+	error_pages 407 ./rlejizetj;
 
 	location / 
 	{
 		allow GET POST DELETE;
-		root ./bsavinel/site/;
-		index index.html;
-		cgi_pass .php /usr/bin/php-cgi;
-		autoindex on;
+		root ./bsavinel/site/;index ; cgi_pass .php /usr/bin/php-cgi; autoindex on;
 	}
 	#testduntrucquimarchepas
 	location /methode/
