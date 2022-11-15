@@ -60,6 +60,7 @@ void	HttpManager::postMethod()
 	else if (_requestFullyReceive == true) // Quand la requete est completement recue, on veut que _isEndsoit true au prochain tour de boucle
 	{
 		std::cout << "FINISH" << std::endl;
+//		remove(_tmpFileName.c_str());
 		canWrite();
 		_tmpEnd = true;
 	}
@@ -84,15 +85,15 @@ void HttpManager::parseMultiPart(std::fstream &fstream)
 	}
 
 	std::cout << "_new_process = "<< _new_process << std::endl;
-	std::cout << "boundaryStart = "<< _process.boundaryStart << std::endl;
+	std::cout << "_process.boundaryStart = "<< _process.boundaryStart << std::endl;
 	if (_process.boundaryStart == false)
 	{
 		std::cout << "0" << std::endl;
 		getline(fstream, str);
-		if ( str.size() && str[str.size()-1] == '\r' )
-			str = str.substr( 0, str.size() - 1 );
-		else
-			str = str;
+		// if ( str.size() && str[str.size()-1] == '\r' )
+		// 	str = str.substr( 0, str.size() - 1 );
+		// else
+		// 	str = str;
 		std::cout << "HEEEEEERRRRRREEE : " << str << std::endl;
 //		usleep(100000);
 		// exit (0);
@@ -109,11 +110,6 @@ void HttpManager::parseMultiPart(std::fstream &fstream)
 	{
 		std::cout << "1" << std::endl;
 		getline(fstream, str);
-		// if ( str.size() && str[str.size()-1] == '\r' )
-		// 	str = str.substr( 0, str.size() - 1 );
-		// else
-		// 	str = str;
-		
 		if (str.compare("\r") == 0)
 		{
 
@@ -123,12 +119,18 @@ void HttpManager::parseMultiPart(std::fstream &fstream)
 			std::cout << "multipart_param.fileName.first:" << multipart_param.fileName.first << std::endl;
 			
  			std::string fileName = _request.getLocation()->getUploadDirectory() + multipart_param.fileName.first;
+
+			std::cout << "fileName" << fileName << std::endl;
 			_uploaded.open(fileName.c_str(), std::fstream::app | std::fstream::in | std::fstream::out);
+			if (_uploaded.fail())
+				std::cout << "failed open _uploadFile" << std::endl;
+			std::cout << "multipart_param.fileName.first:" << multipart_param.fileName.first << std::endl;
 		}
 		else
 		{
 			std::cout << "1.2" << std::endl;
-			boundaryHeader += str;
+//			boundaryHeader += str;
+			boundaryHeader.append(str, 0, str.length());
 			str.clear();
 		}
 	}
