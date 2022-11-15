@@ -13,7 +13,7 @@ int	checkbrackets(std::vector<std::string>::iterator it, std::vector<std::string
 				while (it != splitted.end() && (*it).compare("}") != 0 )
 				{
 					it++;
-					if((*it).compare("location") == 0)
+					if(it == splitted.end() || (*it).compare("location") == 0)
 						throw exceptWebserv("Config Error : Location block not closed");
 				}
 				if (it == splitted.end())
