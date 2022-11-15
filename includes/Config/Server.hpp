@@ -47,7 +47,7 @@ class Server
 		const int&							getSocket() const;
 		struct sockaddr_in					getAddress() const;		
 		const std::string&					getServerName() const;
-		const std::map<int, std::string>			&getErrorMap() const;
+		const std::map<int, std::string>	&getErrorMap() const;
 		const int&							getClientMaxBodySize() const;
 		std::map<std::string, Location*>	getLocationsMap() const;
 

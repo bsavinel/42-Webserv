@@ -23,7 +23,6 @@ Config::Config(char *config_file)
 		}
 	}
 	checkLocBlock();
-		
 }
 
 Config::Config(const Config & src)
