@@ -8,23 +8,4 @@ server
 	location / 
 	{
 		allow GET POST DELETE;
-		root ./bsavinel/site/;index ; cgi_pass .php /usr/bin/php-cgi; autoindex on;
-	}
-	#testduntrucquimarchepas
-	location /methode/
-	{
-		allow GET POST DELETE;
-		root ./bsavinel/site/methode/;
-		cgi_pass .php  /usr/bin/php-cgi;
-		return 404  ./bsavinel/site/404.html;
-		upload_store ./upload/;
-		autoindex on;
-	}
-	location /methode/test/
-	{
-		allow GET POST DELETE;
-		root ./bsavinel/site/methode/test/;
-		cgi_pass .php  /usr/bin/php-cgi;
-		autoindex on;
-	}
-}
+	

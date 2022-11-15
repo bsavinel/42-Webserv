@@ -37,24 +37,37 @@ class Server
 		Server & operator=(const Server & rhs);
 		~Server();
 
-		//Getters
-		const int&							getDomain() const;
-		const int&							getService() const;
-		const int&							getProtocol() const;
-		u_long								getInterface() const;
-		const int&							getPort() const;
-		const int&							getBacklog() const;
-		const int&							getSocket() const;
-		struct sockaddr_in					getAddress() const;		
-		const std::string&					getServerName() const;
-		const std::map<int, std::string>	&getErrorMap() const;
-		const int&							getClientMaxBodySize() const;
-		std::map<std::string, Location*>	getLocationsMap() const;
-
-		void	setConfig(std::vector<std::string>::iterator & it, std::vector<std::string> & splitted);
-		void	printConfig();
-		bool	is_path_stored_yet(std::string path);
+		
 		void	launch();
+		void	setConfig(std::vector<std::string>::iterator & it, std::vector<std::string> & splitted);
+
+				// ----------------------
+				// |		GETTERS		|
+				// ----------------------
+
+				const int&							getDomain() const;
+				const int&							getService() const;
+				const int&							getProtocol() const;
+				u_long								getInterface() const;
+				const int&							getPort() const;
+				const int&							getBacklog() const;
+				const int&							getSocket() const;
+				struct sockaddr_in					getAddress() const;		
+				const std::string&					getServerName() const;
+				const std::map<int, std::string>	&getErrorMap() const;
+				const int&							getClientMaxBodySize() const;
+				std::map<std::string, Location*>	getLocationsMap() const;
+
+				
+				// ----------------------
+				// |		PRINTS		|
+				// ----------------------
+
+				void	printConfig();
+
+	private :
+		bool	is_path_stored_yet(std::string path);
+
 };
 
 #endif

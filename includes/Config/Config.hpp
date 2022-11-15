@@ -13,15 +13,31 @@ class Config
 	private:
 		std::list<Server*> servers;
 
+
+
 	public:
 		Config(char *config_file);
 		Config(const Config & src);
 		Config & operator=(const Config & rhs);
 		~Config();
 
-		void					print_all_conf();
-		std::list<Server*> &	getServersList();
+
+				// ----------------------
+				// |		GETTERS		|
+				// ----------------------
+
+				std::list<Server*> &	getServersList();
+
+
+				// ----------------------
+				// |		PRINTS		|
+				// ----------------------
+
+				void					print_all_conf();
+
+	private :
 		bool					checkLocBlock();
+
 };
 
 

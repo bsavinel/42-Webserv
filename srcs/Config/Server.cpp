@@ -32,11 +32,94 @@ Server & Server::operator=(const Server & rhs)
 
 Server::~Server()
 {
-	
 }
 
 
-//! ------------------------------ GETTERS ------------------------------
+
+
+
+void Server::launch()
+{
+	memset(&_address, 0, sizeof(_address));
+	_address.sin_family = _domain;
+	_address.sin_port = htons(_port);
+	_address.sin_addr.s_addr= htonl(_interface);
+
+	_socket = socket(_domain, _service, _protocol);
+
+	if(_socket == -1)
+		throw exceptWebserv("Server : Failed to create server socket");
+	const int enable = 1;
+	if (setsockopt(_socket, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(int)) < 0)
+   		throw exceptWebserv("Server : Failed to reuse server socket");
+	if (bind(_socket, (struct sockaddr *)&_address, sizeof(_address)) == -1)
+	{
+		throw exceptWebserv("Server : Failed to bind the socket");
+	}
+	if(listen(_socket, _backlog) < 0)
+		throw exceptWebserv("Server : Failed to start listening");
+	std::cout << "Port :" << _port << std::endl;
+}
+
+void Server::setConfig(std::vector<std::string>::iterator & it, std::vector<std::string> & splitted)
+{
+	it++;
+	while (it != splitted.end() && (*it).compare("}") != 0)
+	{
+		if((*it).compare("location") == 0)
+		{
+			it++;
+			std::string path_loc;
+			if((*it) != ";")
+				path_loc = *it;
+			if(!is_path_stored_yet(path_loc) && *(it + 1) == "{")
+			{
+				Location *new_loc = new Location();
+				new_loc->setConfig(it, splitted, path_loc);
+				this->locations.insert(std::make_pair(path_loc, new_loc));
+			}
+		}
+		else if ((*it).compare("listen") == 0 && (*(it + 1)) != ";" && (*(it + 2)) == ";")
+			this->_port = atoi(((*++it).c_str()));
+		else if ((*it).compare("server_name") == 0 && (*(it + 1)) != ";" && (*(it + 2)) == ";")
+			this->server_name = *++it;
+		else if ((*it).compare("error_pages") == 0 && (*(it + 1)) != ";" && (*(it + 3)) == ";")
+		{
+			int error_num = atoi((*++it).c_str());
+			if(!check_existing_error_code(error_num))
+				throw exceptWebserv("Error Config : error_code does not exist");
+			std::string path_to_file = *++it;
+			if(!is_file_path(path_to_file))
+				throw exceptWebserv("Error Config : error_pages value should be a path to a file");
+			this->error_map.insert(std::make_pair(error_num, path_to_file));
+		}
+		else if ((*it).compare("client_max_body_size") == 0 && (*(it + 1)) != ";" && (*(it + 2)) == ";" )
+		{
+			const char *arg = (*++it).c_str();
+			for(size_t i = 0; i < strlen(arg); i++)
+			{
+				if(!isdigit(arg[i]))
+					throw exceptWebserv("Error Config : client_max_body_size need to be a number between 0 and MAXINT");
+			}
+			long conv = atol(arg);
+			if (conv > INT_MAX)
+				throw exceptWebserv("Error Config : client_max_body_size need to be a number between 0 and MAXINT");
+			this->client_max_body_size = atoi(arg);
+		}
+		else if (*it != ";")
+		{
+			std::cout << "VALUE NOT COMPATIBLE = " << *it << " NXT  = " << *(it +1) << std::endl;
+			throw exceptWebserv ("Error Config : SERVER option not compatible");
+		}
+		it++;
+	}
+}
+
+
+
+	// ------------------------------------------------------------------------------------------
+	// |										GETTERS											|
+	// ------------------------------------------------------------------------------------------
 
 const int&		Server::getDomain() const
 {
@@ -98,7 +181,14 @@ const std::map<int, std::string> &Server::getErrorMap() const
 	return(this->error_map);
 }
 
-//! ------------------------------ SETTERS ------------------------------
+
+
+
+
+	// ------------------------------------------------------------------------------------------
+	// |										PRINTS											|
+	// ------------------------------------------------------------------------------------------
+
 
 void	Server::printConfig()
 {
@@ -128,28 +218,14 @@ void	Server::printConfig()
 	
 }
 
-void Server::launch()
-{
-	memset(&_address, 0, sizeof(_address));
-	_address.sin_family = _domain;
-	_address.sin_port = htons(_port);
-	_address.sin_addr.s_addr= htonl(_interface);
 
-	_socket = socket(_domain, _service, _protocol);
 
-	if(_socket == -1)
-		throw exceptWebserv("Server : Failed to create server socket");
-	const int enable = 1;
-	if (setsockopt(_socket, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(int)) < 0)
-   		throw exceptWebserv("Server : Failed to reuse server socket");
-	if (bind(_socket, (struct sockaddr *)&_address, sizeof(_address)) == -1)
-	{
-		throw exceptWebserv("Server : Failed to bind the socket");
-	}
-	if(listen(_socket, _backlog) < 0)
-		throw exceptWebserv("Server : Failed to start listening");
-	std::cout << "Port :" << _port << std::endl;
-}
+
+
+
+	// ------------------------------------------------------------------------------------------
+	// |									PRIVATE METHODS										|
+	// ------------------------------------------------------------------------------------------
 
 bool	Server::is_path_stored_yet(std::string path)
 {
@@ -159,59 +235,5 @@ bool	Server::is_path_stored_yet(std::string path)
 			return(true);
 	}
 	return(false);
-}
-
-void Server::setConfig(std::vector<std::string>::iterator & it, std::vector<std::string> & splitted)
-{
-	it++;
-	while (it != splitted.end() && (*it).compare("}") != 0)
-	{
-		if((*it).compare("location") == 0)
-		{
-			it++;
-			std::string path_loc;
-			if((*it) != ";")
-				path_loc = *it;
-			if(!is_path_stored_yet(path_loc) && *(it + 1) == "{")
-			{
-				Location *new_loc = new Location();
-				new_loc->setConfig(it, splitted, path_loc);
-				this->locations.insert(std::make_pair(path_loc, new_loc));
-			}
-		}
-		else if ((*it).compare("listen") == 0 && (*(it + 1)) != ";" && (*(it + 2)) == ";")
-			this->_port = atoi(((*++it).c_str()));
-		else if ((*it).compare("server_name") == 0 && (*(it + 1)) != ";" && (*(it + 2)) == ";")
-			this->server_name = *++it;
-		else if ((*it).compare("error_pages") == 0 && (*(it + 1)) != ";" && (*(it + 3)) == ";")
-		{
-			int error_num = atoi((*++it).c_str());
-			if(!check_existing_error_code(error_num))
-				throw exceptWebserv("Error Config : error_code does not exist");
-			std::string path_to_file = *++it;
-			if(!is_file_path(path_to_file))
-				throw exceptWebserv("Error Config : error_pages value should be a path to a file");
-			this->error_map.insert(std::make_pair(error_num, path_to_file));
-		}
-		else if ((*it).compare("client_max_body_size") == 0 && (*(it + 1)) != ";" && (*(it + 2)) == ";" )
-		{
-			const char *arg = (*++it).c_str();
-			for(size_t i = 0; i < strlen(arg); i++)
-			{
-				if(!isdigit(arg[i]))
-					throw exceptWebserv("Error Config : client_max_body_size need to be a number between 0 and MAXINT");
-			}
-			long conv = atol(arg);
-			if (conv > INT_MAX)
-				throw exceptWebserv("Error Config : client_max_body_size need to be a number between 0 and MAXINT");
-			this->client_max_body_size = atoi(arg);
-		}
-		else if (*it != ";")
-		{
-			std::cout << "VALUE NOT COMPATIBLE = " << *it << " NXT  = " << *(it +1) << std::endl;
-			throw exceptWebserv ("Error Config : SERVER option not compatible");
-		}
-		it++;
-	}
 }
 
