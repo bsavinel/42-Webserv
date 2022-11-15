@@ -34,6 +34,7 @@ Location::~Location()
 void Location::setConfig(std::vector<std::string>::iterator & it, std::vector<std::string> & splitted, std::string &loc)
 {
 	locate = loc;
+	it+=2;
 	while (it != splitted.end() && (*it).compare("}") != 0)
 	{
 		if ((*it).compare("allow") == 0 && (*(it + 1)) != ";")
@@ -87,6 +88,12 @@ void Location::setConfig(std::vector<std::string>::iterator & it, std::vector<st
 			if(!is_dir_path(path))
 				throw exceptWebserv("Error Config : upload_dir value should be a path to a dir");
 			this->upload_dir = path;
+		}
+		else if (*it != ";")
+		{
+			std::cout << "VALUE NOT COMPATIBLE = " << *it << " NXT  = " << *(it +1) << std::endl;
+			
+			throw exceptWebserv ("Error Config : LOCATION option not compatible");
 		}
 		it++;
 	}

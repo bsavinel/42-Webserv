@@ -163,6 +163,7 @@ bool	Server::is_path_stored_yet(std::string path)
 
 void Server::setConfig(std::vector<std::string>::iterator & it, std::vector<std::string> & splitted)
 {
+	it++;
 	while (it != splitted.end() && (*it).compare("}") != 0)
 	{
 		if((*it).compare("location") == 0)
@@ -171,14 +172,14 @@ void Server::setConfig(std::vector<std::string>::iterator & it, std::vector<std:
 			std::string path_loc;
 			if((*it) != ";")
 				path_loc = *it;
-			if(!is_path_stored_yet(path_loc))
+			if(!is_path_stored_yet(path_loc) && *(it + 1) == "{")
 			{
 				Location *new_loc = new Location();
 				new_loc->setConfig(it, splitted, path_loc);
 				this->locations.insert(std::make_pair(path_loc, new_loc));
 			}
 		}
-		if ((*it).compare("listen") == 0 && (*(it + 1)) != ";")
+		else if ((*it).compare("listen") == 0 && (*(it + 1)) != ";")
 			this->_port = atoi(((*++it).c_str()));
 		else if ((*it).compare("server_name") == 0 && (*(it + 1)) != ";")
 			this->server_name = *++it;
@@ -204,6 +205,11 @@ void Server::setConfig(std::vector<std::string>::iterator & it, std::vector<std:
 			if (conv > INT_MAX)
 				throw exceptWebserv("Error Config : client_max_body_size need to be a number between 0 and MAXINT");
 			this->client_max_body_size = atoi(arg);
+		}
+		else if (*it != ";")
+		{
+			std::cout << "VALUE NOT COMPATIBLE = " << *it << " NXT  = " << *(it +1) << std::endl;
+			throw exceptWebserv ("Error Config : SERVER option not compatible");
 		}
 		it++;
 	}
