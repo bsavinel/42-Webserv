@@ -7,7 +7,30 @@ Server* getServerToken(std::vector<std::string>::iterator & it, std::vector<std:
 	return(server);
 }
 
-Config::Config(char *config_file)
+Config::Config()
+{
+
+}
+
+// Config::Config(char *config_file)
+// {
+// 	// std::string content_file = read_file(config_file);
+// 	// std::string delimiter(" \t;{}");
+// 	// remove_comment(content_file);
+// 	// remove_nl(content_file);
+// 	// std::vector<std::string> splitted = split_vector(content_file, delimiter);
+// 	// for(std::vector<std::string>::iterator beg = splitted.begin(); beg != splitted.end(); beg++)
+// 	// {
+// 	// 	if ((*beg).compare("server") == 0 && (*(beg + 1)).compare("{") == 0)
+// 	// 	{
+// 	// 		if(checkbrackets(++beg, splitted))
+// 	// 			this->servers.push_back(getServerToken(beg, splitted));
+// 	// 	}
+// 	// }
+// 	// checkLocBlock();
+// }
+
+void Config::init(char *config_file)
 {
 	std::string content_file = read_file(config_file);
 	std::string delimiter(" \t;{}");
@@ -24,6 +47,7 @@ Config::Config(char *config_file)
 	}
 	checkLocBlock();
 }
+
 
 Config::Config(const Config & src)
 {

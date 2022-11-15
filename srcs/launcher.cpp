@@ -44,7 +44,9 @@ bool	check_server_port(Config &configuration)
 void launcher(char *av)
 {
 	Epoll	epoll;
-	Config	configuration(av);
+	Config	configuration;
+
+	configuration.init(av);
 
 	//configuration.print_all_conf();
 

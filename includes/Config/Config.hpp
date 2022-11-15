@@ -16,11 +16,13 @@ class Config
 
 
 	public:
-		Config(char *config_file);
+		Config();
+		//Config(char *config_file);
 		Config(const Config & src);
 		Config & operator=(const Config & rhs);
 		~Config();
 
+		void init(char *config_file);
 
 				// ----------------------
 				// |		GETTERS		|
