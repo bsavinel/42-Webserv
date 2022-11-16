@@ -32,20 +32,19 @@ Server & Server::operator=(const Server & rhs)
 
 Server::~Server()
 {
-	// for( std::map<std::string, Location*>::iterator it = locations.begin(); it != locations.end(); it++)
-	// 	delete	it->second;
+	for( std::map<std::string, Location*>::iterator it = locations.begin(); it != locations.end(); it++)
+		delete	it->second;
 }
 
 
 void Server::launch()
 {
 	const int enable = 1;
-	memset(&_address, 0, sizeof(_address));
 	_address.sin_family = _domain;
 	_address.sin_port = htons(_port);
 	_address.sin_addr.s_addr= htonl(_interface);
-
 	_socket = socket(_domain, _service, _protocol);
+
 	if(_socket == -1)
 		throw exceptWebserv("Server : Failed to create server socket");
 	if (setsockopt(_socket, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(int)) < 0)
@@ -65,73 +64,27 @@ void Server::setConfig(std::vector<std::string>::iterator & it, std::vector<std:
 	while (it != splitted.end() && (*it).compare("}") != 0)
 	{
 		if((*it).compare("location") == 0)
-		{
-			it++;
-			std::string path_loc;
-			if((*it) != ";")
-				path_loc = *it;
-			if(!is_path_stored_yet(path_loc) && *(it + 1) == "{")
-			{
-				Location *new_loc = new Location();
-				try
-				{
-					new_loc->setConfig(it, splitted, path_loc);
-				}
-				catch(const exceptWebserv& e)
-				{
-					std::cerr << e.what() << std::endl;
-					delete new_loc;
-					new_loc = NULL;
-					//locations.erase(path_loc);
-					if (errno)
-						std::cerr << "Errno : " << strerror(errno) << std::endl;
-				}
-				if(!new_loc)
-					throw exceptWebserv("Error Location : cannot initialize location block");
-				this->locations.insert(std::make_pair(path_loc, new_loc));
-			}
-		}
+			add_location_block(it, splitted);
 		else if ((*it).compare("listen") == 0 && (*(it + 1)) != ";" && (*(it + 2)) == ";")
 			this->_port = atoi(((*++it).c_str()));
 		else if ((*it).compare("server_name") == 0 && (*(it + 1)) != ";" && (*(it + 2)) == ";")
 			this->server_name = *++it;
 		else if ((*it).compare("error_pages") == 0 && (*(it + 1)) != ";" && (*(it + 3)) == ";")
-		{
-			int error_num = atoi((*++it).c_str());
-			if(!check_existing_error_code(error_num))
-				throw exceptWebserv("Error Config : error_code does not exist");
-			std::string path_to_file = *++it;
-			if(!is_file_path(path_to_file))
-				throw exceptWebserv("Error Config : error_pages value should be a path to a file");
-			this->error_map.insert(std::make_pair(error_num, path_to_file));
-		}
+			set_error_pages(it);
 		else if ((*it).compare("client_max_body_size") == 0 && (*(it + 1)) != ";" && (*(it + 2)) == ";" )
-		{
-			const char *arg = (*++it).c_str();
-			for(size_t i = 0; i < strlen(arg); i++)
-			{
-				if(!isdigit(arg[i]))
-					throw exceptWebserv("Error Config : client_max_body_size need to be a number between 0 and MAXINT");
-			}
-			long conv = atol(arg);
-			if (conv > INT_MAX)
-				throw exceptWebserv("Error Config : client_max_body_size need to be a number between 0 and MAXINT");
-			this->client_max_body_size = atoi(arg);
-		}
+			set_client_max_body_size(it);
 		else if (*it != ";")
-		{
-			std::cout << "VALUE NOT COMPATIBLE = " << *it << " NXT  = " << *(it +1) << std::endl;
 			throw exceptWebserv ("Error Config : SERVER option not compatible");
-		}
 		it++;
 	}
 }
 
 
 
-	// ------------------------------------------------------------------------------------------
-	// |										GETTERS											|
-	// ------------------------------------------------------------------------------------------
+
+// ------------------------------------------------------------------------------------------
+// |										GETTERS											|
+// ------------------------------------------------------------------------------------------
 
 const int&		Server::getDomain() const
 {
@@ -197,10 +150,9 @@ const std::map<int, std::string> &Server::getErrorMap() const
 
 
 
-	// ------------------------------------------------------------------------------------------
-	// |										PRINTS											|
-	// ------------------------------------------------------------------------------------------
-
+// ------------------------------------------------------------------------------------------
+// |										PRINTS											|
+// ------------------------------------------------------------------------------------------
 
 void	Server::printConfig()
 {
@@ -230,11 +182,9 @@ void	Server::printConfig()
 	
 }
 
-
-
-	// ------------------------------------------------------------------------------------------
-	// |									PRIVATE METHODS										|
-	// ------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------
+// |									PRIVATE METHODS										|
+// ------------------------------------------------------------------------------------------
 
 bool	Server::is_path_stored_yet(std::string path)
 {
@@ -246,9 +196,59 @@ bool	Server::is_path_stored_yet(std::string path)
 	return(false);
 }
 
-	// ------------------------------------------------------------------------------------------
-	// |										EXCEPTION										|
-	// ------------------------------------------------------------------------------------------
+void	Server::add_location_block(std::vector<std::string>::iterator & it, std::vector<std::string> & splitted)
+{
+	it++;
+	std::string path_loc;
+	if((*it) != ";")
+		path_loc = *it;
+	if(!is_path_stored_yet(path_loc) && *(it + 1) == "{")
+	{
+		Location *new_loc = new Location();
+		try
+		{
+			new_loc->setConfig(it, splitted, path_loc);
+		}
+		catch(const exceptWebserv& e)
+		{
+			std::cerr << e.what() << std::endl;
+			delete new_loc;
+			new_loc = NULL;
+			throw exceptWebserv("Error Location : cannot initialize location block");
+		}
+		this->locations.insert(std::make_pair(path_loc, new_loc));
+	}
+}
+
+void	Server::set_error_pages(std::vector<std::string>::iterator & it)
+{
+	int error_num = atoi((*++it).c_str());
+	if(!check_existing_error_code(error_num))
+		throw exceptWebserv("Error Config : error_code does not exist");
+	std::string path_to_file = *++it;
+	if(!is_file_path(path_to_file))
+		throw exceptWebserv("Error Config : error_pages value should be a path to a file");
+	this->error_map.insert(std::make_pair(error_num, path_to_file));
+}
+
+void	Server::set_client_max_body_size(std::vector<std::string>::iterator & it)
+{
+	const char *arg = (*++it).c_str();
+	for(size_t i = 0; i < strlen(arg); i++)
+	{
+		if(!isdigit(arg[i]))
+			throw exceptWebserv("Error Config : client_max_body_size need to be a number between 0 and MAXINT");
+	}
+	long conv = atol(arg);
+	if (conv > INT_MAX)
+		throw exceptWebserv("Error Config : client_max_body_size need to be a number between 0 and MAXINT");
+	this->client_max_body_size = atoi(arg);
+}
+
+
+// ------------------------------------------------------------------------------------------
+// |										EXCEPTION										|
+// ------------------------------------------------------------------------------------------
 
 Server::exceptionServer::exceptionServer(const std::string content) throw()
 {

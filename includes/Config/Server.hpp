@@ -66,7 +66,11 @@ class Server
 				void	printConfig();
 
 	private :
+		void	add_location_block(std::vector<std::string>::iterator & it, std::vector<std::string> & splitted);
 		bool	is_path_stored_yet(std::string path);
+		void	set_error_pages(std::vector<std::string>::iterator & it);
+		void	set_client_max_body_size(std::vector<std::string>::iterator & it);
+
 
 
 				// ----------------------
@@ -76,7 +80,7 @@ class Server
 				{
 					private:
 						std::string _content;
-						
+
 					public :
 						exceptionServer(const std::string content) throw();
 						const char *what() const throw();

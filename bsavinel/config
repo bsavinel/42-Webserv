@@ -17,7 +17,7 @@ server
 	{
 		allow GET POST DELETE;
 		root ./bsavinel/site/methode/;
-		cgi_pass .php  /usr/bin/php-cgi;
+		cgi_pass .php  /usr/bin/php-cgi
 		autoindex on;
 	}
 }
