@@ -34,7 +34,7 @@ void	HttpManager::postMethod()
 	if (_headerBuild == false)
 	{
 		_tmpFileName = getFileName();
-		_tmp_upload.open(_tmpFileName.c_str(), std::fstream::app | std::fstream::in | std::fstream::out);
+		_tmp_upload.open(_tmpFileName.c_str(), std::fstream::in | std::fstream::out | std::fstream::app);
 		if (_tmp_upload_o.fail())
 		{
 			std::cout << "_tmp_upload.open() failed" << std::endl;
@@ -45,15 +45,23 @@ void	HttpManager::postMethod()
 	}
 	if (_tmpEnd == false)
 	{
-		std::cout << "_request/" << std::endl;
-//		std::cout << _request.getRequest() << std::endl;
-		printAscii(_request.getRequest().c_str());
-		std::cout << "/_request" << std::endl;
-		std::cout << "-1" << std::endl;
-		_tmp_upload << _request.getRequest().c_str();
+// 		std::cout << "_requestinPOSTmethod/" << std::endl;
+// 		std::cout << _request.getRequest() << std::endl;
+// //		printAscii(_request.getRequest().c_str());
+// 		std::cout << "/_request" << std::endl;
+// 		std::cout << "-1" << std::endl;
+		// if (_tmp_upload.is_open())
+		// 	std::cout << "OPEN" << std::endl;
+		// else
+		// 	std::cout << "CLOSE" << std::endl;
+		_tmp_upload.clear();
+		_tmp_upload.write(_request.getRequest().c_str(), _request.getRequest().size());
 		
 		if (count >= 1)
+		{
 			parseMultiPart(_tmp_upload);
+//			remove(_tmpFileName.c_str());
+		}
 //			exit (0);
 		count++;
 	}
@@ -61,7 +69,7 @@ void	HttpManager::postMethod()
 		_isEnd = true;
 	else if (_requestFullyReceive == true) // Quand la requete est completement recue, on veut que _isEndsoit true au prochain tour de boucle
 	{
-		std::cout << "FINISH" << std::endl;
+//		std::cout << "FINISH" << std::endl;
 //		remove(_tmpFileName.c_str());
 		canWrite();
 		_tmpEnd = true;
@@ -71,57 +79,63 @@ void	HttpManager::postMethod()
 
 void HttpManager::parseMultiPart(std::fstream &fstream)
 {
-	fstream.seekg(std::fstream::beg);
+//	fstream.seekg(std::fstream::beg);
+	fstream.seekg(_lenOfRequestAlreadyRead);
+	std::cout << "std::fstream::beg = " << std::fstream::beg << std::endl;
 	std::string			BoundaryStartToFind = "--" + _request.getBoundary().first + "\r";
 	std::string			BoundaryEndtoFind = "--" + _request.getBoundary().first + "--\r" ;
 	std::string			str;
 	std::string			boundaryHeader;
-	t_multipart_param	multipart_param;
+//	t_multipart_param	multipart_param;
 
 	while (fstream.eof() != true && _process.boundaryEnd == false)
 	{
-		std::cout << "_new_process = " << _new_process << std::endl;
+//		std::cout << "_new_process = " << _new_process << std::endl;
 
 		if (_new_process == false)
 		{
-		std::cout << "_new_process = "<< _new_process << std::endl;
+//		std::cout << "_new_process = "<< _new_process << std::endl;
 			_process = createProcess();
 			_new_process = true;
 		}
 
-		std::cout << "_process.boundaryStart = "<< _process.boundaryStart << std::endl;
+//		std::cout << "_process.boundaryStart = "<< _process.boundaryStart << std::endl;
 		if (_process.boundaryStart == false)
 		{
-			std::cout << "Searching BoundaryStartToFind..." << std::endl;
+//			std::cout << "Searching BoundaryStartToFind..." << std::endl;
 			getline(fstream, str);
+			_lenOfRequestAlreadyRead += str.length() + 1;
 			// on trouve un block boundary,
 			if (str.compare(BoundaryStartToFind) == 0)
 			{
 				_process.boundaryStart = true;
-				std::cout << "BoundaryStartToFind is found!" << std::endl;
+//				std::cout << "BoundaryStartToFind is found!" << std::endl;
 			}
 		}
 		// on veut ici recuperer ce qui est lu, jusqu 'a trouver un BoundaryEndtoFind ou une ligne ne se terminant pas \n
 		while (fstream.eof() != true && _process.boundaryStart == true && _process.header == false)
 		{
-			std::cout << "1: " << str << std::endl;
+//			std::cout << "1: " << str << std::endl;
 			getline(fstream, str);
-			if (str.compare("\r") == 0)
+			_lenOfRequestAlreadyRead += str.length() + 1;
+			// std::cout <<  "STR=\n" << str << "\n=STR" << std::endl;
+			// printAscii(str);
+			if (str.compare("\r") == 0) // si on trouve \r, on a fini de recuperer le header de la partie
 			{
 				std::cout << "1.1" << std::endl;
-				multipart_param = getParamBoundary(boundaryHeader);
+				_multipart_param = getParamBoundary(boundaryHeader);
 				_process.header = true;
 				
-				std::string fileName = _request.getLocation()->getUploadDirectory() + multipart_param.fileName.first;
+				std::string fileName = _request.getLocation()->getUploadDirectory() + _multipart_param.fileName.first;
 
 				_uploaded.open(fileName.c_str(), std::fstream::app | std::fstream::in | std::fstream::out);
 				if (_uploaded.fail())
 					std::cout << "failed open _uploadFile" << std::endl;
-				std::cout << "multipart_param.fileName.first:" << multipart_param.fileName.first << std::endl;
+//				std::cout << "multipart_param.fileName.first:" << multipart_param.fileName.first << std::endl;
 			}
 			else
 			{
-				std::cout << "1.2" << str << std::endl;
+//				std::cout << "1.2" << str << std::endl;
 	//			boundaryHeader += str;
 				boundaryHeader.append(str, 0, str.length());
 				str.clear();
@@ -132,8 +146,11 @@ void HttpManager::parseMultiPart(std::fstream &fstream)
 			while (fstream.eof() != true && str.compare(BoundaryEndtoFind) != 0 && str.compare(BoundaryStartToFind) != 0)
 			{
 				getline(fstream, str);
+				_lenOfRequestAlreadyRead += str.length() + 1;
 				if (str.compare(BoundaryEndtoFind) != 0 && str.compare(BoundaryStartToFind) != 0)
 				{
+					std::cout <<  "STR=\n" << str << "\n=STR" << std::endl;
+				//printAscii(str);
 					_uploaded << str.c_str();
 					_uploaded << "\n";
 				}
@@ -151,13 +168,13 @@ void HttpManager::parseMultiPart(std::fstream &fstream)
 				_process.boundaryStart = true;
 				boundaryHeader.clear();
 //				getline(fstream, str);
-				std::cout << "BoundaryStartToFind is found!" << std::endl;
+//				std::cout << "BoundaryStartToFind is found!" << std::endl;
 //				parseMultiPart(fstream);
 			}
 			else
 			{
 				_process.boundaryEnd = true;
-				std::cout << "BoundaryEndToFind is found!" << std::endl;
+//				std::cout << "BoundaryEndToFind is found!" << std::endl;
 			}
 		}
 	}
@@ -165,12 +182,12 @@ void HttpManager::parseMultiPart(std::fstream &fstream)
 
 void printAscii(std::string str)
 {
-	std::cout << "---------- ASCII -----------" << std::endl;
+//	std::cout << "---------- ASCII -----------" << std::endl;
 	for (size_t i = 0; i < str.length(); i++)
 		std::cout << (int)str[i] << " ";
 	std::cout << std::endl;
 
-	std::cout << "---------- ASCII END -----------" << std::endl;
+//	std::cout << "---------- ASCII END -----------" << std::endl;
 }
 
 void printMultiPartParam(t_multipart_param multipart_param)

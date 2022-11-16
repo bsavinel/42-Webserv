@@ -19,6 +19,7 @@ HttpManager::HttpManager(t_socket socketClient)
 	_tmpEnd = false;
 	_lenRead = 0;
 	_new_process = false;
+	_lenOfRequestAlreadyRead = 0;
 //	_tmp_upload_i = false;
 //	_tmp_upload_o = false;
 }
@@ -48,6 +49,7 @@ HttpManager		&HttpManager::operator=(const HttpManager& rhs)
 		_requestFullyReceive = rhs._requestFullyReceive;
 		_tmpEnd = rhs._tmpEnd;
 		_lenRead = rhs._lenRead;
+		_lenOfRequestAlreadyRead = rhs._lenOfRequestAlreadyRead;
 	//	_tmp_upload_i = rhs._tmp_upload_i;
 	//	_tmp_upload_o = rhs._tmp_upload_o;
 	}
@@ -69,8 +71,8 @@ void	HttpManager::sender()
 		ret = send(_socketClient, _respond.c_str(), _respond.size(), MSG_NOSIGNAL);
 		if (ret == -1)
 			strerror(errno);
-		else
-			std::cout << "ret send:" << ret << std::endl;
+//		else
+//			std::cout << "ret send:" << ret << std::endl;
 		_respond.clear();
 	}
 
@@ -86,15 +88,14 @@ int HttpManager::receive()
 //	usleep(1000);
 	if ((ret = recv(_socketClient, buffer, LEN_TO_READ, MSG_DONTWAIT)) == -1)
 		return (-1);
-	std::cout << "ret = " << ret << std::endl;
+//	std::cout <<  "Request FULLY READ : " << ret << std::endl;
+	std::string buff(buffer);
+	std::cout <<  "BUFFER=\n" << buffer << "\n=BUFFER" << std::endl;
+//	std::cout << "ret = " << ret << std::endl;
 	_lenRead += ret;
-	std::cout << _lenRead << " : " << _request.getContentLength().first << std::endl;
+//	std::cout << _lenRead << " : " << _request.getContentLength().first << std::endl;
 	if (_request.getContentLength().second == true &&  _lenRead >= _request.getContentLength().first)
 	{
-		std::cout <<  "Request FULLY READ : " << ret << std::endl;
-
-		std::string buff(buffer);
-		std::cout <<  "BUFFER=\n" << buffer << "\n=BUFFER" << std::endl;
 		_requestFullyReceive = true;
 	}
 	_request.concatenate(buffer);
@@ -124,6 +125,7 @@ void	HttpManager::initialize(const Server &server)
 	{
 		_init = true;
 		_request.parser();
+		_lenRead = 0;
 //		std::cout << _request << std::endl;
 		_request.setLocation(_request.findLocation(server));
 	}

@@ -46,7 +46,7 @@ void	clientEvent(Epoll &epoll, std::map<t_socket, HttpManager> &stockManager)
 //		print_status(*it);
 		if (manager.getIsEnd() || it->events & EPOLLRDHUP || it->events & EPOLLERR)
 		{
-			std::cout << "Fd : " << it->data.fd << " a ete suprimer" << std::endl;
+//			std::cout << "Fd : " << it->data.fd << " a ete suprimer" << std::endl;
 			epoll.deleteClient(it->data.fd);
 			stockManager.erase(it->data.fd);
 			continue ;

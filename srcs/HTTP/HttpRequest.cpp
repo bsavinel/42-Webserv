@@ -163,7 +163,7 @@ void	HttpRequest::parser(/*std::string &request*/)
 	{
 		_intContentLength.first = atoi(_contentLength.first.c_str());
 		_intContentLength.second = true;
-		std::cout << "_intContentLength: " << _intContentLength.first <<std::endl;
+//		std::cout << "_intContentLength: " << _intContentLength.first <<std::endl;
 	}
 	if (_contentType.first.find("multipart/form-data") == 0)
 	{
@@ -309,5 +309,7 @@ std::ostream &	operator<<( std::ostream & o, HttpRequest const & rhs)
 		o << rhs.getBoundary().first << std::endl;
 	if (rhs.getCookie().second == true) 
 		o << rhs.getCookie().first << std::endl;
+	if (rhs.getContentLength().second == true) 
+		o << rhs.getContentLength().first << std::endl;
 	return o;
 }

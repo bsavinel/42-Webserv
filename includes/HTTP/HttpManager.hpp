@@ -118,6 +118,8 @@ std::string getFileName();
 		std::fstream	_uploaded;
 		t_process		_process;
 		bool			_new_process;
+		t_multipart_param	_multipart_param;
+		int				_lenOfRequestAlreadyRead;
 };
 
 #endif
