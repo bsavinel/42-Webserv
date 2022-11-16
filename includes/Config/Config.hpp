@@ -37,7 +37,7 @@ class Config
 	private :
 				bool					checkLocBlock();
 				Server* 				getServerToken(std::vector<std::string>::iterator & it, std::vector<std::string> & splitted);
-				void 					look_for_and_initialise_server_block(std::vector<std::string>::iterator *beg);
+				void 					look_for_and_initialise_server_block(std::vector<std::string>::iterator *beg, std::vector<std::string> splitted);
 
 
 

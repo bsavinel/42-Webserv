@@ -5,13 +5,13 @@ Config::Config()
 
 }
 
-void Config::look_for_and_initialise_server_block(std::vector<std::string>::iterator *beg 	std::vector<std::string> splitted)
+void Config::look_for_and_initialise_server_block(std::vector<std::string>::iterator *beg, std::vector<std::string> splitted)
 {
-	if ((*beg).compare("server") == 0 && (*(beg + 1)).compare("{") == 0)
+	if ((**beg).compare("server") == 0 && (*(*beg + 1)).compare("{") == 0)
 	{
-		if(checkbrackets(++beg, splitted))
+		if(checkbrackets(++*beg, splitted))
 		{
-			Server *server = getServerToken(beg, splitted);
+			Server *server = getServerToken(*beg, splitted);
 			if(!server)
 				throw exceptWebserv("Error Server : cannot initialize the server");
 			this->servers.push_back(server);
@@ -30,17 +30,17 @@ void Config::init(char *config_file)
 	std::vector<std::string> splitted = split_vector(content_file, delimiter);
 	for(std::vector<std::string>::iterator beg = splitted.begin(); beg != splitted.end(); beg++)
 	{
-		look_for_and_initialise_server_block(&beg);
-		// if ((*beg).compare("server") == 0 && (*(beg + 1)).compare("{") == 0)
-		// {
-		// 	if(checkbrackets(++beg, splitted))
-		// 	{
-		// 		Server *server = getServerToken(beg, splitted);
-		// 		if(!server)
-		// 			throw exceptWebserv("Error Server : cannot initialize the server");
-		// 		this->servers.push_back(server);
-		// 	}
-		// }
+		// look_for_and_initialise_server_block(&beg, splitted);
+		if ((*beg).compare("server") == 0 && (*(beg + 1)).compare("{") == 0)
+		{
+			if(checkbrackets(++beg, splitted))
+			{
+				Server *server = getServerToken(beg, splitted);
+				if(!server)
+					throw exceptWebserv("Error Server : cannot initialize the server");
+				this->servers.push_back(server);
+			}
+		}
 	}
 	checkLocBlock();
 }
@@ -60,8 +60,13 @@ Config & Config::operator=(const Config & rhs)
 
 Config::~Config()
 {
+	int nbrserv = servers.size();
+	std::cout << "NBR DE SERVER" << nbrserv << std::endl;
 	for (std::list<Server*>::iterator it = this->servers.begin(); it != this->servers.end(); it++)
-		delete *it;
+	{	
+		if(*it)
+			delete *it;
+	}
 }
 
 	// ------------------------------------------------------------------------------------------
@@ -164,6 +169,7 @@ Server* Config::getServerToken(std::vector<std::string>::iterator & it, std::vec
 	{
 		std::cerr << e.what() << std::endl;
 		delete server;
+		server = NULL;
 		if (errno)
 			std::cerr << "Errno : " << strerror(errno) << std::endl;
 		return(NULL);

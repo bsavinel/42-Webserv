@@ -4,6 +4,7 @@ Server::Server()
 : _domain(AF_INET), _service(SOCK_STREAM), _protocol(0), _interface(INADDR_ANY),
 _backlog(200), _socket(-1), client_max_body_size(0)
 {
+	std::cout << "Constructor called" << std::endl;
 }
 
 Server::Server(const Server & src)
@@ -35,14 +36,20 @@ Server::~Server()
 
 	std::cout << "SERVER destructor called" << std::endl;
 	std::map<std::string, Location*>::iterator it;
+	std::cout << "NBR BLOCK LOCK " << locations.size() << std::endl;
+
 	it = locations.begin();
 	while (it != locations.end())
 	{
 		std::cout << "dans la boucle" << std::endl;
-		delete	it->second;
+		if(it->second)
+		{	
+			delete	it->second;
+			it->second = NULL;
+			locations.erase(it->first);
+		}
 		it++;
 	}
-	std::cout << "coucou" <<std::endl;
 }
 
 void Server::launch()

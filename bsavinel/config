@@ -22,6 +22,29 @@ server
 	}
 }
 
+server 
+{
+	listen 8080;
+	error_pages 404 ./bsavinel/site/404.html; #testduntrucquimarchepas
+
+	location / 
+	{
+		allow GET POST DELETE;
+		root ./bsavinel/site/;
+		index index.html;
+		#testduntrucquimarchepas
+		cgi_pass .php /usr/bin/php-cgi;
+		autoindex on;
+	}
+	#testduntrucquimarchepas
+	location /methode/
+	{
+		allow GET POST DELETE;
+		root ./bsavinel/site/methode/;
+		cgi_pass .php  /usr/bin/php-cgi;
+		autoindex on;
+	}
+}
 
 server 
 {
@@ -31,18 +54,18 @@ server
 	location / 
 	{
 		allow GET POST DELETE;
-		root ./bsavinel/site/
+		root ./bsavinel/site/;
 		index index.html;
 		#testduntrucquimarchepas
 		cgi_pass .php /usr/bin/php-cgi;
-		autoindex on
+		autoindex on;
 	}
 	#testduntrucquimarchepas
 	location /methode/
 	{
 		allow GET POST DELETE;
 		root ./bsavinel/site/methode/;
-		cgi_pass .php  /usr/bin/php-cgi;
+		cgi_pass .php  /usr/bin/php-cgi
 		autoindex on;
 	}
 }
