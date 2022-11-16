@@ -4,7 +4,6 @@ Server::Server()
 : _domain(AF_INET), _service(SOCK_STREAM), _protocol(0), _interface(INADDR_ANY),
 _backlog(200), _socket(-1), client_max_body_size(0)
 {
-	std::cout << "Constructor called" << std::endl;
 }
 
 Server::Server(const Server & src)
@@ -33,37 +32,22 @@ Server & Server::operator=(const Server & rhs)
 
 Server::~Server()
 {
-
-	std::cout << "SERVER destructor called" << std::endl;
-	std::map<std::string, Location*>::iterator it;
-	std::cout << "NBR BLOCK LOCK " << locations.size() << std::endl;
-
-	it = locations.begin();
-	while (it != locations.end())
-	{
-		std::cout << "dans la boucle" << std::endl;
-		if(it->second)
-		{	
-			delete	it->second;
-			it->second = NULL;
-			locations.erase(it->first);
-		}
-		it++;
-	}
+	// for( std::map<std::string, Location*>::iterator it = locations.begin(); it != locations.end(); it++)
+	// 	delete	it->second;
 }
+
 
 void Server::launch()
 {
+	const int enable = 1;
 	memset(&_address, 0, sizeof(_address));
 	_address.sin_family = _domain;
 	_address.sin_port = htons(_port);
 	_address.sin_addr.s_addr= htonl(_interface);
 
 	_socket = socket(_domain, _service, _protocol);
-
 	if(_socket == -1)
 		throw exceptWebserv("Server : Failed to create server socket");
-	const int enable = 1;
 	if (setsockopt(_socket, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(int)) < 0)
    		throw exceptWebserv("Server : Failed to reuse server socket");
 	if (bind(_socket, (struct sockaddr *)&_address, sizeof(_address)) == -1)
@@ -98,7 +82,7 @@ void Server::setConfig(std::vector<std::string>::iterator & it, std::vector<std:
 					std::cerr << e.what() << std::endl;
 					delete new_loc;
 					new_loc = NULL;
-					locations.erase(path_loc);
+					//locations.erase(path_loc);
 					if (errno)
 						std::cerr << "Errno : " << strerror(errno) << std::endl;
 				}
