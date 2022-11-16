@@ -31,6 +31,8 @@ Location & Location::operator=(const Location & rhs)
 Location::~Location()
 {}
 
+
+
 void Location::setConfig(std::vector<std::string>::iterator & it, std::vector<std::string> & splitted, std::string &loc)
 {
 	locate = loc;
@@ -101,25 +103,11 @@ void Location::setConfig(std::vector<std::string>::iterator & it, std::vector<st
 	}
 }
 
-void	Location::printConfig()
-{
-	std::cout << "Allowed methods : ";
-	for (std::vector<std::string>::iterator beg = allowed_methods.begin(); beg != allowed_methods.end(); beg++)
-		std::cout << *beg << " ";
-	std::cout << std::endl;
-	
-	std::cout <<"Return code : " << return_code << std::endl;
-	std::cout <<"Redirection path : " << redirection_path << std::endl;
-	std::cout <<"root_path : " << root_path << std::endl;
-	std::cout <<"index_path : " << index_path << std::endl;
-	std::cout <<"autoindex : " << autoindex << std::endl;
-	std::cout <<"cgi_file_extension : " << cgi_file_extension << std::endl;
-	std::cout <<"cgi_path_to_script : " << cgi_path_to_script << std::endl;
-	std::cout <<"upload_dir : " << upload_dir << std::endl;
-}
 
 
-//----------------------------GETTERS--------------------------
+	// ------------------------------------------------------------------------------------------
+	// |										GETTERS											|
+	// ------------------------------------------------------------------------------------------
 
 
 const std::vector<std::string> & Location::getAllowedMethods() const
@@ -171,5 +159,51 @@ const std::string& Location::getUploadDirectory() const
 const std::string&	Location::getLocate() const
 {
 	return locate;
+}
+
+
+	// ------------------------------------------------------------------------------------------
+	// |										PRINTS											|
+	// ------------------------------------------------------------------------------------------
+
+
+void	Location::printConfig()
+{
+	std::cout << "Allowed methods : ";
+	for (std::vector<std::string>::iterator beg = allowed_methods.begin(); beg != allowed_methods.end(); beg++)
+		std::cout << *beg << " ";
+	std::cout << std::endl;
+	
+	std::cout <<"Return code : " << return_code << std::endl;
+	std::cout <<"Redirection path : " << redirection_path << std::endl;
+	std::cout <<"root_path : " << root_path << std::endl;
+	std::cout <<"index_path : " << index_path << std::endl;
+	std::cout <<"autoindex : " << autoindex << std::endl;
+	std::cout <<"cgi_file_extension : " << cgi_file_extension << std::endl;
+	std::cout <<"cgi_path_to_script : " << cgi_path_to_script << std::endl;
+	std::cout <<"upload_dir : " << upload_dir << std::endl;
+}
+
+
+
+
+
+	// ------------------------------------------------------------------------------------------
+	// |										EXCEPTION										|
+	// ------------------------------------------------------------------------------------------
+
+Location::exceptionLocation::exceptionLocation(const std::string content) throw()
+{
+	_content = content;
+}
+
+Location::exceptionLocation::~exceptionLocation() throw()
+{
+
+}
+
+const char *Location::exceptionLocation::what() const throw()
+{
+	return _content.c_str();
 }
 

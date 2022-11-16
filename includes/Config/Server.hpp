@@ -68,6 +68,21 @@ class Server
 	private :
 		bool	is_path_stored_yet(std::string path);
 
+
+				// ----------------------
+				// |	EXCEPTION		|
+				// ----------------------
+				class exceptionServer:  public std::exception
+				{
+					private:
+						std::string _content;
+						
+					public :
+						exceptionServer(const std::string content) throw();
+						const char *what() const throw();
+						~exceptionServer() throw();
+				};
+
 };
 
 #endif

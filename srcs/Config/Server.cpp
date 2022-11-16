@@ -32,14 +32,17 @@ Server & Server::operator=(const Server & rhs)
 
 Server::~Server()
 {
-// 	std::map<std::string, Location*>::iterator it;
-// 	it = locations.begin();
-// 	while (it != locations.end())
-// 	{
-// 		if(it->second)
-// 			delete	it->second;
-// 		it++;
-// 	}
+
+	std::cout << "SERVER destructor called" << std::endl;
+	std::map<std::string, Location*>::iterator it;
+	it = locations.begin();
+	while (it != locations.end())
+	{
+		std::cout << "dans la boucle" << std::endl;
+		delete	it->second;
+		it++;
+	}
+	std::cout << "coucou" <<std::endl;
 }
 
 void Server::launch()
@@ -79,7 +82,21 @@ void Server::setConfig(std::vector<std::string>::iterator & it, std::vector<std:
 			if(!is_path_stored_yet(path_loc) && *(it + 1) == "{")
 			{
 				Location *new_loc = new Location();
-				new_loc->setConfig(it, splitted, path_loc);
+				try
+				{
+					new_loc->setConfig(it, splitted, path_loc);
+				}
+				catch(const exceptWebserv& e)
+				{
+					std::cerr << e.what() << std::endl;
+					delete new_loc;
+					new_loc = NULL;
+					locations.erase(path_loc);
+					if (errno)
+						std::cerr << "Errno : " << strerror(errno) << std::endl;
+				}
+				if(!new_loc)
+					throw exceptWebserv("Error Location : cannot initialize location block");
 				this->locations.insert(std::make_pair(path_loc, new_loc));
 			}
 		}
@@ -236,5 +253,24 @@ bool	Server::is_path_stored_yet(std::string path)
 			return(true);
 	}
 	return(false);
+}
+
+	// ------------------------------------------------------------------------------------------
+	// |										EXCEPTION										|
+	// ------------------------------------------------------------------------------------------
+
+Server::exceptionServer::exceptionServer(const std::string content) throw()
+{
+	_content = content;
+}
+
+Server::exceptionServer::~exceptionServer() throw()
+{
+
+}
+
+const char *Server::exceptionServer::what() const throw()
+{
+	return _content.c_str();
 }
 

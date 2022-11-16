@@ -13,11 +13,8 @@ class Config
 	private:
 		std::list<Server*> servers;
 
-
-
 	public:
 		Config();
-		//Config(char *config_file);
 		Config(const Config & src);
 		Config & operator=(const Config & rhs);
 		~Config();
@@ -38,7 +35,11 @@ class Config
 				void					print_all_conf();
 
 	private :
-		bool					checkLocBlock();
+				bool					checkLocBlock();
+				Server* 				getServerToken(std::vector<std::string>::iterator & it, std::vector<std::string> & splitted);
+				void 					look_for_and_initialise_server_block(std::vector<std::string>::iterator *beg);
+
+
 
 };
 
