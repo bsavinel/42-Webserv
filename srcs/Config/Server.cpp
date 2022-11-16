@@ -74,7 +74,7 @@ void Server::setConfig(std::vector<std::string>::iterator & it, std::vector<std:
 		else if ((*it).compare("client_max_body_size") == 0 && (*(it + 1)) != ";" && (*(it + 2)) == ";" )
 			set_client_max_body_size(it);
 		else if (*it != ";")
-			throw exceptWebserv ("Error Config : SERVER option not compatible");
+			throw exceptWebserv ("Error Server : option not compatible or missing \';\'");
 		it++;
 	}
 }

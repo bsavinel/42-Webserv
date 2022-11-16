@@ -40,74 +40,28 @@ void Location::setConfig(std::vector<std::string>::iterator & it, std::vector<st
 	while (it != splitted.end() && (*it).compare("}") != 0)
 	{
 		if ((*it).compare("allow") == 0 && (*(it + 1)) != ";")
-		{
-			it++;
-			while (it != splitted.end() && (*it).compare(";") != 0)
-				this->allowed_methods.push_back(*it++);
-		}
+			set_allowed_methods(it, splitted);
 		else if ((*it).compare("return") == 0 && (*(it + 1)) != ";")
-		{
-			int tmp = atoi((*++it).c_str());
-			if(tmp)
-			{
-				this->return_code = tmp;
-				if(!check_existing_error_code(tmp))
-					throw exceptWebserv("Error Config : return code does not exist");
-				std::string path =  *++it;
-				if(!is_file_path(path))
-					throw exceptWebserv("Error Config : return value should be a path to a dir");
-				this->redirection_path = path;
-			}
-			else
-				this->redirection_path = *it;
-		}
+			set_redirection(it);
 		else if ((*it).compare("root") == 0 && (*(it + 1)) != ";" && (*(it + 2)) == ";")
-		{
-			std::string path =  *++it;
-			if(!is_dir_path(path))
-				throw exceptWebserv("Error Config : root value should be a path to a dir");
-			this->root_path = path;
-		}
+			set_root_path(it);
 		else if ((*it).compare("index") == 0 && (*(it + 1)) != ";" && (*(it + 2)) == ";")
 			this->index_path = *++it;
 		else if ((*it).compare("autoindex") == 0 && (*(it + 2)) == ";")
-		{
-			if ((*++it).compare("on") == 0)
-				this->autoindex = true;
-			else if((*it).compare("off") == 0)
-				this->autoindex = false;
-			else
-				throw exceptWebserv("Error Config : autoindex should set on \"on\" or \"off\"");
-		}
+			set_autoindex(it);
 		else if ((*it).compare("cgi_pass") == 0 && (*(it + 1)) != ";" && (*(it + 3)) == ";")
-		{
-			this->cgi_file_extension = *++it;
-			std::string path =  *++it;
-			if(!is_file_path(path))
-				throw exceptWebserv("Error Config : cgi path value should be a path to a binary file");
-			this->cgi_path_to_script = path;
-		}
+			set_cgi_pass(it);
 		else if ((*it).compare("upload_store") == 0 && (*(it + 1)) != ";" && (*(it + 2)) == ";")
-		{
-			std::string path =  *++it;
-			if(!is_dir_path(path))
-				throw exceptWebserv("Error Config : upload_dir value should be a path to a dir");
-			this->upload_dir = path;
-		}
+			set_upload_store(it);
 		else if (*it != ";")
-		{
-			std::cout << "VALUE NOT COMPATIBLE = " << *it << " NXT  = " << *(it +1) << std::endl;
-			throw exceptWebserv ("Error Config : LOCATION option not compatible");
-		}
+			throw exceptWebserv ("Error Location : option not compatible or missing \';\'");
 		it++;
 	}
 }
 
-
-
-	// ------------------------------------------------------------------------------------------
-	// |										GETTERS											|
-	// ------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------
+// |										GETTERS											|
+// ------------------------------------------------------------------------------------------
 
 
 const std::vector<std::string> & Location::getAllowedMethods() const
@@ -162,9 +116,9 @@ const std::string&	Location::getLocate() const
 }
 
 
-	// ------------------------------------------------------------------------------------------
-	// |										PRINTS											|
-	// ------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------
+// |										PRINTS											|
+// ------------------------------------------------------------------------------------------
 
 
 void	Location::printConfig()
@@ -186,11 +140,74 @@ void	Location::printConfig()
 
 
 
+// ------------------------------------------------------------------------------------------
+// |									PRIVATE METHODS										|
+// ------------------------------------------------------------------------------------------
 
 
-	// ------------------------------------------------------------------------------------------
-	// |										EXCEPTION										|
-	// ------------------------------------------------------------------------------------------
+void Location::set_allowed_methods(std::vector<std::string>::iterator & it, std::vector<std::string> & splitted)
+{
+	it++;
+	while (it != splitted.end() && (*it).compare(";") != 0)
+		this->allowed_methods.push_back(*it++);
+}
+
+void	Location::set_redirection(std::vector<std::string>::iterator & it)
+{
+		int tmp = atoi((*++it).c_str());
+		if(tmp)
+		{
+			this->return_code = tmp;
+			if(!check_existing_error_code(tmp))
+				throw exceptWebserv("Error Config : return code does not exist");
+			std::string path =  *++it;
+			if(!is_file_path(path))
+				throw exceptWebserv("Error Config : return value should be a path to a dir");
+			this->redirection_path = path;
+		}
+		else
+			this->redirection_path = *it;
+}
+
+void	Location::set_root_path(std::vector<std::string>::iterator & it)
+{
+	std::string path =  *++it;
+	if(!is_dir_path(path))
+		throw exceptWebserv("Error Config : root value should be a path to a dir");
+	this->root_path = path;
+}
+
+
+void	Location::set_autoindex(std::vector<std::string>::iterator & it)
+{
+	if ((*++it).compare("on") == 0)
+		this->autoindex = true;
+	else if((*it).compare("off") == 0)
+		this->autoindex = false;
+	else
+		throw exceptWebserv("Error Config : autoindex should set on \"on\" or \"off\"");
+}
+
+void	Location::set_cgi_pass(std::vector<std::string>::iterator & it)
+{
+	this->cgi_file_extension = *++it;
+	std::string path =  *++it;
+	if(!is_file_path(path))
+		throw exceptWebserv("Error Config : cgi path value should be a path to a binary file");
+	this->cgi_path_to_script = path;
+}
+
+void	Location::set_upload_store(std::vector<std::string>::iterator & it)
+{
+	std::string path =  *++it;
+	if(!is_dir_path(path))
+		throw exceptWebserv("Error Config : upload_dir value should be a path to a dir");
+	this->upload_dir = path;
+}
+
+// ------------------------------------------------------------------------------------------
+// |										EXCEPTION										|
+// ------------------------------------------------------------------------------------------
 
 Location::exceptionLocation::exceptionLocation(const std::string content) throw()
 {

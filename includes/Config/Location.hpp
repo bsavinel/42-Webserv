@@ -59,15 +59,24 @@ class Location
 				// |	EXCEPTION		|
 				// ----------------------
 
-				class exceptionLocation :  public std::exception
-				{
-					private:
-						std::string _content;
-					public :
-						exceptionLocation(const std::string content) throw();
-						const char *what() const throw();
-						~exceptionLocation() throw();
-				};
+	private :
+		void	set_allowed_methods(std::vector<std::string>::iterator & it, std::vector<std::string> & splitted);
+		void	set_redirection(std::vector<std::string>::iterator & it);
+		void	set_root_path(std::vector<std::string>::iterator & it);
+		void	set_autoindex(std::vector<std::string>::iterator & it);
+		void	set_cgi_pass(std::vector<std::string>::iterator & it);
+		void	set_upload_store(std::vector<std::string>::iterator & it);
+
+
+	class exceptionLocation :  public std::exception
+	{
+		private:
+			std::string _content;
+		public :
+			exceptionLocation(const std::string content) throw();
+			const char *what() const throw();
+			~exceptionLocation() throw();
+	};
 };
 
 #endif
