@@ -59,7 +59,7 @@ static void print_status(t_epoll_event event)
 void	clientEvent(Epoll &epoll, std::map<t_socket, HttpManager> &stockManager)
 {
 	Epoll::stockEventType::iterator				it_event;
-	std::map<t_socket, Server> &				socketClient =	epoll.getSockClient();
+	std::map<t_socket, const Server *> &		socketClient =	epoll.getSockClient();
 	Epoll::stockClientType::iterator			itClient;
 
 	for (it_event = epoll.getAllEvents().begin(); it_event != epoll.getAllEvents().end(); it_event++)
@@ -84,8 +84,8 @@ void	clientEvent(Epoll &epoll, std::map<t_socket, HttpManager> &stockManager)
 			manager.receive();
 	
 		if (manager.getInit() == false)
-			manager.initialize(socketClient.find(it_event->data.fd)->second);
-		manager.applyMethod(socketClient.find(it_event->data.fd)->second);
+			manager.initialize(*socketClient.find(it_event->data.fd)->second);
+		manager.applyMethod(*socketClient.find(it_event->data.fd)->second);
 
 		if (manager.getModeChange() && manager.getWriteOk())
 		{
