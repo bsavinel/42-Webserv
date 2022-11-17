@@ -40,7 +40,7 @@ void	Epoll::addClient(t_socket const & sock, Server const * infoServ)
 {
 	t_epoll_event epollEvent;
 
-	_sockClient.insert(std::make_pair(sock, *infoServ));
+	_sockClient.insert(std::make_pair(sock, infoServ));
 	epollEvent.data.fd = sock;
 	epollEvent.events = EPOLLIN;
 	fcntl(sock, O_NONBLOCK);
@@ -52,7 +52,7 @@ void	Epoll::addServer(t_socket const & sock, Server const * server)
 {
 	t_epoll_event epollEvent;
 
-	_sockServ.insert(std::make_pair(sock, *server));
+	_sockServ.insert(std::make_pair(sock, server));
 	epollEvent.data.fd = sock;
 	epollEvent.events = EPOLLIN;
 	if (epoll_ctl(_instance, EPOLL_CTL_ADD, sock, &epollEvent) == -1)
@@ -95,12 +95,12 @@ void	Epoll::wait()
 	// TODO  resize a fin de event vca r NULL mais la fin
 }
 
-std::map<t_socket, Server> &Epoll::getSockClient()
+std::map<t_socket, const Server*> &Epoll::getSockClient()
 {
 	return _sockClient;
 }
 
-const std::map<t_socket, Server> &Epoll::getSockServ() const
+const std::map<t_socket, const Server*> &Epoll::getSockServ() const
 {
 	return _sockServ;
 }

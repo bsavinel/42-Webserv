@@ -19,13 +19,13 @@ void	serverEvent(Epoll &epoll, std::map<t_socket, HttpManager> &stockManager)
 		itServ = epoll.getSockServ().find(it->data.fd);
 		if (itServ == epoll.getSockServ().end())
 			continue;
-		sin = itServ->second.getAddress();
+		sin = itServ->second->getAddress();
 		newClient = accept(it->data.fd, (t_sockaddr *)&sin, (socklen_t *)&size);
 		if (newClient == -1)
 			throw exceptWebserv("serverEvent : Accept new client failed");
 		//Socket(epoll, newClient); // client est add a epoll a l'interieur
-		epoll.addClient(newClient, &epoll.getSockServ().find(it->data.fd)->second); // on associe l evetn client a un serveur
+		epoll.addClient(newClient, epoll.getSockServ().find(it->data.fd)->second); // on associe l evetn client a un serveur
 		stockManager.insert(std::make_pair(newClient, HttpManager(newClient)));
-		std::cout << "le fd : " << newClient << " est lie au server " << itServ->second.getPort() << std::endl;
+		std::cout << "le fd : " << newClient << " est lie au server " << itServ->second->getPort() << std::endl;
 	}
 }
