@@ -30,7 +30,7 @@ static int count;
 void	HttpManager::postMethod()
 {
 	std::string nbForFileName;
-
+//	bool		requestTreated = false;
 	if (_headerBuild == false)
 	{
 		_tmpFileName = getFileName();
@@ -55,14 +55,18 @@ void	HttpManager::postMethod()
 		// else
 		// 	std::cout << "CLOSE" << std::endl;
 		_tmp_upload.clear();
-		_tmp_upload.write(_request.getRequest().c_str(), _request.getRequest().size());
 		
-		if (count >= 1)
+		if (count >= 1 )
 		{
-			parseMultiPart(_tmp_upload);
+			_tmp_upload.write(_request.getRequest().c_str(), _request.getRequest().size());
+//			parseMultiPart(_tmp_upload);
 //			remove(_tmpFileName.c_str());
 		}
-//			exit (0);
+		if (_requestFullyReceive == true)
+		{
+			parseMultiPart(_tmp_upload);
+//			requestTreated = true;
+		}
 		count++;
 	}
 	if (_tmpEnd == true)
@@ -76,7 +80,38 @@ void	HttpManager::postMethod()
 	}
 	_request.getRequest().clear();
 }
-
+/*
+void HttpManager::parseMultiPart(std::fstream &fstream)
+{
+	std::string			BoundaryStartToFind = "--" + _request.getBoundary().first + "\r";
+	std::string			BoundaryEndtoFind = "--" + _request.getBoundary().first + "--\r" ;
+	std::string			str;
+	std::string			boundaryHeader;
+	int					uploadReady = false;
+	int					boundaryHeaderReady = false;
+	while (getline(fstream, str))
+	{
+		if(str.compare(BoundaryStartToFind) == 0)
+			uploadReady = true;
+		if (boundaryHeaderReady == true && str.compare("\r") == 0) // si on trouve \r, on a fini de recuperer le header de la partie
+		{
+			_multipart_param = getParamBoundary(boundaryHeader);
+			_process.header = true;
+			std::string fileName = _request.getLocation()->getUploadDirectory() + _multipart_param.fileName.first;
+			_uploaded.open(fileName.c_str(), std::fstream::app | std::fstream::in | std::fstream::out);
+			if (_uploaded.fail())
+				std::cout << "failed open _uploadFile" << std::endl;
+			uploadReady = false;
+		}
+		else if (uploadReady == true)
+		{
+			boundaryHeader.append(str, 0, str.length());
+			str.clear();
+		}
+	}
+	
+}
+*/
 void HttpManager::parseMultiPart(std::fstream &fstream)
 {
 //	fstream.seekg(std::fstream::beg);
@@ -146,13 +181,18 @@ void HttpManager::parseMultiPart(std::fstream &fstream)
 			while (fstream.eof() != true && str.compare(BoundaryEndtoFind) != 0 && str.compare(BoundaryStartToFind) != 0)
 			{
 				getline(fstream, str);
+
+
 				_lenOfRequestAlreadyRead += str.length() + 1;
 				if (str.compare(BoundaryEndtoFind) != 0 && str.compare(BoundaryStartToFind) != 0)
 				{
 					std::cout <<  "STR=\n" << str << "\n=STR" << std::endl;
-				//printAscii(str);
+				printAscii(str);
+			//		int i = str.length() -1;
+//					std::cout << *(str.end() - 1) << std::endl;
+
 					_uploaded << str.c_str();
-					_uploaded << "\n";
+					_uploaded << '\n'; 
 				}
 			}
 			std::cout << "2" << std::endl;
@@ -262,12 +302,10 @@ t_process	createProcess( void )
 	return process;
 }
 
-
-
 bool file_exist (const std::string& name)
 {
 	struct stat	buffer;   
-	return (stat (name.c_str(), &buffer) == 0); 
+	return (stat (name.c_str(), &buffer) == 0);
 }
 
 std::string HttpManager::getFileName()
