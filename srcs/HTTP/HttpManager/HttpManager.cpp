@@ -98,7 +98,7 @@ int HttpManager::receive()
 	{
 		_requestFullyReceive = true;
 	}
-	_request.concatenate(buffer);
+	_request.concatenateInsert(buffer, ret);
 //	std::cout <<  "REQUEST=\n" << _request.getRequest().c_str() << "\n=REQUEST" << std::endl;
 	return (0);
 }

@@ -12,6 +12,7 @@ class HttpRequest
 		void							parseStartLine(std::string const & client_request);
 		std::pair <std::string, bool>	parseHeader(std::string &header, std::string optionToFind);
 		void							concatenate(char *str);
+		void							concatenateInsert(char *str, int len);
 		void							erase(int index);
 
 		std::string						&getRequest(void);

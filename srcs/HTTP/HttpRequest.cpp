@@ -178,6 +178,11 @@ void	HttpRequest::concatenate(char *str)
 	_request.append(str);
 }
 
+void	HttpRequest::concatenateInsert(char *str, int len)
+{
+	_request.insert(_request.size(), str, len);
+}
+
 void	HttpRequest::erase(int index)
 {
 	_request.erase(0, index);
