@@ -2,6 +2,24 @@
 #include <sys/stat.h>
 
 
+void	HttpManager::launchCgi()
+{
+	if (_firstPassage == false)
+	{
+		_firstPassage = true;
+		_cgi.execute();
+	}
+	else
+	{
+		_respond.clear();
+		if (_proccess_fini == false)
+			checkIfProcessIsFinished();
+		else
+			fillResponseWithCgiOutput();
+	}
+}
+
+
 void	HttpManager::manageCgi(HttpRequest &_request, const Server &server)
 {
 	struct stat _status;
@@ -25,24 +43,22 @@ void	HttpManager::manageCgi(HttpRequest &_request, const Server &server)
 			_tmpEnd = true;
 		}
 		else
+		{
 			launchCgi();
-	}
-}
-
-void	HttpManager::launchCgi()
-{
-	if (_firstPassage == false)
-	{
-		_firstPassage = true;
-		_cgi.execute();
-	}
-	else
-	{
-		_respond.clear();
-		if (_proccess_fini == false)
-			checkIfProcessIsFinished();
-		else
-			fillResponseWithCgiOutput();
+			// if (_firstPassage == false)
+			// {
+			// 	_firstPassage = true;
+			// 	_cgi.execute();
+			// }
+			// else
+			// {
+			// 	_respond.clear();
+			// 	if (_proccess_fini == false)
+			// 		checkIfProcessIsFinished();
+			// 	else
+			// 		fillResponseWithCgiOutput()
+			// }
+		}
 	}
 }
 
@@ -62,7 +78,7 @@ void		HttpManager::checkIfProcessIsFinished()
 
 void	HttpManager::fillResponseWithCgiOutput()
 {
-	if (_respond.size() > LEN_TO_READ)
+	 if (_respond.size() > LEN_TO_READ)
 	{
 		_respond.insert(_respond.size(), _cgi.getOutput(), 0, LEN_TO_READ);
 		_cgi.cutOutput(LEN_TO_READ);

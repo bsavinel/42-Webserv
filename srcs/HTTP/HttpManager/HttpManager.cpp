@@ -218,7 +218,6 @@ void HttpManager::sender()
 	}
 }
 
-
 /*std::string	HttpManager::ErrorRespond()
 {
 	std::string errResp;

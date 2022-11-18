@@ -245,7 +245,18 @@ void	Server::set_client_max_body_size(std::vector<std::string>::iterator & it)
 	this->client_max_body_size = atoi(arg);
 }
 
+bool Server::checkRacineLocationExist()
+{
+    std::map<std::string, Location*>::iterator itLocation = locations.begin();
+    std::map<std::string, Location*>::iterator endItLocation = locations.end();
 
+    for (;itLocation !=endItLocation; itLocation ++)
+    {
+        if (itLocation->first == "/")
+            return (true);
+    }
+    return (false);
+}
 // ------------------------------------------------------------------------------------------
 // |										EXCEPTION										|
 // ------------------------------------------------------------------------------------------

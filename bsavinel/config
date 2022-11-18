@@ -3,6 +3,16 @@ server
 	listen 8080;
 	error_pages 404 ./bsavinel/site/404.html; #testduntrucquimarchepas
 
+	#testduntrucquimarchepas
+	location /methode/
+	{
+		allow GET POST DELETE;
+		root ./bsavinel/site/methode/;
+		cgi_pass .php  /usr/bin/php-cgi;
+		autoindex on;
+	}
+	
+
 	location / 
 	{
 		allow GET POST DELETE;
@@ -10,14 +20,6 @@ server
 		index index.html;
 		#testduntrucquimarchepas
 		cgi_pass .php /usr/bin/php-cgi;
-		autoindex on;
-	}
-	#testduntrucquimarchepas
-	location /methode/
-	{
-		allow GET POST DELETE;
-		root ./bsavinel/site/methode/;
-		cgi_pass .php  /usr/bin/php-cgi;
 		autoindex on;
 	}
 }
