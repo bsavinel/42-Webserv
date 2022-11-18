@@ -1,6 +1,6 @@
 #include "HttpManager.hpp"
 #include <sys/socket.h>
-#include <sys/stat.h>
+
 #include <iostream>
 #include <sstream>
 
@@ -59,116 +59,88 @@ HttpManager::~HttpManager()
 {
 }
 
-void HttpManager::sender()
+void HttpManager::initialize(const Server &server)
 {
-	int ret;
-
-	if (_respond.size() > 0)
+	if (!_init)
 	{
-		ret = send(_socketClient, _respond.c_str(), _respond.size(), MSG_NOSIGNAL);
-		_respond.clear();
-		if (ret == -1)
-			_isEnd = true;
+		_init = true;
+		_request.parser();
+		_request.setLocation(_request.findLocation(server));
+		_goodRequest = checkRequest(server);
 	}
 }
 
-int HttpManager::receiver()
+bool HttpManager::checkIfMethodIsAthorized()
 {
-	int ret;
-	char buffer[LEN_TO_READ + 1];
+	std::vector<std::string>::const_iterator itMethod = _request.getLocation()->getAllowedMethods().begin();
+	std::vector<std::string>::const_iterator iteMethod = _request.getLocation()->getAllowedMethods().end();
 
-	for (int i = 0; i < LEN_TO_READ + 1; i++)
-		buffer[i] = 0;
-	ret = recv(_socketClient, buffer, LEN_TO_READ, MSG_DONTWAIT);
-	if (ret == -1)
+	while (itMethod != iteMethod)
 	{
-		_isEnd = true;
-		return -1;
+		if (_request.methodGET().first == (*itMethod))
+			return (1);
+		itMethod++;
 	}
-	_request.concatenate(buffer);
-	std::cout << buffer << std::endl;
 	return (0);
 }
 
-/*std::string	HttpManager::ErrorRespond()
+void HttpManager::canRead()
 {
-	std::string errResp;
-	Error err;
-
-	if (_errorCode == 204)
-		errResp = "HTTP/1.1 204 No Content";
-	else
+	if (_Readok == false)
 	{
-		errResp = buildErrorPage(_errorCode);
-		errResp.insert(0, HeaderRespond(errResp.size(), _errorCode, "text/html"));
-	}
-	_isEnd = true;
-	return errResp;
-}*/
-
-void HttpManager::launch_cgi(HttpRequest &_request, const Server &server)
-{
-	struct stat _status;
-
-	if (_tmpEnd == true)
-	{
-		_cgi.free_argenv();
-		_isEnd = true;
-	}
-	else if (!_tmpEnd)
-	{
-		canWrite();
-		std::string header;
-		_cgi.initialise_env(_request, server);
-		_cgi.set_path_cgi(_request.getLocation()->getCgiPathToScript());
-		_cgi.set_argv();
-		stat(_cgi.getScriptPath().c_str(), &_status);
-		if (errno == ENOENT)
-		{
-			_errorCode = 404;
-			_tmpEnd = true;
-		}
-		else
-		{
-			if (_firstPassage == false)
-			{
-				_firstPassage = true;
-				_cgi.execute();
-			}
-			else
-			{
-				_respond.clear();
-				if (_proccess_fini == false)
-				{
-					int retfo;
-					retfo = _cgi.feedOutput();
-					if (retfo == 1)
-					{
-						_respond = HeaderRespond(_cgi.getOutput().size(), 200, "text/html", _cgi.getCookies());
-						_proccess_fini = true;
-					}
-					else if (retfo == -1)
-						_errorCode = 408;
-				}
-				else
-				{
-					if (_respond.size() > LEN_TO_READ)
-					{
-						_respond.insert(_respond.size(), _cgi.getOutput(), 0, LEN_TO_READ);
-						_cgi.cutOutput(LEN_TO_READ);
-					}
-					else
-					{
-						_respond.insert(_respond.size(), _cgi.getOutput(), 0, _cgi.getOutput().size());
-						_cgi.cutOutput(_cgi.getOutput().size());
-					}
-					if (_cgi.getOutput().size() == 0)
-						_isEnd = true; 
-				}
-			}
-		}
+		_Readok = true;
+		_modeChange = true;
 	}
 }
+
+void HttpManager::canWrite()
+{
+	if (_Writeok == false)
+	{
+		_Writeok = true;
+		_modeChange = true;
+	}
+}
+
+bool HttpManager::checkRequest(const Server &server)
+{
+	(void)server;
+	if (_request.getHttpVersion().first != "HTTP/1.1\r" && _request.getHttpVersion().first != "HTTP/1.1")
+		_errorCode = 505;
+	else if (_request.methodGET().first != "GET" &&
+			 _request.methodGET().first != "POST" &&
+			 _request.methodGET().first != "DELETE")
+		_errorCode = 501;
+	else if (!checkIfMethodIsAthorized())
+		_errorCode = 405;
+	/*else if (server.getClientMaxBodySize() != -1 && 
+				(_request.getContentLenght().second == true && _request.getContentLenght().first > server.getClientMaxBodySize()))
+		_errorCode = 413*/
+	else
+		return true;
+	return false;
+}
+
+std::string HttpManager::determinateType(const std::string &name_file)
+{
+	if (name_file.rfind(".html") == name_file.size() - 5 && name_file.size() >= 5)
+		return "text/html";
+	else if (name_file.rfind(".css") == name_file.size() - 4 && name_file.size() >= 4)
+		return "text/css";
+	else if (name_file.rfind(".ico") == name_file.size() - 4 && name_file.size() >= 4)
+		return "image/x-icon";
+	else if (name_file.rfind(".png") == name_file.size() - 4 && name_file.size() >= 4)
+		return "image/png";
+	else if (name_file.rfind(".jpeg") == name_file.size() - 5 && name_file.size() >= 5)
+		return "image/jpeg";
+	else if (name_file.rfind(".jpg") == name_file.size() - 4 && name_file.size() >= 4)
+		return "image/jpg";
+	if (_errorCode == 0)
+		_errorCode = 415;
+	return "";
+}
+
+
 
 bool HttpManager::applyMethod(const Server &server)
 {
@@ -197,7 +169,7 @@ bool HttpManager::applyMethod(const Server &server)
 		else if (_request.getLocation()->getCgiFileExtension() == get_file_extension(_request.getUrl().first))
 		{
 			std::cout << "REQUEST = " << _request << std::endl;
-			launch_cgi(_request, server);
+			manageCgi(_request, server);
 		}
 		else if (_request.methodGET().first == "GET")
 			methodGET(server);
@@ -214,83 +186,56 @@ bool HttpManager::applyMethod(const Server &server)
 	return _isEnd;
 }
 
-void HttpManager::initialize(const Server &server)
+
+int HttpManager::receiver()
 {
-	if (!_init)
+	int ret;
+	char buffer[LEN_TO_READ + 1];
+
+	for (int i = 0; i < LEN_TO_READ + 1; i++)
+		buffer[i] = 0;
+	ret = recv(_socketClient, buffer, LEN_TO_READ, MSG_DONTWAIT);
+	if (ret == -1)
 	{
-		_init = true;
-		_request.parser();
-		_request.setLocation(_request.findLocation(server));
-		_goodRequest = checkRequest(server);
+		_isEnd = true;
+		return -1;
 	}
-}
-
-bool HttpManager::checkRequest(const Server &server)
-{
-	(void)server;
-	if (_request.getHttpVersion().first != "HTTP/1.1\r" && _request.getHttpVersion().first != "HTTP/1.1")
-		_errorCode = 505;
-	else if (_request.methodGET().first != "GET" &&
-			 _request.methodGET().first != "POST" &&
-			 _request.methodGET().first != "DELETE")
-		_errorCode = 501;
-	else if (!checkIfMethodIsAthorized())
-		_errorCode = 405;
-	/*else if (server.getClientMaxBodySize() != -1 && 
-				(_request.getContentLenght().second == true && _request.getContentLenght().first > server.getClientMaxBodySize()))
-		_errorCode = 413*/
-	else
-		return true;
-	return false;
-}
-
-void HttpManager::canRead()
-{
-	if (_Readok == false)
-	{
-		_Readok = true;
-		_modeChange = true;
-	}
-}
-
-void HttpManager::canWrite()
-{
-	if (_Writeok == false)
-	{
-		_Writeok = true;
-		_modeChange = true;
-	}
-}
-
-std::string HttpManager::determinateType(const std::string &name_file)
-{
-	if (name_file.rfind(".html") == name_file.size() - 5 && name_file.size() >= 5)
-		return "text/html";
-	else if (name_file.rfind(".css") == name_file.size() - 4 && name_file.size() >= 4)
-		return "text/css";
-	else if (name_file.rfind(".ico") == name_file.size() - 4 && name_file.size() >= 4)
-		return "image/x-icon";
-	else if (name_file.rfind(".png") == name_file.size() - 4 && name_file.size() >= 4)
-		return "image/png";
-	else if (name_file.rfind(".jpeg") == name_file.size() - 5 && name_file.size() >= 5)
-		return "image/jpeg";
-	else if (name_file.rfind(".jpg") == name_file.size() - 4 && name_file.size() >= 4)
-		return "image/jpg";
-	if (_errorCode == 0)
-		_errorCode = 415;
-	return "";
-}
-
-bool HttpManager::checkIfMethodIsAthorized()
-{
-	std::vector<std::string>::const_iterator itMethod = _request.getLocation()->getAllowedMethods().begin();
-	std::vector<std::string>::const_iterator iteMethod = _request.getLocation()->getAllowedMethods().end();
-
-	while (itMethod != iteMethod)
-	{
-		if (_request.methodGET().first == (*itMethod))
-			return (1);
-		itMethod++;
-	}
+	_request.concatenate(buffer);
+	std::cout << buffer << std::endl;
 	return (0);
 }
+
+void HttpManager::sender()
+{
+	int ret;
+
+	if (_respond.size() > 0)
+	{
+		ret = send(_socketClient, _respond.c_str(), _respond.size(), MSG_NOSIGNAL);
+		_respond.clear();
+		if (ret == -1)
+			_isEnd = true;
+	}
+}
+
+
+/*std::string	HttpManager::ErrorRespond()
+{
+	std::string errResp;
+	Error err;
+
+	if (_errorCode == 204)
+		errResp = "HTTP/1.1 204 No Content";
+	else
+	{
+		errResp = buildErrorPage(_errorCode);
+		errResp.insert(0, HeaderRespond(errResp.size(), _errorCode, "text/html"));
+	}
+	_isEnd = true;
+	return errResp;
+}*/
+
+
+
+
+

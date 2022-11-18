@@ -24,17 +24,17 @@ class HttpManager
 
 		void		initialize(const Server &server);
 		bool		checkIfMethodIsAthorized();
+		bool		checkRequest(const Server &server);
+		std::string	determinateType(const std::string &name_file);
 		bool		applyMethod(const Server &server);
 		void		canRead();
 		void		canWrite();
 		int			receiver(void);
 		void		sender();
-		bool		checkRequest(const Server &server);
-		std::string	determinateType(const std::string &name_file);
 		std::string ErrorRespond(const Server &server);
 		std::string initDefaultErrorResponse();
 		bool		init_error_file(const std::string &error_page, std::string &errResp);
-		void		launch_cgi(HttpRequest &_request, const Server &server);
+		void		manageCgi(HttpRequest &_request, const Server &server);
 
 		// ----------------------
 		// |		GETTERS		|
@@ -59,6 +59,7 @@ class HttpManager
 		void 				setInit(bool init);
 
 	private:
+
 		bool		_Writeok;
 		bool		_Readok;
 		bool		_modeChange;
@@ -79,9 +80,15 @@ class HttpManager
 		// ------------------------------------------------------
 
 	private:
-		
+
 		bool 	_firstPassage;
 		bool	_proccess_fini;
+	
+		void	launchCgi();
+		void	checkIfProcessIsFinished();
+		void	fillResponseWithCgiOutput();
+
+
 
 
 		// ------------------------------------------------------
@@ -119,9 +126,6 @@ class HttpManager
 
 	public:
 		void methodDELETE();
-
-
-
 
 		/* Redirection management */
 
