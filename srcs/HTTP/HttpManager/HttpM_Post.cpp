@@ -25,12 +25,10 @@ std::string			getNbForFileName( void );
 bool				exists (const std::string& filename);
 int					openUploadFile();
 std::fstream &		safegetline( std::fstream & fstream, std::string & line );
-static int count;
 
 void	HttpManager::postMethod()
 {
 	std::string nbForFileName;
-//	bool		requestTreated = false;
 	if (_headerBuild == false)
 	{
 		_tmpFileName = getFileName();
@@ -45,31 +43,18 @@ void	HttpManager::postMethod()
 	}
 	if (_tmpEnd == false)
 	{
-// 		std::cout << "_requestinPOSTmethod/" << std::endl;
-// 		std::cout << _request.getRequest() << std::endl;
-// //		printAscii(_request.getRequest().c_str());
-// 		std::cout << "/_request" << std::endl;
-// 		std::cout << "-1" << std::endl;
-		// if (_tmp_upload.is_open())
-		// 	std::cout << "OPEN" << std::endl;
-		// else
-		// 	std::cout << "CLOSE" << std::endl;
 		_tmp_upload.clear();
-		
-		if (count >= 1 )
-		{
-			_tmp_upload.write(_request.getRequest().c_str(), _request.getRequest().size());
-//			remove(_tmpFileName.c_str());
-		}
+		_tmp_upload.write(_request.getRequest().c_str(), _request.getRequest().size());
 		if (_requestFullyReceive == true)
+		{
 			parseMultiPart(_tmp_upload);
-		count++;
+			remove(_tmpFileName.c_str());
+		}
 	}
 	if (_tmpEnd == true)
 		_isEnd = true;
 	else if (_requestFullyReceive == true) // Quand la requete est completement recue, on veut que _isEndsoit true au prochain tour de boucle
 	{
-
 		canWrite();
 		_tmpEnd = true;
 	}
@@ -78,73 +63,90 @@ void	HttpManager::postMethod()
 
 void HttpManager::parseMultiPart(std::fstream &fstream)
 {
-	fstream.seekg(_lenOfRequestAlreadyRead);
-	std::string			BoundaryStartToFind = "--" + _request.getBoundary().first + "\r";
-	std::string			BoundaryEndtoFind = "--" + _request.getBoundary().first + "--\r" ;
-	std::string			str;
-	std::string			boundaryHeader;
+    std::string            BoundaryStartToFind = "--" + _request.getBoundary().first + "\r";
+    std::string            BoundaryEndtoFind = "--" + _request.getBoundary().first + "--\r" ;
+    std::string            str;
+    std::string            boundaryHeader;
 
-	while (fstream.eof() != true && _process.boundaryEnd == false)
-	{
-		if (_new_process == false)
-		{
-			_process = createProcess();
-			_new_process = true;
-		}
-		if (_process.boundaryStart == false)
-		{
-			getline(fstream, str);
-			_lenOfRequestAlreadyRead += str.length() + 1;
-			if (str.compare(BoundaryStartToFind) == 0)
-				_process.boundaryStart = true;
-		}
-		while (fstream.eof() != true && _process.boundaryStart == true && _process.header == false)
-		{
-			getline(fstream, str);
-			_lenOfRequestAlreadyRead += str.length() + 1;
-			if (str.compare("\r") == 0) // si on trouve \r, on a fini de recuperer le header de la partie
-			{
-				_multipart_param = getParamBoundary(boundaryHeader);
-				_process.header = true;
-				std::string fileName = _request.getLocation()->getUploadDirectory() + _multipart_param.fileName.first;
-				_uploaded.open(fileName.c_str(), std::fstream::app | std::fstream::in | std::fstream::out);
-				if (_uploaded.fail())
-					std::cout << "failed open _uploadFile" << std::endl;
-			}
-			else
-			{
-				boundaryHeader.append(str, 0, str.length());
-				str.clear();
-			}
-		}
-		if (_process.header == true)
-		{
-			while (fstream.eof() != true && str.compare(BoundaryEndtoFind) != 0 && str.compare(BoundaryStartToFind) != 0)
-			{
-				getline(fstream, str);
-				_lenOfRequestAlreadyRead += str.length() + 1;
-				if (str.compare(BoundaryEndtoFind) != 0 && str.compare(BoundaryStartToFind) != 0)
-				{
-					_uploaded << str.c_str();
-					_uploaded << '\n'; 
-				}
-			}
-		}
-		if (str.compare(BoundaryEndtoFind) == 0 || str.compare(BoundaryStartToFind) == 0)
-		{
-			_uploaded.close();
-			_new_process = false;
-			if (str.compare(BoundaryStartToFind) == 0)
-			{
-				_process = createProcess();
-				_new_process = true;
-				_process.boundaryStart = true;
-				boundaryHeader.clear();
-			}
-			else
-				_process.boundaryEnd = true;
-		}
-	}
+    fstream.seekg(_lenOfRequestAlreadyRead);
+
+    while (fstream.eof() != true && _process.boundaryEnd == false)
+    {
+        if (_new_process == false)
+        {
+            _process = createProcess();
+            _new_process = true;
+        }
+        if (_process.boundaryStart == false)
+        {
+            getline(fstream, str);
+            _lenOfRequestAlreadyRead += str.length() + 1;
+            if (str.compare(BoundaryStartToFind) == 0)
+                _process.boundaryStart = true;
+        }
+        while (fstream.eof() != true && _process.boundaryStart == true && _process.header == false)
+        {
+            getline(fstream, str);
+            _lenOfRequestAlreadyRead += str.length() + 1;
+            if (str.compare("\r") == 0) // si on trouve \r, on a fini de recuperer le header de la partie
+            {
+                _multipart_param = getParamBoundary(boundaryHeader);
+                _process.header = true;
+                std::string fileName = _request.getLocation()->getUploadDirectory() + _multipart_param.fileName.first;
+                _uploaded.open(fileName.c_str(), std::fstream::app | std::fstream::in | std::fstream::out);
+                if (_uploaded.fail())
+                    std::cout << "failed open _uploadFile" << std::endl;
+            }
+            else
+            {
+                boundaryHeader.append(str, 0, str.length());
+                str.clear();
+            }
+        }
+        if (_process.header == true)
+        {
+            bool first = true;
+            bool carriageReturn = false;
+            int i = 0;
+            while (fstream.eof() != true && str.compare(BoundaryEndtoFind) != 0 && str.compare(BoundaryStartToFind) != 0)
+            {
+                getline(fstream, str);
+                _lenOfRequestAlreadyRead += str.length() + 1;
+                if (str.compare(BoundaryEndtoFind) != 0 && str.compare(BoundaryStartToFind) != 0)
+                {
+                    if (!first)
+                        _uploaded << '\n'; 
+                    if (carriageReturn == true)
+                    {
+                        _uploaded << '\r';
+                        carriageReturn = false;
+                    }
+                    first = false;
+                    if (str[str.size() - 1] == '\r')
+                    {
+                        carriageReturn = true;
+                        str.erase(str.size() - 1);
+                    }
+                    _uploaded << str.c_str();
+                }
+                i++;
+            }
+        }
+        if (str.compare(BoundaryEndtoFind) == 0 || str.compare(BoundaryStartToFind) == 0)
+        {
+            _uploaded.close();
+            _new_process = false;
+            if (str.compare(BoundaryStartToFind) == 0)
+            {
+                _process = createProcess();
+                _new_process = true;
+                _process.boundaryStart = true;
+                boundaryHeader.clear();
+            }
+            else
+                _process.boundaryEnd = true;
+        }
+    }
 }
 
 void printAscii(std::string str)
