@@ -1,0 +1,34 @@
+server 
+{
+
+	listen 8080;
+	server_name ;#OPTIONNAL
+	error_pages 404 resources/error/404.html;
+	error_pages 403 resources/error/403.html;
+	client_max_body_size 2000;
+	error_pages 401 resources/error/401.html;
+	error_pages 301 resources/error/301.html;
+
+	location / 
+	{
+		allow GET POST DELETE;
+		return 404 /resources/error/404.html;
+		root /resources/;
+		index ;
+		autoindex on;
+		cgi_pass .php ./www/bin/php-cgi;
+		upload_store /uploads ;
+	}
+
+	location /www/
+	{
+		allow GET POST DELETE;
+		return 404 /resources/error/404.html;
+		root /data/;
+		index index.html;
+		autoindex on;
+		cgi_pass .php ./www/bin/php-cgi;
+		upload_store /uploads;
+	}
+
+}

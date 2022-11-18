@@ -68,7 +68,7 @@ void HttpManager::parseMultiPart(std::fstream &fstream)
     std::string            str;
     std::string            boundaryHeader;
 
-    fstream.seekg(_lenOfRequestAlreadyRead);
+    fstream.seekg(0);
 
     while (fstream.eof() != true && _process.boundaryEnd == false)
     {
@@ -80,14 +80,12 @@ void HttpManager::parseMultiPart(std::fstream &fstream)
         if (_process.boundaryStart == false)
         {
             getline(fstream, str);
-            _lenOfRequestAlreadyRead += str.length() + 1;
             if (str.compare(BoundaryStartToFind) == 0)
                 _process.boundaryStart = true;
         }
         while (fstream.eof() != true && _process.boundaryStart == true && _process.header == false)
         {
             getline(fstream, str);
-            _lenOfRequestAlreadyRead += str.length() + 1;
             if (str.compare("\r") == 0) // si on trouve \r, on a fini de recuperer le header de la partie
             {
                 _multipart_param = getParamBoundary(boundaryHeader);
@@ -111,7 +109,6 @@ void HttpManager::parseMultiPart(std::fstream &fstream)
             while (fstream.eof() != true && str.compare(BoundaryEndtoFind) != 0 && str.compare(BoundaryStartToFind) != 0)
             {
                 getline(fstream, str);
-                _lenOfRequestAlreadyRead += str.length() + 1;
                 if (str.compare(BoundaryEndtoFind) != 0 && str.compare(BoundaryStartToFind) != 0)
                 {
                     if (!first)
