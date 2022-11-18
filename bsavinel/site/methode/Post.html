@@ -1,9 +1,25 @@
-<body>
+<!--<body>
 	<h1>Post page</h1>
 	<a href="methode/Post.html">Go to Menu</a>
 	<form action="/" method="post" enctype="multipart/form-data">
-		<input type="text" name="description" value="test" />
-		<input type="file" name="myFile" />
+		 <input type="text" name="description" value="test" />
+		<input type="file" name="myFile" /> 
+		<input type="file" name="filefield" multiple="multiple">
+		<input type='file' name='files[]' multiple>
 		<button type="submit">Submit</button>
 	</form>
-</body>
+</body>-->
+<!DOCTYPE html>
+<html>
+   <body>
+      <p>Write your name below:</p>
+      <input type = "text" id = "myid" oninput="display()">
+      <p id="test"></p>
+      <script>
+         function display() {
+            var p = document.getElementById("myid").value;
+            document.getElementById("test").innerHTML = "Your answer is " + p;
+         }
+      </script>
+   </body>
+</html>

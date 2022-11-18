@@ -18,7 +18,7 @@ server
 	{
 		allow GET POST DELETE;
 		root ./serverConfig/allIn/count/;
-		upload_store  ./serverConfig/allIn/AllInAcount/;
+		upload_store  ./serverConfig/allIn/count/payments/;
 	}
 
 	location /image/

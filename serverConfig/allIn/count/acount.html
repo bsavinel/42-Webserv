@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+        <meta charset="utf-8" />
+        <!--- <link rel="stylesheet" href="/style.css" /> --->
+        <title>Login</title>
+    </head>
+	<body>
+		<div id="warper">
+			<header>
+				<div id="logoSlogan">
+					<img src="/image/allin.ico" alt="logo AllIn"/>
+					<div>
+						<h1>AllIn</h1>
+						<h2>Visez dans le mille<br>Jouez AllIn</h2>
+					</div>
+				</div>
+				<div>
+					<h2>Profile</h2>
+					<!-- metre le login -->
+				</div>
+			</header>
+			<div id="corps">
+				<ul>
+					<li>
+						<a href="/">Accueil</a>
+					</li>
+					<li>
+						<a href="/count/payments/">All payment</a>
+					</li>
+					<li>
+						<form action="/count/" method="post" enctype="multipart/form-data">
+							<label>Do payment</label>
+							<input type="file" name="Payment 1:" />
+							<input type="file" name="Payment 2:" />
+							<button type="submit">Submit</button>
+						</form>
+					</li>
+					<li><a href="#"></a></li>
+				</ul>
+			</div>
+		</div>
+	</body>
+</html>
+
+<script>
+	class DeleteHTTP {
+	
+	async delete(url) {
+		const response = await fetch(url, {
+			method: 'DELETE',
+			headers: {
+				'Content-type': 'application/json'
+			}
+		});
+		const resData = 'resource deleted...';
+		return resData;
+		}
+	}
+
+	const http = new DeleteHTTP;
+	let button = document.getElementById("delete-button");
+
+	button.addEventListener("click", () => {
+		console.log("clicked");
+		http.delete('http://localhost:8080/methode/Destroy')
+		.then(data => console.log(data))
+		.catch(err => console.log(err))
+	});
+
+</script>
