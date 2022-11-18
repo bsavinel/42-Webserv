@@ -79,7 +79,8 @@ Location	*HttpRequest::findLocation(const Server &server)
 		}
 		if (urlCopy.find_last_of("/") != urlCopy.npos)
 		{
-			//urlCopy.erase(urlCopy.find_last_of("/") , urlCopy.size());
+			if (urlCopy[urlCopy.size() - 1] ==	'/')
+				urlCopy.erase(urlCopy.size() - 1 , urlCopy.size());
 			urlCopy.erase(urlCopy.find_last_of("/") + 1 , urlCopy.size());
 		}
 		else
