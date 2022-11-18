@@ -1,6 +1,6 @@
 #include "HttpManager.hpp"
 
-bool HttpManager::redirectionManage()
+bool HttpManager::manageRedirection()
 {
 	char buffer[LEN_TO_READ];
 	int nb_char = LEN_TO_READ;
@@ -16,12 +16,12 @@ bool HttpManager::redirectionManage()
 	}
 	else
 	{
-		nb_char = read(_file, buffer, LEN_TO_READ);
+		nb_char = read(_file_fd, buffer, LEN_TO_READ);
 		if (nb_char > 0)
 			_respond.insert(_respond.size(), &buffer[0], nb_char);
 		if (nb_char < LEN_TO_READ)
 		{
-			close(_file);
+			close(_file_fd);
 			_isEnd = true;
 		}
 	}

@@ -32,7 +32,6 @@ Server & Server::operator=(const Server & rhs)
 
 Server::~Server()
 {
-	std::cout << " Destructor called" << std::endl;
 	for( std::map<std::string, Location*>::iterator it = locations.begin(); it != locations.end(); it++)
 		delete	it->second;
 }

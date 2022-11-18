@@ -22,7 +22,7 @@ void Cgi::initialise_env(HttpRequest &request, const Server &server)
 	env_var.push_back("GATEWAY_INTERFACE=CGI/1.1");
 	env_var.push_back("SERVER_PROTOCOL=HTTP/1.1");
 	env_var.push_back("SERVER_PORT=" + (std::string) ft_itoa(server.getPort()));
-	env_var.push_back("REQUEST_METHOD=" + request.getMethod().first);
+	env_var.push_back("REQUEST_METHOD=" + request.methodGET().first);
 	env_var.push_back("PATH_INFO=" + buildLocalPath(request)); // the path to the script, example : methode/index.php
 	env_var.push_back("PATH_TRANSLATED=" + buildLocalPath(request)); // idem 
 	env_var.push_back("SCRIPT_NAME=" + buildLocalPath(request)); // the constructed path to the script /data/www/script.php
@@ -150,24 +150,15 @@ void	Cgi::store_cookies()
 	int end_position_of_line = _output.find("\r\n");
 	int end_of_header = _output.find("\r\n\r\n");
 
-	std::cout<< std::endl<< std::endl<< std::endl<< std::endl << "POSITION END_OF_HEADER " << end_of_header << line << std::endl;
-	std::cout << _output.size() << std::endl;
 	while (end_position_of_line < end_of_header)
 	{
-		line = _output.substr(start_position_of_line, end_position_of_line - start_position_of_line);
-		std::cout << "END POSITION LINE " << end_position_of_line<< "start  POSITION LINE " << start_position_of_line << std::endl;
-		std::cout << "LINE n" << i << " " << line << std::endl;
-		
+		line = _output.substr(start_position_of_line, end_position_of_line - start_position_of_line);		
 		if(line.find("Set-Cookie:") != std::string::npos)
-		{
-			std::cout << "-----FOUND COOKIES" <<std::endl;
 			_cookies.push_back(line);
-		}
 		start_position_of_line = end_position_of_line + 2;
 		end_position_of_line = _output.find("\r\n", start_position_of_line);
 		if(end_position_of_line >= end_of_header)
 			end_position_of_line = end_of_header;
-		std::cout << "END POSITION NEXT LINE " << end_position_of_line << std::endl << "########################################################################" << std::endl;
 		i++;
 	}
 	std::cout<< std::endl<< std::endl<< std::endl;

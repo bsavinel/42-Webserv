@@ -2,7 +2,7 @@
 #include "Error.hpp"
 #include <sys/stat.h>
 
-std::string	HttpManager::buildSimpleErrorResponse()
+std::string	HttpManager::initDefaultErrorResponse()
 {
 	std::string errResp;
 
@@ -22,22 +22,22 @@ bool	HttpManager::init_error_file(const std::string &error_page, std::string &er
 {
 	struct stat status;
 
-	_file = open(error_page.c_str(), O_RDONLY);
+	_file_fd= open(error_page.c_str(), O_RDONLY);
 	stat(error_page.c_str(), &status);
-	if (_file < 0 || !S_ISREG(status.st_mode))
+	if (_file_fd< 0 || !S_ISREG(status.st_mode))
 	{
-		if (_file >= 0)
-			close(_file);
+		if (_file_fd>= 0)
+			close(_file_fd);
 		if (_errorCode == 0)
 			return false;
 		_isEnd = true;
-		errResp = buildSimpleErrorResponse();
+		errResp = initDefaultErrorResponse();
 		return false;
 	}
 	std::string type_file = determinateType(error_page);
 	if (type_file.empty())
 	{
-		errResp = buildSimpleErrorResponse();
+		errResp = initDefaultErrorResponse();
 		_isEnd = true;
 		return false;
 	}
@@ -55,21 +55,21 @@ std::string	HttpManager::ErrorRespond(const Server &server)
 	canWrite();
 	if (server.getErrorMap().find(_errorCode) != server.getErrorMap().end())
 	{
-		if (_file == -1)
+		if (_file_fd== -1)
             if (!init_error_file((*server.getErrorMap().find(_errorCode)).second, errResp))
 				return errResp;
-		nb_char = read(_file, buffer, LEN_TO_READ);
+		nb_char = read(_file_fd, buffer, LEN_TO_READ);
 		if (nb_char > 0)
 			errResp.insert(errResp.size(), &buffer[0], nb_char);
 		if (nb_char < LEN_TO_READ)
 		{
-			close(_file);
+			close(_file_fd);
 			_isEnd = true;
 		}
 	}
 	else
 	{
-		errResp = buildSimpleErrorResponse();
+		errResp = initDefaultErrorResponse();
 		_isEnd = true;
 	}
 	return errResp;

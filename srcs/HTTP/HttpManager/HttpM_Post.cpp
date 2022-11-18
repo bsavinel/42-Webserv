@@ -12,7 +12,7 @@ std::string	getNbForFileName( void );
 int openUploadFile( std::string fileName );
 
 
-void	HttpManager::postMethod()
+void	HttpManager::methodPOST()
 {
 	std::string nbForFileName;
 	std::string fileName;

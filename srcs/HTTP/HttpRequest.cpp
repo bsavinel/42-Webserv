@@ -204,7 +204,7 @@ std::string	HttpRequest::getRequest(void) const
 	return _request;
 }
 
-std::pair<std::string, bool> HttpRequest::getMethod(void) const
+std::pair<std::string, bool> HttpRequest::methodGET(void) const
 {
 	return _method;
 } 
@@ -274,8 +274,8 @@ std::pair<std::string, bool>	HttpRequest::getCookie(void) const
 std::ostream &	operator<<( std::ostream & o, HttpRequest const & rhs)
 {
 
-	if (rhs.getMethod().second == true) 
-		o << rhs.getMethod().first << std::endl;
+	if (rhs.methodGET().second == true) 
+		o << rhs.methodGET().first << std::endl;
 	if (rhs.getUrl().second == true) 
 		o << rhs.getUrl().first << std::endl;
 	if (rhs.getHttpVersion().second == true)  

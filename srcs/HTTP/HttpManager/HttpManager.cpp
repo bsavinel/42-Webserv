@@ -18,7 +18,7 @@ HttpManager::HttpManager(t_socket socketClient)
 	_Writeok = false;
 	_headerBuild = false;
 	_errorCode = 0;
-	_file = -1;
+	_file_fd= -1;
 	_tmp_upload_fd = -1;
 	_tmpEnd = false;
 	_firstPassage = false;
@@ -45,7 +45,7 @@ HttpManager &HttpManager::operator=(const HttpManager &rhs)
 		_modeChange = rhs._modeChange;
 		_init = rhs._init;
 		_isEnd = rhs._isEnd;
-		_file = rhs._file;
+		_file_fd= rhs._file_fd;
 		_name_file = rhs._name_file;
 		_headerBuild = rhs._headerBuild;
 		_respond = rhs._respond;
@@ -72,7 +72,7 @@ void HttpManager::sender()
 	}
 }
 
-int HttpManager::receive()
+int HttpManager::receiver()
 {
 	int ret;
 	char buffer[LEN_TO_READ + 1];
@@ -144,15 +144,8 @@ void HttpManager::launch_cgi(HttpRequest &_request, const Server &server)
 					retfo = _cgi.feedOutput();
 					if (retfo == 1)
 					{
-						std::cout << _cgi.getOutput().size() << std::endl;
 						_respond = HeaderRespond(_cgi.getOutput().size(), 200, "text/html", _cgi.getCookies());
-						 std::cout << "RESPOND CGI =" << std::endl << _respond << std::endl;
 						_proccess_fini = true;
-						std::cout << "CGI OUT PUT = " << std::endl
-								  << _cgi.getOutput() << std::endl;
-						std::cout << std::endl;
-						std::cout << "RESPOND= " << std::endl
-								  << _respond << std::endl;
 					}
 					else if (retfo == -1)
 						_errorCode = 408;
@@ -170,13 +163,10 @@ void HttpManager::launch_cgi(HttpRequest &_request, const Server &server)
 						_cgi.cutOutput(_cgi.getOutput().size());
 					}
 					if (_cgi.getOutput().size() == 0)
-					{
-						_isEnd = true; // peut mem directement is end
-					}
+						_isEnd = true; 
 				}
 			}
 		}
-		// std::cout << "RESPOND CGI =" << std::endl << _respond << std::endl;
 	}
 }
 
@@ -193,7 +183,7 @@ bool HttpManager::applyMethod(const Server &server)
 		else if (_errorCode == 0 && _request.getLocation()->getReturnCode() != 0)
 		{
 			canWrite();
-			if (!redirectionManage())
+			if (!manageRedirection())
 				_errorCode = _request.getLocation()->getReturnCode();
 			return _isEnd;
 		}
@@ -202,22 +192,22 @@ bool HttpManager::applyMethod(const Server &server)
 			_respond.clear();
 			_respond = ErrorRespond(server);
 		}
-		else if (!check_if_method_authorized())
+		else if (!checkIfMethodIsAthorized())
 			_errorCode = 405;
 		else if (_request.getLocation()->getCgiFileExtension() == get_file_extension(_request.getUrl().first))
 		{
 			std::cout << "REQUEST = " << _request << std::endl;
 			launch_cgi(_request, server);
 		}
-		else if (_request.getMethod().first == "GET")
-			getMethod(server);
-		else if (_request.getMethod().first == "POST")
+		else if (_request.methodGET().first == "GET")
+			methodGET(server);
+		else if (_request.methodGET().first == "POST")
 		{
 			std::cout << _request.getRequest() << std::endl;
-			postMethod();
+			methodPOST();
 		}
-		else if (_request.getMethod().first == "DELETE")
-			deleteMethod();
+		else if (_request.methodGET().first == "DELETE")
+			methodDELETE();
 		else
 			_isEnd = true;
 	}
@@ -240,11 +230,11 @@ bool HttpManager::checkRequest(const Server &server)
 	(void)server;
 	if (_request.getHttpVersion().first != "HTTP/1.1\r" && _request.getHttpVersion().first != "HTTP/1.1")
 		_errorCode = 505;
-	else if (_request.getMethod().first != "GET" &&
-			 _request.getMethod().first != "POST" &&
-			 _request.getMethod().first != "DELETE")
+	else if (_request.methodGET().first != "GET" &&
+			 _request.methodGET().first != "POST" &&
+			 _request.methodGET().first != "DELETE")
 		_errorCode = 501;
-	else if (!check_if_method_authorized())
+	else if (!checkIfMethodIsAthorized())
 		_errorCode = 405;
 	/*else if (server.getClientMaxBodySize() != -1 && 
 				(_request.getContentLenght().second == true && _request.getContentLenght().first > server.getClientMaxBodySize()))
@@ -291,14 +281,14 @@ std::string HttpManager::determinateType(const std::string &name_file)
 	return "";
 }
 
-bool HttpManager::check_if_method_authorized()
+bool HttpManager::checkIfMethodIsAthorized()
 {
 	std::vector<std::string>::const_iterator itMethod = _request.getLocation()->getAllowedMethods().begin();
 	std::vector<std::string>::const_iterator iteMethod = _request.getLocation()->getAllowedMethods().end();
 
 	while (itMethod != iteMethod)
 	{
-		if (_request.getMethod().first == (*itMethod))
+		if (_request.methodGET().first == (*itMethod))
 			return (1);
 		itMethod++;
 	}

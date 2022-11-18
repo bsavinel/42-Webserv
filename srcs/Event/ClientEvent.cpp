@@ -81,7 +81,7 @@ void	clientEvent(Epoll &epoll, std::map<t_socket, HttpManager> &stockManager)
 
 
 		if (it_event->events & EPOLLIN)
-			manager.receive();
+			manager.receiver();
 	
 		if (manager.getInit() == false)
 			manager.initialize(*socketClient.find(it_event->data.fd)->second);
