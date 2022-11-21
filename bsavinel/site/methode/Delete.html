@@ -2,10 +2,12 @@
 	<h1>Delte page</h1>
 	<a href="/">Go to Menu</a>
 	<a data-confirm="Are you sure?" data-method="delete" href="/methode/destroy" rel="nofollow">Delete</a>
+	<input type = "text" id = "myid" value="delete" />
 	<button id="delete-button">DELETE</button>
 </body>
 
 <script>
+	
 	class DeleteHTTP {
 	
 	async delete(url) {
@@ -25,7 +27,7 @@
 
 	button.addEventListener("click", () => {
 		console.log("clicked");
-		http.delete('http://localhost:8080/methode/Destroy')
+		http.delete('http://localhost:8080/methode/' + document.getElementById("myid").value)
 		.then(data => console.log(data))
 		.catch(err => console.log(err))
 	});
