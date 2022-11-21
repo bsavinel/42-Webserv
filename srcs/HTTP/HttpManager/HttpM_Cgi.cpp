@@ -63,7 +63,7 @@ void		HttpManager::checkIfProcessIsFinished()
 
 void	HttpManager::fillResponseWithCgiOutput()
 {
-	 if (_respond.size() > LEN_TO_READ)
+	if (_respond.size() > LEN_TO_READ)
 	{
 		_respond.insert(_respond.size(), _cgi.getOutput(), 0, LEN_TO_READ);
 		_cgi.cutOutput(LEN_TO_READ);

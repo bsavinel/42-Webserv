@@ -93,7 +93,6 @@ void Cgi::execute()
 		throw exceptWebserv("Error CGI : failed to fork");
 	if(_pid == 0) 
 	{
-		//Child Process, CGI execution
 		dup2(_pip[1], STDOUT_FILENO);
 		close(_pip[0]);
 		close(_pip[1]);
