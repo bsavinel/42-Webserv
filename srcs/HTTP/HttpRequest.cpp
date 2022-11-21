@@ -136,6 +136,7 @@ std::pair <std::string, bool> getMultiPartBoundary(std::string contentType)
 
 	boundaryPosition = contentType.find("=") + 1;
 	boundary.first.assign(contentType, boundaryPosition, contentType.npos);
+//	boundary.first += "\r";
 	boundary.second = true;
 
 //	std::cout << "boundary = [" << boundary.first << "]" << std::endl;
@@ -143,11 +144,11 @@ std::pair <std::string, bool> getMultiPartBoundary(std::string contentType)
 	return boundary;
 }
 
-void	HttpRequest::parser(/*std::string &request*/)
+void    HttpRequest::parser(/*std::string &request*/)
 {
-//	std::cout << "REQUEST\n" << _request << std::endl;
-	parseStartLine(_request);
-	_request.erase(0, _request.find('\n') + 1);
+//    std::cout << "REQUEST\n" << _request << std::endl;
+    parseStartLine(_request);
+    _request.erase(0, _request.find('\n') + 1);
 
 	_Connection = parseHeader(_request, "\nConnection: ");
 	_Accept = parseHeader(_request, "\nAccept: ");
@@ -157,6 +158,14 @@ void	HttpRequest::parser(/*std::string &request*/)
 	_Referer = parseHeader(_request, "\nReferer: ");
 	_AcceptEncoding = parseHeader(_request, "\nAccept-Encoding: ");
 	_contentType = parseHeader(_request, "\nContent-Type: ");
+	_contentLength = parseHeader(_request, "\nContent-Length: ");
+	_cookie = parseHeader(_request, "\nCookie: ");
+	if (_contentLength.second == true)
+	{
+		_intContentLength.first = atoi(_contentLength.first.c_str());
+		_intContentLength.second = true;
+//		std::cout << "_intContentLength: " << _intContentLength.first <<std::endl;
+	}
 	if (_contentType.first.find("multipart/form-data") == 0)
 	{
 		_boundary = getMultiPartBoundary(_contentType.first);
@@ -168,6 +177,11 @@ void	HttpRequest::parser(/*std::string &request*/)
 void	HttpRequest::concatenate(char *str)
 {
 	_request.append(str);
+}
+
+void	HttpRequest::concatenateInsert(char *str, int len)
+{
+	_request.insert(_request.size(), str, len);
 }
 
 void	HttpRequest::erase(int index)
@@ -192,12 +206,12 @@ void	HttpRequest::setUrl(std::string const & url)
 	_url.second = true;
 }
 
-std::string	HttpRequest::getRequest(void) const
+std::string	&HttpRequest::getRequest(void)
 {
 	return _request;
 }
 
-std::pair<std::string, bool> HttpRequest::getMethod(void) const
+std::pair<std::string, bool> HttpRequest::methodGET(void) const
 {
 	return _method;
 } 
@@ -253,17 +267,28 @@ std::pair<std::string, bool> HttpRequest::getBoundary(void) const
 	return _boundary;
 }
 
+
+std::pair<int, bool>	HttpRequest::getContentLength(void) const
+{
+	return _intContentLength;
+}
+
 Location					*HttpRequest::getLocation(void) const
 {
 	return _location;
+}
+
+std::pair<std::string, bool>	HttpRequest::getCookie(void) const
+{
+	return _cookie;
 }
 
 
 std::ostream &	operator<<( std::ostream & o, HttpRequest const & rhs)
 {
 
-	if (rhs.getMethod().second == true) 
-		o << rhs.getMethod().first << std::endl;
+	if (rhs.methodGET().second == true) 
+		o << rhs.methodGET().first << std::endl;
 	if (rhs.getUrl().second == true) 
 		o << rhs.getUrl().first << std::endl;
 	if (rhs.getHttpVersion().second == true)  
@@ -288,5 +313,9 @@ std::ostream &	operator<<( std::ostream & o, HttpRequest const & rhs)
 		o << rhs.getContentType().first << std::endl;
 	if (rhs.getBoundary().second == true) 
 		o << rhs.getBoundary().first << std::endl;
+	if (rhs.getCookie().second == true) 
+		o << rhs.getCookie().first << std::endl;
+	if (rhs.getContentLength().second == true) 
+		o << rhs.getContentLength().first << std::endl;
 	return o;
 }

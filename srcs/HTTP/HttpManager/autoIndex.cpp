@@ -141,3 +141,8 @@ int	isRootDirectory(std::string fileName)
 		return true;
 	return false;
 }
+
+/*
+/methode/truc.html
+./bsavinel/site/truc.html
+*/

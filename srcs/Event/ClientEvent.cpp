@@ -12,7 +12,7 @@
 
 static void print_status(t_epoll_event event)
 {
-	std::cout << "le fd : " << event.data.fd << " a les evenement: ";
+//	std::cout << "le fd : " << event.data.fd << " a les evenement: ";
 	if (event.events & EPOLLIN)
 		std::cout << "EPOLLIN";
 	if (event.events & EPOLLOUT)
@@ -80,8 +80,8 @@ void	clientEvent(Epoll &epoll, std::map<t_socket, HttpManager> &stockManager)
 		}
 
 		if (it_event->events & EPOLLIN)
-			manager.receive();
-
+			manager.receiver();
+	
 		if (manager.getInit() == false)
 			manager.initialize(*socketClient.find(it_event->data.fd)->second);
 		manager.applyMethod(*socketClient.find(it_event->data.fd)->second);

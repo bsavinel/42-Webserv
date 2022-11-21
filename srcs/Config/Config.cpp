@@ -1,29 +1,7 @@
 #include "Config.hpp"
 
-static Server* getServerToken(std::vector<std::string>::iterator & it, std::vector<std::string> & splitted)
+Config::Config()
 {
-	Server *server = new Server();
-	server->setConfig(it, splitted);
-	return(server);
-}
-
-Config::Config(char *config_file)
-{
-	std::string content_file = read_file(config_file);
-	std::string delimiter(" \t;{}");
-	remove_comment(content_file);
-	remove_nl(content_file);
-	std::vector<std::string> splitted = split_vector(content_file, delimiter);
-	for(std::vector<std::string>::iterator beg = splitted.begin(); beg != splitted.end(); beg++)
-	{
-		if ((*beg).compare("server") == 0 && (*(beg + 1)).compare("{") == 0)
-		{
-			if(checkbrackets(++beg, splitted))
-				this->servers.push_back(getServerToken(beg, splitted));
-		}
-	}
-	checkLocBlock();
-		
 }
 
 Config::Config(const Config & src)
@@ -44,7 +22,45 @@ Config::~Config()
 		delete *it;
 }
 
-//----------------------------MEMBER FUNCTION--------------------------
+
+
+
+void Config::init(char *config_file)
+{
+	std::string content_file = read_file(config_file);
+	std::string delimiter(" \t;{}");
+	remove_comment(content_file);
+	remove_nl(content_file);
+	std::vector<std::string> splitted = split_vector(content_file, delimiter);
+	for(std::vector<std::string>::iterator beg = splitted.begin(); beg != splitted.end(); beg++)
+		look_for_and_initialise_server_block(beg, splitted);
+	checkLocBlock();
+}
+
+
+
+
+	// ------------------------------------------------------------------------------------------
+	// |										GETTERS											|
+	// ------------------------------------------------------------------------------------------
+
+
+
+std::list<Server*> & Config::getServersList()
+{
+	return (servers);
+}
+
+
+
+
+
+
+	// ------------------------------------------------------------------------------------------
+	// |										PRINTS											|
+	// ------------------------------------------------------------------------------------------
+
+
 
 void	Config::print_all_conf()
 {
@@ -58,32 +74,33 @@ void	Config::print_all_conf()
 	}
 }
 
-//----------------------------GETTERS--------------------------
 
-std::list<Server*> & Config::getServersList()
-{
-	return (servers);
-}
+
+
+
+	// ------------------------------------------------------------------------------------------
+	// |									PRIVATE METHODS										|
+	// ------------------------------------------------------------------------------------------
 
 bool	is_allowed_method(Location *locBlock)
 {
 	std::vector<std::string> vec = locBlock->getAllowedMethods();
-	std::vector<std::string>::iterator it = vec.begin();
-	std::vector<std::string>::iterator ite =vec.end();
-	while(it != ite)
+	
+	for(std::vector<std::string>::iterator it = vec.begin(); it != vec.end(); it++)
 	{
 		if((*it).compare("GET") != 0 && (*it).compare("POST") != 0 && (*it).compare("DELETE") != 0)
 			return (0);
-		it++;
 	}
 	return (1);
 }
 
 bool	check_loc_path(std::string path)
 {
+	std::string::iterator lastchar;
+
 	if(path.rfind("/", 0) == std::string::npos)
 		return (0);
-	std::string::iterator lastchar= path.end() - 1;
+	lastchar= path.end() - 1;
 	if((*lastchar) != '/')
 		return(0);
 	else
@@ -107,3 +124,37 @@ bool	Config::checkLocBlock()
 	}
 	return (1);
 }
+
+Server* Config::getServerToken(std::vector<std::string>::iterator & it, std::vector<std::string> & splitted)
+{
+	Server *server = new Server();
+
+	try
+	{
+		server->setConfig(it, splitted);
+		if (!server->checkRacineLocationExist())
+			throw exceptWebserv("Error Server : Missing root location");
+	}
+	catch(const exceptWebserv& e)
+	{
+		std::cerr << e.what() << std::endl;
+		delete server;
+		return(NULL);
+	}
+	return(server);
+}
+
+void Config::look_for_and_initialise_server_block(std::vector<std::string>::iterator &beg, std::vector<std::string> &splitted)
+{
+	if ((*beg).compare("server") == 0 && (*(beg + 1)).compare("{") == 0)
+	{
+		if(checkbrackets(++beg, splitted))
+		{
+			Server *server = getServerToken(beg, splitted);
+			if(!server)
+				throw exceptWebserv("Error Server : cannot initialize the server");
+			this->servers.push_back(server);
+		}
+	}
+}
+

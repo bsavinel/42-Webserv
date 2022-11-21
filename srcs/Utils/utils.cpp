@@ -13,7 +13,7 @@ int	checkbrackets(std::vector<std::string>::iterator it, std::vector<std::string
 				while (it != splitted.end() && (*it).compare("}") != 0 )
 				{
 					it++;
-					if((*it).compare("location") == 0)
+					if(it == splitted.end() || (*it).compare("location") == 0)
 						throw exceptWebserv("Config Error : Location block not closed");
 				}
 				if (it == splitted.end())
@@ -129,6 +129,21 @@ bool	is_file_path(std::string path)
 	if(!isalnum(*lastchar))
 		return(0);
 	return (1);
+}
+
+bool	is_extension_file(std::string ext)
+{
+	std::string::iterator it = ext.begin();
+	if(*it != '.')
+		return (false);
+	it++;
+	while (it != ext.end())
+	{
+		if(!isalnum(*it))
+			return (false);
+		it++;
+	}
+	return(true);
 }
 
 std::string get_file_extension(std::string path)

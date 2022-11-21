@@ -2,8 +2,9 @@
 #include <string>
 #include <sstream>
 #include <iostream>
+#include <vector>
 
-std::string HeaderRespond (off_t contentLenght, int statusCode, std::string type = std::string())
+std::string HeaderRespond (off_t contentLenght, int statusCode, std::string type = std::string(), std::vector<std::string> cookies = std::vector<std::string>())
 {
 	std::stringstream ss;
 	std::string	header;
@@ -18,6 +19,11 @@ std::string HeaderRespond (off_t contentLenght, int statusCode, std::string type
 		ss.str("");
 		ss << contentLenght;
 		header += "Content-Length: " + ss.str() + "\n";
+	}
+	if (!cookies.empty())
+	{
+		for (std::vector<std::string>::iterator it = cookies.begin(); it != cookies.end(); it++)
+			header += *it + "\r\n";
 	}
 	header += "\n";
 	return header;

@@ -29,6 +29,7 @@ SRCS =	Config/Config.cpp						\
 		HTTP/HttpManager/HttpM_Post.cpp			\
 		HTTP/HttpManager/HttpM_redir.cpp		\
 		HTTP/HttpManager/HttpManager.cpp		\
+		HTTP/HttpManager/HttpM_Cgi.cpp			\
 		HTTP/HttpRequest.cpp					\
 		Utils/builder.cpp						\
 		Utils/Error.cpp							\

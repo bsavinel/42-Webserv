@@ -8,6 +8,7 @@
 # include <iostream>
 # include <vector>
 # include <map>
+# include <exception>
 
 # include "utils.hpp"
 
@@ -32,18 +33,50 @@ class Location
 		~Location();
 
 		void	setConfig(std::vector<std::string>::iterator & it, std::vector<std::string> & splitted, std::string &loc);
-		void	printConfig();
 
-		const std::vector<std::string>	& getAllowedMethods() const;
-		const int&					getReturnCode() const;
-		const std::string&			getRedirectionPath() const;
-		const std::string&			getRootPath() const;
-		const std::string&			getIndexPath() const;
-		const bool&					getAutoPath() const;
-		const std::string&			getCgiFileExtension() const;
-		const std::string&			getCgiPathToScript() const;
-		const std::string&			getUploadDirectory() const;
-		const std::string&			getLocate() const;
+				// ----------------------
+				// |		GETTERS		|
+				// ----------------------
+
+				const std::vector<std::string>&		getAllowedMethods() const;
+				const int&							getReturnCode() const;
+				const std::string&					getRedirectionPath() const;
+				const std::string&					getRootPath() const;
+				const std::string&					getIndexPath() const;
+				const bool&							getAutoPath() const;
+				const std::string&					getCgiFileExtension() const;
+				const std::string&					getCgiPathToScript() const;
+				const std::string&					getUploadDirectory() const;
+				const std::string&					getLocate() const;
+
+				// ----------------------
+				// |		PRINTS		|
+				// ----------------------
+
+				void	printConfig();
+
+				// ----------------------
+				// |	EXCEPTION		|
+				// ----------------------
+
+	private :
+		void	set_allowed_methods(std::vector<std::string>::iterator & it, std::vector<std::string> & splitted);
+		void	set_redirection(std::vector<std::string>::iterator & it);
+		void	set_root_path(std::vector<std::string>::iterator & it);
+		void	set_autoindex(std::vector<std::string>::iterator & it);
+		void	set_cgi_pass(std::vector<std::string>::iterator & it);
+		void	set_upload_store(std::vector<std::string>::iterator & it);
+
+
+	class exceptionLocation :  public std::exception
+	{
+		private:
+			std::string _content;
+		public :
+			exceptionLocation(const std::string content) throw();
+			const char *what() const throw();
+			~exceptionLocation() throw();
+	};
 };
 
 #endif

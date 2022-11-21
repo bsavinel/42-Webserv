@@ -7,6 +7,7 @@ exceptWebserv::exceptWebserv(const std::string content) throw()
 
 exceptWebserv::~exceptWebserv() throw()
 {
+	
 }
 
 const char *exceptWebserv::what() const throw()

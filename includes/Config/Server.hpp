@@ -37,24 +37,58 @@ class Server
 		Server & operator=(const Server & rhs);
 		~Server();
 
-		//Getters
-		const int&							getDomain() const;
-		const int&							getService() const;
-		const int&							getProtocol() const;
-		u_long								getInterface() const;
-		const int&							getPort() const;
-		const int&							getBacklog() const;
-		const int&							getSocket() const;
-		struct sockaddr_in					getAddress() const;		
-		const std::string&					getServerName() const;
-		const std::map<int, std::string>			&getErrorMap() const;
-		const int&							getClientMaxBodySize() const;
-		std::map<std::string, Location*>	getLocationsMap() const;
-
-		void	setConfig(std::vector<std::string>::iterator & it, std::vector<std::string> & splitted);
-		void	printConfig();
-		bool	is_path_stored_yet(std::string path);
+		
 		void	launch();
+		void	setConfig(std::vector<std::string>::iterator & it, std::vector<std::string> & splitted);
+		bool	checkRacineLocationExist();
+
+
+				// ----------------------
+				// |		GETTERS		|
+				// ----------------------
+
+				const int&							getDomain() const;
+				const int&							getService() const;
+				const int&							getProtocol() const;
+				u_long								getInterface() const;
+				const int&							getPort() const;
+				const int&							getBacklog() const;
+				const int&							getSocket() const;
+				struct sockaddr_in					getAddress() const;		
+				const std::string&					getServerName() const;
+				const std::map<int, std::string>	&getErrorMap() const;
+				const int&							getClientMaxBodySize() const;
+				std::map<std::string, Location*>	getLocationsMap() const;
+
+				
+				// ----------------------
+				// |		PRINTS		|
+				// ----------------------
+
+				void	printConfig();
+
+	private :
+		void	add_location_block(std::vector<std::string>::iterator & it, std::vector<std::string> & splitted);
+		bool	is_path_stored_yet(std::string path);
+		void	set_error_pages(std::vector<std::string>::iterator & it);
+		void	set_client_max_body_size(std::vector<std::string>::iterator & it);
+
+
+
+				// ----------------------
+				// |	EXCEPTION		|
+				// ----------------------
+				class exceptionServer:  public std::exception
+				{
+					private:
+						std::string _content;
+
+					public :
+						exceptionServer(const std::string content) throw();
+						const char *what() const throw();
+						~exceptionServer() throw();
+				};
+
 };
 
 #endif
