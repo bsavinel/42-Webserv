@@ -43,22 +43,7 @@ void	HttpManager::manageCgi(HttpRequest &_request, const Server &server)
 			_tmpEnd = true;
 		}
 		else
-		{
 			launchCgi();
-			// if (_firstPassage == false)
-			// {
-			// 	_firstPassage = true;
-			// 	_cgi.execute();
-			// }
-			// else
-			// {
-			// 	_respond.clear();
-			// 	if (_proccess_fini == false)
-			// 		checkIfProcessIsFinished();
-			// 	else
-			// 		fillResponseWithCgiOutput()
-			// }
-		}
 	}
 }
 

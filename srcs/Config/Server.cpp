@@ -4,6 +4,7 @@ Server::Server()
 : _domain(AF_INET), _service(SOCK_STREAM), _protocol(0), _interface(INADDR_ANY),
 _backlog(200), _socket(-1), client_max_body_size(0)
 {
+
 }
 
 Server::Server(const Server & src)
@@ -60,13 +61,17 @@ void Server::launch()
 
 void Server::setConfig(std::vector<std::string>::iterator & it, std::vector<std::string> & splitted)
 {
+	bool listenIsSet = false;
 	it++;
 	while (it != splitted.end() && (*it).compare("}") != 0)
 	{
 		if((*it).compare("location") == 0)
 			add_location_block(it, splitted);
 		else if ((*it).compare("listen") == 0 && (*(it + 1)) != ";" && (*(it + 2)) == ";")
+		{
 			this->_port = atoi(((*++it).c_str()));
+			listenIsSet = true;
+		}
 		else if ((*it).compare("server_name") == 0 && (*(it + 1)) != ";" && (*(it + 2)) == ";")
 			this->server_name = *++it;
 		else if ((*it).compare("error_pages") == 0 && (*(it + 1)) != ";" && (*(it + 3)) == ";")
@@ -74,9 +79,14 @@ void Server::setConfig(std::vector<std::string>::iterator & it, std::vector<std:
 		else if ((*it).compare("client_max_body_size") == 0 && (*(it + 1)) != ";" && (*(it + 2)) == ";" )
 			set_client_max_body_size(it);
 		else if (*it != ";")
+		{
+			std::cerr << "HERE" << std::endl;
 			throw exceptWebserv ("Error Server : option not compatible or missing \';\'");
+		}
 		it++;
 	}
+	if (listenIsSet == false || _port < 0)
+		throw exceptWebserv ("Error Server : listening port not set or bad value attributed");
 }
 
 
