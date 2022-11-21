@@ -131,6 +131,21 @@ bool	is_file_path(std::string path)
 	return (1);
 }
 
+bool	is_extension_file(std::string ext)
+{
+	std::string::iterator it = ext.begin();
+	if(*it != '.')
+		return (false);
+	it++;
+	while (it != ext.end())
+	{
+		if(!isalnum(*it))
+			return (false);
+		it++;
+	}
+	return(true);
+}
+
 std::string get_file_extension(std::string path)
 {
 	std::string extension;

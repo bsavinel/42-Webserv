@@ -1,6 +1,6 @@
 server 
 {
-	listen -7070;
+	listen 7070;
 	error_pages 404 ./bsavinel/site/404.html;
 	
 	location /methode/
@@ -16,7 +16,6 @@ server
 		allow GET POST DELETE;
 		root ./bsavinel/site/;
 		index index.html;
-		#testduntrucquimarchepas
 		cgi_pass .php /usr/bin/php-cgi;
 		autoindex on;
 	}

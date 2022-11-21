@@ -191,6 +191,8 @@ void	Location::set_autoindex(std::vector<std::string>::iterator & it)
 void	Location::set_cgi_pass(std::vector<std::string>::iterator & it)
 {
 	this->cgi_file_extension = *++it;
+	if(!is_extension_file(cgi_file_extension))
+		throw exceptWebserv("Error Config : cgi pass value should be an extension file starting with \'.\'");
 	std::string path =  *++it;
 	if(!is_file_path(path))
 		throw exceptWebserv("Error Config : cgi path value should be a path to a binary file");
