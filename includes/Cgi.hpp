@@ -35,7 +35,7 @@ class Cgi
 		int					feedOutput();
 		void				set_path_cgi(std::string path);
 		void				set_argv();
-		void				execute();
+		bool				execute();
 		void				manage_output();
 		void				cutOutput(int len);
 		void				store_cookies();

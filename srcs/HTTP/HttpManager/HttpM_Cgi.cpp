@@ -7,7 +7,8 @@ void	HttpManager::launchCgi()
 	if (_firstPassage == false)
 	{
 		_firstPassage = true;
-		_cgi.execute();
+		if(!_cgi.execute())
+			_errorCode = 401;
 	}
 	else
 	{

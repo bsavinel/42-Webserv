@@ -1,6 +1,7 @@
 #include "Cgi.hpp"
 #include "define.hpp"
 #include <signal.h>
+#include <unistd.h>
 
 Cgi::Cgi()
 {
@@ -85,8 +86,10 @@ void	Cgi::set_argv()
 	_arg[i] = NULL;
 }
 
-void Cgi::execute()
+bool Cgi::execute()
 {
+	if (access(_arg[1], X_OK) < 0 || access(_exec.c_str(), X_OK))
+		return (0);
 	if(pipe(_pip) == -1)
 		throw exceptWebserv("Error CGI : failed to create a pipe");
 	if((_pid = fork()) == -1)
@@ -103,6 +106,7 @@ void Cgi::execute()
 		_start = give_time();
 		close(_pip[1]);
 	}
+	return (1);
 }
 
 /*retour 0 process non fini
