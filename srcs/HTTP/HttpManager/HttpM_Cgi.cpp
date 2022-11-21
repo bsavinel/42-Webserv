@@ -7,8 +7,18 @@ void	HttpManager::launchCgi()
 	if (_firstPassage == false)
 	{
 		_firstPassage = true;
-		if(!_cgi.execute())
-			_errorCode = 401;
+		try
+		{
+			if(!_cgi.execute())
+				_errorCode = 401;
+		}
+		catch(const std::exception& e)
+		{
+			_errorCode = 500;
+			std::cerr << e.what() << '\n';
+		}
+		
+		
 	}
 	else
 	{
