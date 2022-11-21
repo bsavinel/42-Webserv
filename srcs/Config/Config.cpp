@@ -132,6 +132,8 @@ Server* Config::getServerToken(std::vector<std::string>::iterator & it, std::vec
 	try
 	{
 		server->setConfig(it, splitted);
+		if (!server->checkRacineLocationExist())
+			throw exceptWebserv("Error Server : Missing root location");
 	}
 	catch(const exceptWebserv& e)
 	{
@@ -155,3 +157,4 @@ void Config::look_for_and_initialise_server_block(std::vector<std::string>::iter
 		}
 	}
 }
+

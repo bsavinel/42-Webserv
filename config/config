@@ -1,6 +1,5 @@
 server 
 {
-	listen 8080;
 	server_name ;#OPTIONNAL
 	error_pages 3 ./data/error/404.html;
 	error_pages 403 ./data/error/403.html;

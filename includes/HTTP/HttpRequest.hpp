@@ -17,7 +17,7 @@ class HttpRequest
 		void							erase(int index);
 
 		std::string						&getRequest(void);
-		std::pair<std::string, bool>	getMethod(void) const;
+		std::pair<std::string, bool>	methodGET(void) const;
 		std::pair<std::string, bool>	getUrl(void) const; 
 		std::pair<std::string, bool>	getHttpVersion(void) const;
 

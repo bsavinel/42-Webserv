@@ -40,6 +40,8 @@ class Server
 		
 		void	launch();
 		void	setConfig(std::vector<std::string>::iterator & it, std::vector<std::string> & splitted);
+		bool	checkRacineLocationExist();
+
 
 				// ----------------------
 				// |		GETTERS		|

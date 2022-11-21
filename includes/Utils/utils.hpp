@@ -22,6 +22,7 @@ std::vector<std::string>	split_vector(std::string str, std::string delimiter);
 int							checkbrackets(std::vector<std::string>::iterator it, std::vector<std::string> & splitted);
 bool						is_dir_path(std::string path);
 bool						is_file_path(std::string path);
+bool						is_extension_file(std::string ext);
 std::string					get_file_extension(std::string path);
 char						*ft_itoa(int n);
 std::string					retrieve_from_left_till_char(std::string path, char c);

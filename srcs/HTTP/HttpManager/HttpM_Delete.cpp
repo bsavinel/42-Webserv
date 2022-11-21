@@ -2,7 +2,7 @@
 #include <iostream>
 #include <stdio.h>
 
-void	HttpManager::deleteMethod()
+void	HttpManager::methodDELETE()
 {
 	std::string	path_to_remove;
 	int			exit_code;

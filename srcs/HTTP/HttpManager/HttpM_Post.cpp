@@ -18,7 +18,7 @@ void				printMultiPartParam(t_multipart_param multipart_param);
 t_multipart_param	getParamBoundary(std::string boundaryHeader);
 t_process			createProcess( void );
 // void				HttpManager::parseMultiPart(std::fstream &fstream);
-// void				HttpManager::postMethod();
+// void				HttpManager::methodPOST();
 bool				file_exist (const std::string& name);
 // std::string		HttpManager::getFileName();
 std::string			getNbForFileName( void );
@@ -26,14 +26,14 @@ bool				exists (const std::string& filename);
 int					openUploadFile();
 std::fstream &		safegetline( std::fstream & fstream, std::string & line );
 
-void	HttpManager::postMethod()
+void	HttpManager::methodPOST()
 {
 	std::string nbForFileName;
 	if (_headerBuild == false)
 	{
 		_tmpFileName = getFileName();
 		_tmp_upload.open(_tmpFileName.c_str(), std::fstream::in | std::fstream::out | std::fstream::app);
-		if (_tmp_upload_o.fail())
+		if (_tmp_upload.fail())
 		{
 			std::cout << "_tmp_upload.open() failed" << std::endl;
 			exit (1) ;
