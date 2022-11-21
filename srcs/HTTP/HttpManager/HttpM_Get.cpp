@@ -14,6 +14,27 @@ bool	HttpManager::autoIndexRequired()
 	if (name[name.size() - 1] == '/' && _request.getLocation()->getAutoPath() && _request.getLocation()->getIndexPath().empty())
 		return true;
 	return false;
+	// (void)statusCode;
+	// header += "HTTP/1.1 200 OK\r\n"; // TODO voir les image apres
+	// if (_request.getUrl().first.find("html") != std::string::npos)
+	// 	header += "Content-Type: text/html\n";
+	// else if (_request.getUrl().first.find("css") != std::string::npos)
+	// 	header += "Content-Type: text/css\n";
+	// else if (_request.getUrl().first.find("ico") != std::string::npos)
+	// 	header += "Content-Type: image/x-icon\n";
+	// if (_request.getUrl().first.compare("/") == 0)
+	// 	header += "Content-Type: text/html\n";
+
+	// if (contentLenght > 0)
+	// {
+	// 	std::stringstream ss;
+	// 	ss << contentLenght;
+	// 	header += "Content-Length: " + ss.str() + "\r\n";
+	// }
+	// else
+	// 	header += "Content-Length: 0\r\n";
+	// header += "\n";
+	// return header;
 }
 
 std::string HttpManager::LocalPathFile_get()

@@ -13,7 +13,7 @@
 
 #include "exceptWebserv.hpp"
 
-#define BUFFER_SIZE 200
+#define BUFFER_SIZE 10000
 
 std::string					read_file(char *config_file);
 void						remove_comment(std::string & content_file);

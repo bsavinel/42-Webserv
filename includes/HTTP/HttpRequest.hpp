@@ -13,9 +13,10 @@ class HttpRequest
 		void							parseStartLine(std::string const & client_request);
 		std::pair <std::string, bool>	parseHeader(std::string &header, std::string optionToFind);
 		void							concatenate(char *str);
+		void							concatenateInsert(char *str, int len);
 		void							erase(int index);
 
-		std::string						getRequest(void) const;
+		std::string						&getRequest(void);
 		std::pair<std::string, bool>	getMethod(void) const;
 		std::pair<std::string, bool>	getUrl(void) const; 
 		std::pair<std::string, bool>	getHttpVersion(void) const;
@@ -31,7 +32,7 @@ class HttpRequest
 		std::pair<std::string, bool>	getContentType(void) const;
 		std::pair<std::string, bool>	getBoundary(void) const;
 		std::pair<std::string, bool>	getCookie(void) const;
-
+		std::pair<int, bool>			getContentLength(void) const;
 
 		Location						*getLocation(void) const;
 		void							setRequest(std::string const & request);
@@ -60,9 +61,9 @@ class HttpRequest
 		std::pair<std::string, bool> 	_dnt;
 		std::pair<std::string, bool> 	_contentType;
 		std::pair<std::string, bool>	_boundary;
-		std::pair<std::string, bool>	_cookie;
 		std::pair<std::string, bool>	_contentLength;
-       	std::pair<int, bool>			_intContentLength;
+		std::pair<int, bool>			_intContentLength;
+		std::pair<std::string, bool>	_cookie;
 		//std::string _AcceptLanguage;
 		//std::string _sec_ch_ua;
 		//std::string _sec_ch_ua_mobile;

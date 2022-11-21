@@ -11,10 +11,25 @@ class HttpManager;
 # include <sys/types.h>
 # include "Server.hpp"
 # include <sys/socket.h>
-
+#include <fstream>
 
 
 std::string HeaderRespond (off_t contentLenght, int statusCode, std::string type = std::string(), std::vector<std::string> cookies = std::vector<std::string>());
+
+typedef struct s_multipart_param
+{
+	std::pair<std::string, bool>	contentDisposition;
+	std::pair<std::string, bool>	fileName;
+	std::pair<std::string, bool>	contentType;
+}	t_multipart_param;
+
+typedef struct s_process
+{
+	bool	boundaryStart;
+	bool	header;
+	bool	body;
+	bool	boundaryEnd;
+}	t_process;
 
 class HttpManager
 {
@@ -50,6 +65,10 @@ class HttpManager
 		void				setIsEnd(bool IsEnd);
 		void				setInit(bool init);
 
+	void	postMethodfstream();
+	std::ofstream		openUploadFilefstream();
+std::string getFileName();
+	void parseMultiPart(std::fstream &fstream);
 	private:
 
 		int				_errorCode;
@@ -96,7 +115,10 @@ class HttpManager
 
 		void			postMethod();
 		int				_tmp_upload_fd;
-
+		std::ifstream	_tmp_upload_i;
+		std::ofstream	_tmp_upload_o;
+		std::fstream	_tmp_upload;
+		std::string 	_tmpFileName;
 		/*delete methode*/
 
 		void			deleteMethod();
@@ -113,7 +135,16 @@ class HttpManager
 		bool			init_error_file(const std::string &error_page, std::string &errResp);
 		std::string		_respond;
 		HttpRequest		_request;
+		bool			_requestFullyReceive;
 		bool			_tmpEnd;
+		int				_lenRead;
+
+		/* multipart */
+		std::fstream	_uploaded;
+		t_process		_process;
+		bool			_new_process;
+		t_multipart_param	_multipart_param;
+		int				_lenOfRequestAlreadyRead;
 };
 
 #endif

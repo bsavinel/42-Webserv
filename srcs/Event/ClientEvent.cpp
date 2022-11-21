@@ -12,7 +12,7 @@
 
 static void print_status(t_epoll_event event)
 {
-	std::cout << "le fd : " << event.data.fd << " a les evenement: ";
+//	std::cout << "le fd : " << event.data.fd << " a les evenement: ";
 	if (event.events & EPOLLIN)
 		std::cout << "EPOLLIN";
 	if (event.events & EPOLLOUT)

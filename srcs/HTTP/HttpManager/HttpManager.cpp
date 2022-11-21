@@ -3,6 +3,7 @@
 #include <sys/stat.h>
 #include <iostream>
 #include <sstream>
+#include <unistd.h>
 
 void autoIndex(HttpRequest &request, HttpManager &manager);
 
@@ -23,6 +24,12 @@ HttpManager::HttpManager(t_socket socketClient)
 	_tmpEnd = false;
 	_firstPassage = false;
 	_proccess_fini = false;
+	_requestFullyReceive = false;
+	_lenRead = 0;
+	_new_process = false;
+	_lenOfRequestAlreadyRead = 0;
+//	_tmp_upload_i = false;
+//	_tmp_upload_o = false;
 }
 
 HttpManager::HttpManager(const HttpManager &rhs)
@@ -51,6 +58,12 @@ HttpManager &HttpManager::operator=(const HttpManager &rhs)
 		_respond = rhs._respond;
 		_request = rhs._request;
 		_tmp_upload_fd = rhs._tmp_upload_fd;
+		_requestFullyReceive = rhs._requestFullyReceive;
+		_tmpEnd = rhs._tmpEnd;
+		_lenRead = rhs._lenRead;
+		_lenOfRequestAlreadyRead = rhs._lenOfRequestAlreadyRead;
+	//	_tmp_upload_i = rhs._tmp_upload_i;
+	//	_tmp_upload_o = rhs._tmp_upload_o;
 	}
 	return *this;
 }
@@ -70,6 +83,7 @@ void HttpManager::sender()
 		if (ret == -1)
 			_isEnd = true;
 	}
+
 }
 
 int HttpManager::receive()
@@ -79,14 +93,12 @@ int HttpManager::receive()
 
 	for (int i = 0; i < LEN_TO_READ + 1; i++)
 		buffer[i] = 0;
-	ret = recv(_socketClient, buffer, LEN_TO_READ, MSG_DONTWAIT);
-	if (ret == -1)
-	{
-		_isEnd = true;
-		return -1;
-	}
-	_request.concatenate(buffer);
-	std::cout << buffer << std::endl;
+	if ((ret = recv(_socketClient, buffer, LEN_TO_READ, MSG_DONTWAIT)) == -1)
+		return (-1);
+	_lenRead += ret;
+	if (_request.getContentLength().second == true &&  _lenRead >= _request.getContentLength().first)
+		_requestFullyReceive = true;
+	_request.concatenateInsert(buffer, ret);
 	return (0);
 }
 
@@ -226,10 +238,15 @@ bool HttpManager::applyMethod(const Server &server)
 
 void HttpManager::initialize(const Server &server)
 {
+	if (_request.getRequest().find("\r\n\r\n") == std::string::npos)
+		return ;
 	if (!_init)
 	{
 		_init = true;
 		_request.parser();
+		_lenRead = 0;
+		_lenRead = _request.getRequest().size();
+//		std::cout << _request << std::endl;
 		_request.setLocation(_request.findLocation(server));
 		_goodRequest = checkRequest(server);
 	}
