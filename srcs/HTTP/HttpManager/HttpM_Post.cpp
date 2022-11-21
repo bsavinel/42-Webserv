@@ -43,7 +43,7 @@ void	HttpManager::postMethod()
 	}
 	if (_tmpEnd == false)
 	{
-		_tmp_upload.clear();
+//		_tmp_upload.clear();
 		_tmp_upload.write(_request.getRequest().c_str(), _request.getRequest().size());
 		if (_requestFullyReceive == true)
 		{
@@ -124,7 +124,8 @@ void HttpManager::parseMultiPart(std::fstream &fstream)
                         carriageReturn = true;
                         str.erase(str.size() - 1);
                     }
-                    _uploaded << str.c_str();
+                    //_uploaded << str.c_str();
+                    _uploaded << str;
                 }
                 i++;
             }

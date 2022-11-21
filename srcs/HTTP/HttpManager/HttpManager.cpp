@@ -93,7 +93,7 @@ int HttpManager::receive()
 	std::cout <<  "BUFFER=\n" << buffer << "\n=BUFFER" << std::endl;
 //	std::cout << "ret = " << ret << std::endl;
 	_lenRead += ret;
-//	std::cout << _lenRead << " : " << _request.getContentLength().first << std::endl;
+	std::cout << _lenRead << " : " << _request.getContentLength().first << std::endl;
 	if (_request.getContentLength().second == true &&  _lenRead >= _request.getContentLength().first)
 	{
 		_requestFullyReceive = true;
@@ -121,11 +121,14 @@ bool	HttpManager::applyMethod()
 
 void	HttpManager::initialize(const Server &server)
 {
+	if (_request.getRequest().find("\r\n\r\n") == std::string::npos)
+		return ;
 	if (!_init)
 	{
 		_init = true;
 		_request.parser();
 		_lenRead = 0;
+		_lenRead = _request.getRequest().size();
 //		std::cout << _request << std::endl;
 		_request.setLocation(_request.findLocation(server));
 	}
