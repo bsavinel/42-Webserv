@@ -11,6 +11,7 @@ server
 		#testduntrucquimarchepas
 		cgi_pass .php /usr/bin/php-cgi;
 		autoindex on;
+		return ./bsavinel/site/404.html  404;
 		upload_store ./bsavinel/site/uploads/;
 	}
 

@@ -76,7 +76,7 @@ void	Cgi::set_argv()
 
 	std::vector<std::string>::iterator itEnvVar = executable.begin();
 	_arg = new char*[executable.size() + 1];
-	int i = 0;
+	int i = 0;;
 	while (i < (int) executable.size())
 	{
 		_arg[i] = strdup((*itEnvVar).c_str());
