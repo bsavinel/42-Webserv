@@ -96,8 +96,12 @@ int HttpManager::receiver()
 	if ((ret = recv(_socketClient, buffer, LEN_TO_READ, MSG_DONTWAIT)) == -1)
 		return (-1);
 	_lenRead += ret;
+//	std::string buff(buffer);
+//	std::cout << buff << std::endl; 
 	if (_request.getContentLength().second == true &&  _lenRead >= _request.getContentLength().first)
+	{
 		_requestFullyReceive = true;
+	}
 	_request.concatenateInsert(buffer, ret);
 	return (0);
 }
@@ -218,7 +222,7 @@ std::string HttpManager::determinateType(const std::string &name_file)
 bool HttpManager::applyMethod(const Server &server)
 {
 	(void)server;
-	if (!_isEnd)
+	if (!_isEnd && _init)
 	{
 		if (_goodRequest == false)
 		{
@@ -241,14 +245,14 @@ bool HttpManager::applyMethod(const Server &server)
 			_errorCode = 405;
 		else if (_request.getLocation()->getCgiFileExtension() == get_file_extension(_request.getUrl().first))
 		{
-			std::cout << "REQUEST = " << _request << std::endl;
+//			std::cout << "REQUEST = " << _request << std::endl;
 			manageCgi(_request, server);
 		}
 		else if (_request.methodGET().first == "GET")
 			methodGET(server);
 		else if (_request.methodGET().first == "POST")
 		{
-			std::cout << _request.getRequest() << std::endl;
+//			std::cout << _request.getRequest() << std::endl;
 			methodPOST();
 		}
 		else if (_request.methodGET().first == "DELETE")

@@ -145,7 +145,7 @@ std::pair <std::string, bool> getMultiPartBoundary(std::string contentType)
 
 void    HttpRequest::parser(/*std::string &request*/)
 {
-//    std::cout << "REQUEST\n" << _request << std::endl;
+  //  std::cout << "REQUEST\n" << _request << std::endl;
     parseStartLine(_request);
     _request.erase(0, _request.find('\n') + 1);
 

@@ -11,7 +11,6 @@ server
 		#testduntrucquimarchepas
 		cgi_pass .php /usr/bin/php-cgi;
 		autoindex on;
-		upload_store ./bsavinel/site/uploads/;
 	}
 
 	location /methode/
@@ -20,6 +19,5 @@ server
 		root ./bsavinel/site/methode/;
 		cgi_pass .php  /usr/bin/php-cgi;
 		autoindex on;
-		upload_store ./bsavinel/site/uploads/;
 	}
 }

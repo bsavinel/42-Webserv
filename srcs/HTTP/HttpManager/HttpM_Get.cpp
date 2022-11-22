@@ -49,7 +49,7 @@ std::string HttpManager::retrieveCorrespondingLocalPath()
 
 void	HttpManager::openFileGET(std::string &file_name)
 {
-	_file_fd= open(file_name.c_str(), O_RDONLY);
+	_file_fd = open(file_name.c_str(), O_RDONLY);
 	if (_file_fd< 0)
 	{
 		if (errno == EACCES)
