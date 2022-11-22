@@ -208,20 +208,6 @@ void	Location::set_redirection(std::vector<std::string>::iterator & it)
 		check_both_params(it);
 	else
 		throw exceptWebserv("Error Config : redirection too many param");
-
-		// int tmp = atoi((*++it).c_str());
-		// if(tmp)
-		// {
-		// 	this->return_code = tmp;
-		// 	if(!check_existing_error_code(tmp))
-		// 		throw exceptWebserv("Error Config : return code does not exist");
-		// 	std::string path =  *++it;
-		// 	if(!is_file_path(path))
-		// 		throw exceptWebserv("Error Config : return value should be a path to a dir");
-		// 	this->redirection_path = path;
-		// }
-		// else
-		// 	this->redirection_path = *it;
 }
 
 void	Location::set_root_path(std::vector<std::string>::iterator & it)
