@@ -11,7 +11,7 @@
 
 t_multipart_param	getParamBoundary(std::string boundaryHeader);
 t_process			createProcess( void );
-bool				file_exist (const std::string& name);
+bool				fileExist (const std::string& name);
 std::string			getNbForFileName( void );
 int					openUploadFile();
 void				printAscii(std::string str);
@@ -124,7 +124,7 @@ int HttpManager::parseMultiPart(std::fstream &fstream)
 					return (false);
 				}
 
-				if (file_exist(fileName))
+				if (fileExist(fileName))
 				{
 					std::cout << "File already exist." << std::endl;
 					_errorCode = 409;
@@ -267,7 +267,7 @@ t_process	createProcess( void )
 	return process;
 }
 
-bool file_exist (const std::string& name)
+bool fileExist (const std::string& name)
 {
 	struct stat	buffer;
 
@@ -284,7 +284,7 @@ std::string HttpManager::getFileName()
 	{
 		nbForFileName	= getNbForFileName();
 		fileName		= DIR_PATH_TMP_UPLOAD_FILE + nbForFileName;
-	}	while (file_exist(fileName));
+	}	while (fileExist(fileName));
 	return fileName;
 }
 
