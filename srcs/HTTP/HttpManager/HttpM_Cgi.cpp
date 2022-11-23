@@ -1,6 +1,6 @@
 #include "HttpManager.hpp"
 #include <sys/stat.h>
-
+#include <iostream>
 
 void	HttpManager::launchCgi()
 {

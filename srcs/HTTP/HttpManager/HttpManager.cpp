@@ -236,7 +236,7 @@ bool HttpManager::applyMethod(const Server &server)
 		}
 		else if (!checkIfMethodIsAthorized())
 			_errorCode = 405;
-		else if (_request.getLocation()->getCgiFileExtension() == get_file_extension(_request.getUrl().first))
+		else if (!_request.getLocation()->getCgiFileExtension().empty() && _request.getLocation()->getCgiFileExtension() == get_file_extension(_request.getUrl().first))
 		{
 //			std::cout << "REQUEST = " << _request << std::endl;
 			manageCgi(_request, server);

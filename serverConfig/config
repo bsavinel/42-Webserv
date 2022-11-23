@@ -17,8 +17,16 @@ server
 	location /count/
 	{
 		allow GET POST DELETE;
+		index manageCount.html;
 		root ./serverConfig/allIn/count/;
 		upload_store  ./serverConfig/allIn/count/payments/;
+	}
+
+	location /count/payments/
+	{
+		allow GET;
+		autoindex on;
+		root ./serverConfig/allIn/count/;
 	}
 
 	location /image/
@@ -65,7 +73,7 @@ server
 		index index.html;
 		root ./serverConfig/lautreport/;
 	}
-#metre ,une page html dans methode, pour post un fichier et pour delete le fichier
+
 	location /methode/
 	{
 		allow GET POST DELETE;

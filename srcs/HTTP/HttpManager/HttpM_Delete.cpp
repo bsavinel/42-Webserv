@@ -10,7 +10,6 @@ void	HttpManager::methodDELETE()
 	canWrite();
 	if (_headerBuild == false)
 	{
-		std::cout << "coucou" << std::endl;
 		path_to_remove = _request.getLocation()->getRootPath();
 		path_to_remove.erase(--path_to_remove.end());
 		path_to_remove += _request.getUrl().first;
