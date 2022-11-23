@@ -27,6 +27,7 @@ void	HttpManager::methodPOST( void )
 				if (parseMultiPart(_tmp_upload) == false)
 				{
 					canWrite();
+					_tmpEnd = true;
 					remove(_tmpFileName.c_str());
 					return ;
 				}
@@ -44,27 +45,6 @@ void	HttpManager::methodPOST( void )
 	_request.getRequest().clear();
 }
 
-std::string			HttpManager::getUploadFileName( void )
-{
-	std::string fileName;
-	int status;
-
-	if (_request.getLocation()->getUploadDirectory().empty())
-	{
-		status = mkdir("./uploads/", 0777);
-		if ((status < 0) && (errno != EEXIST))
-			return (fileName);
-		fileName = "./uploads/" + _multipart_param.fileName.first;
-	}
-	else
-	{
-		status = mkdir(_request.getLocation()->getUploadDirectory().c_str(), 0777);
-		if ((status < 0) && (errno != EEXIST))
-			return (fileName);
-		fileName = _request.getLocation()->getUploadDirectory() + _multipart_param.fileName.first;
-	}
-	return (fileName);
-}
 
 int HttpManager::parseMultiPart(std::fstream &fstream)
 {
@@ -170,6 +150,28 @@ int HttpManager::parseMultiPart(std::fstream &fstream)
         }
     }
 	return (true);
+}
+
+std::string			HttpManager::getUploadFileName( void )
+{
+	std::string fileName;
+	int status;
+
+	if (_request.getLocation()->getUploadDirectory().empty())
+	{
+		status = mkdir("./uploads/", 0777);
+		if ((status < 0) && (errno != EEXIST))
+			return (fileName);
+		fileName = "./uploads/" + _multipart_param.fileName.first;
+	}
+	else
+	{
+		status = mkdir(_request.getLocation()->getUploadDirectory().c_str(), 0777);
+		if ((status < 0) && (errno != EEXIST))
+			return (fileName);
+		fileName = _request.getLocation()->getUploadDirectory() + _multipart_param.fileName.first;
+	}
+	return (fileName);
 }
 
 void printAscii(std::string str)
