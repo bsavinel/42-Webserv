@@ -36,7 +36,7 @@
 
 	button.addEventListener("click", () => {
 		console.log("clicked");
-		http.delete('http://localhost:8080/count/' + document.getElementById("myid").value)
+		http.delete('http://localhost:8080/count/payments/' + document.getElementById("myid").value)
 		.then(data => console.log(data))
 		.catch(err => console.log(err))
 	});

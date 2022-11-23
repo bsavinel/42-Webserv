@@ -10,9 +10,7 @@ void	HttpManager::methodDELETE()
 	canWrite();
 	if (_headerBuild == false)
 	{
-		path_to_remove = _request.getLocation()->getRootPath();
-		path_to_remove.erase(--path_to_remove.end());
-		path_to_remove += _request.getUrl().first;
+		path_to_remove = retrieveCorrespondingLocalPath();
 		exit_code = remove(path_to_remove.c_str());
 		if (exit_code == 0)
 			_errorCode = 204;
