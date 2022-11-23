@@ -108,13 +108,6 @@ int HttpManager::receiver()
 
 
 
-
-
-
-
-
-
-
 /*std::string	HttpManager::ErrorRespond()
 {
 	std::string errResp;
@@ -154,7 +147,7 @@ bool HttpManager::checkIfMethodIsAthorized()
 
 	while (itMethod != iteMethod)
 	{
-		if (_request.methodGET().first == (*itMethod))
+		if (_request.getMethod().first == (*itMethod))
 			return (1);
 		itMethod++;
 	}
@@ -184,9 +177,9 @@ bool HttpManager::checkRequest(const Server &server)
 	(void)server;
 	if (_request.getHttpVersion().first != "HTTP/1.1\r" && _request.getHttpVersion().first != "HTTP/1.1")
 		_errorCode = 505;
-	else if (_request.methodGET().first != "GET" &&
-			 _request.methodGET().first != "POST" &&
-			 _request.methodGET().first != "DELETE")
+	else if (_request.getMethod().first != "GET" &&
+			 _request.getMethod().first != "POST" &&
+			 _request.getMethod().first != "DELETE")
 		_errorCode = 501;
 	else if (!checkIfMethodIsAthorized())
 		_errorCode = 405;
@@ -248,14 +241,14 @@ bool HttpManager::applyMethod(const Server &server)
 //			std::cout << "REQUEST = " << _request << std::endl;
 			manageCgi(_request, server);
 		}
-		else if (_request.methodGET().first == "GET")
+		else if (_request.getMethod().first == "GET")
 			methodGET(server);
-		else if (_request.methodGET().first == "POST")
+		else if (_request.getMethod().first == "POST")
 		{
 //			std::cout << _request.getRequest() << std::endl;
 			methodPOST();
 		}
-		else if (_request.methodGET().first == "DELETE")
+		else if (_request.getMethod().first == "DELETE")
 			methodDELETE();
 		else
 			_isEnd = true;

@@ -66,6 +66,10 @@ class Location
 		void	set_autoindex(std::vector<std::string>::iterator & it);
 		void	set_cgi_pass(std::vector<std::string>::iterator & it);
 		void	set_upload_store(std::vector<std::string>::iterator & it);
+		void	check_param(std::vector<std::string>::iterator & it);
+		void	check_both_params(std::vector<std::string>::iterator & it);
+
+
 
 
 	class exceptionLocation :  public std::exception

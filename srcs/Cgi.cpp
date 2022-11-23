@@ -1,6 +1,7 @@
 #include "Cgi.hpp"
 #include "define.hpp"
 #include <signal.h>
+#include <unistd.h>
 
 Cgi::Cgi()
 {
@@ -22,13 +23,14 @@ void Cgi::initialise_env(HttpRequest &request, const Server &server)
 	env_var.push_back("GATEWAY_INTERFACE=CGI/1.1");
 	env_var.push_back("SERVER_PROTOCOL=HTTP/1.1");
 	env_var.push_back("SERVER_PORT=" + (std::string) ft_itoa(server.getPort()));
-	env_var.push_back("REQUEST_METHOD=" + request.methodGET().first);
+	env_var.push_back("REQUEST_METHOD=" + request.getMethod().first);
 	env_var.push_back("PATH_INFO=" + buildLocalPath(request)); // the path to the script, example : methode/index.php
-	env_var.push_back("PATH_TRANSLATED=" + buildLocalPath(request)); // idem 
+	env_var.push_back("PATH_TRANSLATED=" + buildLocalPath(request)); // idem
 	env_var.push_back("SCRIPT_NAME=" + buildLocalPath(request)); // the constructed path to the script /data/www/script.php
 	env_var.push_back("SCRIPT_FILENAME=" + buildLocalPath(request)); // the constructed path to the script /data/www/script.php
 	env_var.push_back("QUERY_STRING=" + request.getUrl().first);
 	env_var.push_back("CONTENT_LENGTH=0");
+
 	env_var.push_back("REDIRECT_STATUS=200");
 	env_var.push_back("HTTP_COOKIE=" + request.getCookie().first);
 
@@ -75,7 +77,7 @@ void	Cgi::set_argv()
 
 	std::vector<std::string>::iterator itEnvVar = executable.begin();
 	_arg = new char*[executable.size() + 1];
-	int i = 0;
+	int i = 0;;
 	while (i < (int) executable.size())
 	{
 		_arg[i] = strdup((*itEnvVar).c_str());
@@ -85,8 +87,10 @@ void	Cgi::set_argv()
 	_arg[i] = NULL;
 }
 
-void Cgi::execute()
+bool Cgi::execute()
 {
+	if (access(_arg[1], X_OK) < 0 || access(_exec.c_str(), X_OK))
+		return (0);
 	if(pipe(_pip) == -1)
 		throw exceptWebserv("Error CGI : failed to create a pipe");
 	if((_pid = fork()) == -1)
@@ -103,6 +107,7 @@ void Cgi::execute()
 		_start = give_time();
 		close(_pip[1]);
 	}
+	return (1);
 }
 
 /*retour 0 process non fini
