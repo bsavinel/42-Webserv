@@ -65,17 +65,22 @@ void	HttpManager::methodPOST( void )
 std::string			HttpManager::getUploadFileName( void )
 {
 	std::string fileName;
+	int status;
 
 	if (_request.getLocation()->getUploadDirectory().empty())
 	{
-		int status = mkdir("./uploads/", 0777);
+		status = mkdir("./uploads/", 0777);
 		if ((status < 0) && (errno != EEXIST))
 			return (fileName);
 		fileName = "./uploads/" + _multipart_param.fileName.first;
-
 	}
 	else
+	{
+		status = mkdir(_request.getLocation()->getUploadDirectory().c_str(), 0777);
+		if ((status < 0) && (errno != EEXIST))
+			return (fileName);
 		fileName = _request.getLocation()->getUploadDirectory() + _multipart_param.fileName.first;
+	}
 	return (fileName);
 }
 
@@ -112,28 +117,12 @@ int HttpManager::parseMultiPart(std::fstream &fstream)
 				if (_multipart_param.contentType.first.find("application/octet-stream") == 0)
 					return true;
 
-////////////////////
 				fileName = getUploadFileName();
 				if (fileName.empty())
 				{
 					_errorCode = 409;
 					return (false);
 				}
-///////////////////
-				// if (_request.getLocation()->getUploadDirectory().empty())
-				// {
-				// 	int status = mkdir("./uploads/", 0777);
-				// 	if ((status < 0) && (errno != EEXIST))
-				// 	{
-				// 		_errorCode = 409;
-				// 		return (false);
-				// 	}
-				// 	fileName = "./uploads/" + _multipart_param.fileName.first;
-				// }
-				// else
-				// 	fileName = _request.getLocation()->getUploadDirectory() + _multipart_param.fileName.first;
-
-////////////////
 
 				if (file_exist(fileName))
 				{
