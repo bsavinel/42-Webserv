@@ -1,34 +1,9 @@
-#include "HttpManager.hpp"
-#include <iostream>
-#include <sstream>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <stdio.h>
-#include <unistd.h>
-#include <errno.h>
-#include <fstream>
+#include "HttpM_Post.hpp"
 
-// probleme quand LEN_TO_READ est trop petit pour lire toute la requete
-// la len indique dans le header de la requete et la len du BODY de la requete
-
-
-void				printAscii(std::string str);
-void				printMultiPartParam(t_multipart_param multipart_param);
-t_multipart_param	getParamBoundary(std::string boundaryHeader);
-t_process			createProcess( void );
-// void				HttpManager::parseMultiPart(std::fstream &fstream);
-// void				HttpManager::methodPOST();
-bool				file_exist (const std::string& name);
-// std::string		HttpManager::getFileName();
-std::string			getNbForFileName( void );
-bool				exists (const std::string& filename);
-int					openUploadFile();
-std::fstream &		safegetline( std::fstream & fstream, std::string & line );
-
-void	HttpManager::methodPOST()
+void	HttpManager::methodPOST( void )
 {
 	std::string nbForFileName;
+
 	if (_headerBuild == false)
 	{
 		_tmpFileName = getFileName();
@@ -36,18 +11,26 @@ void	HttpManager::methodPOST()
 		if (_tmp_upload.fail())
 		{
 			std::cout << "_tmp_upload.open() failed" << std::endl;
-			exit (1) ;
+			_errorCode = 500;
+			return ;
 		}
 		_respond = "HTTP/1.1 204 No Content\n\n";
 		_headerBuild = true;
 	}
 	if (_tmpEnd == false)
 	{
-//		_tmp_upload.clear();
 		_tmp_upload.write(_request.getRequest().c_str(), _request.getRequest().size());
 		if (_requestFullyReceive == true)
 		{
-			parseMultiPart(_tmp_upload);
+			if (_request.getContentType().first.find("multipart/form-data") == 0)
+			{
+				if (parseMultiPart(_tmp_upload) == false)
+				{
+					canWrite();
+					remove(_tmpFileName.c_str());
+					return ;
+				}
+			}
 			remove(_tmpFileName.c_str());
 		}
 	}
@@ -61,7 +44,29 @@ void	HttpManager::methodPOST()
 	_request.getRequest().clear();
 }
 
-void HttpManager::parseMultiPart(std::fstream &fstream)
+std::string			HttpManager::getUploadFileName( void )
+{
+	std::string fileName;
+	int status;
+
+	if (_request.getLocation()->getUploadDirectory().empty())
+	{
+		status = mkdir("./uploads/", 0777);
+		if ((status < 0) && (errno != EEXIST))
+			return (fileName);
+		fileName = "./uploads/" + _multipart_param.fileName.first;
+	}
+	else
+	{
+		status = mkdir(_request.getLocation()->getUploadDirectory().c_str(), 0777);
+		if ((status < 0) && (errno != EEXIST))
+			return (fileName);
+		fileName = _request.getLocation()->getUploadDirectory() + _multipart_param.fileName.first;
+	}
+	return (fileName);
+}
+
+int HttpManager::parseMultiPart(std::fstream &fstream)
 {
     std::string            BoundaryStartToFind = "--" + _request.getBoundary().first + "\r";
     std::string            BoundaryEndtoFind = "--" + _request.getBoundary().first + "--\r" ;
@@ -86,15 +91,35 @@ void HttpManager::parseMultiPart(std::fstream &fstream)
         while (fstream.eof() != true && _process.boundaryStart == true && _process.header == false)
         {
             getline(fstream, str);
+			std::string fileName;
             if (str.compare("\r") == 0) // si on trouve \r, on a fini de recuperer le header de la partie
             {
                 _multipart_param = getParamBoundary(boundaryHeader);
                 _process.header = true;
-                std::string fileName = _request.getLocation()->getUploadDirectory() + _multipart_param.fileName.first;
-                _uploaded.open(fileName.c_str(), std::fstream::app | std::fstream::in | std::fstream::out);
-                if (_uploaded.fail())
-                    std::cout << "failed open _uploadFile" << std::endl;
-            }
+				if (_multipart_param.contentType.first.find("application/octet-stream") == 0)
+					return true;
+
+				fileName = getUploadFileName();
+				if (fileName.empty())
+				{
+					_errorCode = 409;
+					return (false);
+				}
+
+				if (fileExist(fileName))
+				{
+					std::cout << "File already exist." << std::endl;
+					_errorCode = 409;
+					return (false);
+				}
+				_uploaded.open(fileName.c_str(), std::fstream::app | std::fstream::in | std::fstream::out);
+				if (_uploaded.fail())
+				{
+					std::cout << "Failed opening upload file." << std::endl;
+					_errorCode = 500;
+					return (false);
+				}
+			}
             else
             {
                 boundaryHeader.append(str, 0, str.length());
@@ -124,7 +149,6 @@ void HttpManager::parseMultiPart(std::fstream &fstream)
                         carriageReturn = true;
                         str.erase(str.size() - 1);
                     }
-                    //_uploaded << str.c_str();
                     _uploaded << str;
                 }
                 i++;
@@ -145,6 +169,7 @@ void HttpManager::parseMultiPart(std::fstream &fstream)
                 _process.boundaryEnd = true;
         }
     }
+	return (true);
 }
 
 void printAscii(std::string str)
@@ -153,7 +178,6 @@ void printAscii(std::string str)
 	for (size_t i = 0; i < str.length(); i++)
 		std::cout << (int)str[i] << " ";
 	std::cout << std::endl;
-
 //	std::cout << "---------- ASCII END -----------" << std::endl;
 }
 
@@ -166,16 +190,16 @@ void printMultiPartParam(t_multipart_param multipart_param)
 
 t_multipart_param	getParamBoundary(std::string boundaryHeader)
 {
-	t_multipart_param multipart_param;
-	std::string toFind;
-	std::string::size_type startPos = 0;
-	std::string::size_type endPos = 0;
-	std::string::size_type subStrLen = 0;
+	t_multipart_param		multipart_param;
+	std::string				toFind;
+	std::string::size_type	startPos = 0;
+	std::string::size_type	endPos = 0;
+	std::string::size_type	subStrLen = 0;
 
-//	std::cout << "boundaryHeader/" << std::endl;
-//	std::cout << boundaryHeader << std::endl;
+// 	std::cout << "boundaryHeader/" << std::endl;
+// 	std::cout << boundaryHeader << std::endl;
 //	printAscii(boundaryHeader);
-//	std::cout << "/boundaryHeader" << std::endl;
+// 	std::cout << "/boundaryHeader" << std::endl;
 
 	toFind = "Content-Disposition: ";
 	
@@ -192,6 +216,7 @@ t_multipart_param	getParamBoundary(std::string boundaryHeader)
 
 	if ((startPos = boundaryHeader.find(toFind.c_str(), 0)) != boundaryHeader.npos)
 	{
+
 		startPos = startPos + toFind.length();
 		endPos = boundaryHeader.find("\"", startPos);
 		subStrLen = endPos - startPos;
@@ -209,11 +234,6 @@ t_multipart_param	getParamBoundary(std::string boundaryHeader)
 		multipart_param.contentType.first = boundaryHeader.substr(startPos, subStrLen);
 		multipart_param.contentType.second = true;
 	}
-
-	// std::cout << "multipart_param/" << std::endl;
-	// printMultiPartParam(multipart_param);
-	// std::cout << "/multipart_param" << std::endl;
-
 	return multipart_param;
 }
 
@@ -229,9 +249,10 @@ t_process	createProcess( void )
 	return process;
 }
 
-bool file_exist (const std::string& name)
+bool fileExist (const std::string& name)
 {
-	struct stat	buffer;   
+	struct stat	buffer;
+
 	return (stat (name.c_str(), &buffer) == 0);
 }
 
@@ -245,26 +266,20 @@ std::string HttpManager::getFileName()
 	{
 		nbForFileName	= getNbForFileName();
 		fileName		= DIR_PATH_TMP_UPLOAD_FILE + nbForFileName;
-	}	while (file_exist(fileName));
+	}	while (fileExist(fileName));
 	return fileName;
 }
 
 std::string getNbForFileName( void )
 {
-	std::string nbForFileName;
-	std::stringstream ss;
-	static int nb_fd;
+	std::string			nbForFileName;
+	std::stringstream	ss;
+	static int			nb_fd;
 
 	ss << nb_fd;
 	nbForFileName = ss.str();
 	nb_fd++;
 	return nbForFileName;
-}
-
-bool exists (const std::string& filename)
-{
-  struct stat buffer;   
-  return (stat (filename.c_str(), &buffer) == 0); 
 }
 
 int openUploadFile()
@@ -285,18 +300,4 @@ int openUploadFile()
 	if (tmp_upload_fd == -1)
 		perror("failed open: ");
 	return tmp_upload_fd;
-}
-
-std::fstream & safegetline( std::fstream & fstream, std::string & line )
-{
-    std::string myline;
-    if ( getline( fstream, myline ) ) {
-       if ( myline.size() && myline[myline.size()-1] == '\r' ) {
-           line = myline.substr( 0, myline.size() - 1 );
-       }
-       else {
-           line = myline;
-       }
-    }
-    return fstream;
 }

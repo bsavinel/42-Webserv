@@ -96,18 +96,15 @@ int HttpManager::receiver()
 	if ((ret = recv(_socketClient, buffer, LEN_TO_READ, MSG_DONTWAIT)) == -1)
 		return (-1);
 	_lenRead += ret;
+//	std::string buff(buffer);
+//	std::cout << buff << std::endl; 
 	if (_request.getContentLength().second == true &&  _lenRead >= _request.getContentLength().first)
+	{
 		_requestFullyReceive = true;
+	}
 	_request.concatenateInsert(buffer, ret);
 	return (0);
 }
-
-
-
-
-
-
-
 
 
 
@@ -150,7 +147,7 @@ bool HttpManager::checkIfMethodIsAthorized()
 
 	while (itMethod != iteMethod)
 	{
-		if (_request.methodGET().first == (*itMethod))
+		if (_request.getMethod().first == (*itMethod))
 			return (1);
 		itMethod++;
 	}
@@ -180,9 +177,9 @@ bool HttpManager::checkRequest(const Server &server)
 	(void)server;
 	if (_request.getHttpVersion().first != "HTTP/1.1\r" && _request.getHttpVersion().first != "HTTP/1.1")
 		_errorCode = 505;
-	else if (_request.methodGET().first != "GET" &&
-			 _request.methodGET().first != "POST" &&
-			 _request.methodGET().first != "DELETE")
+	else if (_request.getMethod().first != "GET" &&
+			 _request.getMethod().first != "POST" &&
+			 _request.getMethod().first != "DELETE")
 		_errorCode = 501;
 	else if (!checkIfMethodIsAthorized())
 		_errorCode = 405;
@@ -218,7 +215,7 @@ std::string HttpManager::determinateType(const std::string &name_file)
 bool HttpManager::applyMethod(const Server &server)
 {
 	(void)server;
-	if (!_isEnd)
+	if (!_isEnd && _init)
 	{
 		if (_goodRequest == false)
 		{
@@ -241,17 +238,17 @@ bool HttpManager::applyMethod(const Server &server)
 			_errorCode = 405;
 		else if (_request.getLocation()->getCgiFileExtension() == get_file_extension(_request.getUrl().first))
 		{
-			std::cout << "REQUEST = " << _request << std::endl;
+//			std::cout << "REQUEST = " << _request << std::endl;
 			manageCgi(_request, server);
 		}
-		else if (_request.methodGET().first == "GET")
+		else if (_request.getMethod().first == "GET")
 			methodGET(server);
-		else if (_request.methodGET().first == "POST")
+		else if (_request.getMethod().first == "POST")
 		{
-			std::cout << _request.getRequest() << std::endl;
+//			std::cout << _request.getRequest() << std::endl;
 			methodPOST();
 		}
-		else if (_request.methodGET().first == "DELETE")
+		else if (_request.getMethod().first == "DELETE")
 			methodDELETE();
 		else
 			_isEnd = true;

@@ -146,7 +146,7 @@ std::pair <std::string, bool> getMultiPartBoundary(std::string contentType)
 
 void    HttpRequest::parser(/*std::string &request*/)
 {
-//    std::cout << "REQUEST\n" << _request << std::endl;
+  //  std::cout << "REQUEST\n" << _request << std::endl;
     parseStartLine(_request);
     _request.erase(0, _request.find('\n') + 1);
 
@@ -211,7 +211,7 @@ std::string	&HttpRequest::getRequest(void)
 	return _request;
 }
 
-std::pair<std::string, bool> HttpRequest::methodGET(void) const
+std::pair<std::string, bool> HttpRequest::getMethod(void) const
 {
 	return _method;
 } 
@@ -287,8 +287,8 @@ std::pair<std::string, bool>	HttpRequest::getCookie(void) const
 std::ostream &	operator<<( std::ostream & o, HttpRequest const & rhs)
 {
 
-	if (rhs.methodGET().second == true) 
-		o << rhs.methodGET().first << std::endl;
+	if (rhs.getMethod().second == true) 
+		o << rhs.getMethod().first << std::endl;
 	if (rhs.getUrl().second == true) 
 		o << rhs.getUrl().first << std::endl;
 	if (rhs.getHttpVersion().second == true)  

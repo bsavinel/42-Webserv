@@ -1,7 +1,7 @@
 {
 	"files.associations": {
-		"*.json": "c",
 		"*.c": "c",
+		"*.json": "c",
 		"array": "cpp",
 		"*.tcc": "cpp",
 		"cctype": "cpp",
@@ -54,6 +54,7 @@
 		"sstream": "cpp",
 		"complex": "cpp",
 		"cstring": "cpp",
-		"cinttypes": "cpp"
+		"cinttypes": "cpp",
+		"ctime": "cpp"
 	}
 }

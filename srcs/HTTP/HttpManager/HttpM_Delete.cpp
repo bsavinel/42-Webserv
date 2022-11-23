@@ -27,7 +27,6 @@ void	HttpManager::methodDELETE()
 				_errorCode = 403;
 		}
 		_headerBuild = true;
-		std::cout << "code erreur :" << _errorCode << std::endl;
 	}
 	else
 		_isEnd = true;

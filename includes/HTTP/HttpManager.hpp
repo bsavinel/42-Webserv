@@ -77,7 +77,9 @@ class HttpManager
 	void	methodPOSTfstream();
 	std::ofstream		openUploadFilefstream();
 std::string getFileName();
-	void parseMultiPart(std::fstream &fstream);
+//	void parseMultiPart(std::fstream &fstream);
+	int parseMultiPart(std::fstream &fstream);
+	std::string			getUploadFileName( void );
 	private:
 
 		bool		_Writeok;

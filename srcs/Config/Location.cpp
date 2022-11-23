@@ -152,21 +152,62 @@ void Location::set_allowed_methods(std::vector<std::string>::iterator & it, std:
 		this->allowed_methods.push_back(*it++);
 }
 
+void	Location::check_param(std::vector<std::string>::iterator & it)
+{
+	std::string	param = *++it;
+
+	std::string::iterator itParam = param.begin();
+	while (itParam != param.end())
+	{
+		if(!isdigit(*itParam))
+		{
+			if(!is_file_path(param))
+				throw exceptWebserv("Error Config : return value should be a path to a dir");
+			this->redirection_path = param;
+			return ;	
+		}
+		itParam++;
+	}
+	this->return_code = atoi(param.c_str());
+}
+
+void	Location::check_both_params(std::vector<std::string>::iterator & it)
+{
+	std::string	first_param = (*++it).c_str();
+	std::string::iterator itFirstParam = first_param.begin();
+	while (itFirstParam != first_param.end())
+	{
+		if(!isdigit(*itFirstParam))
+				throw exceptWebserv("Error Config : redirection parameters should start with error_code and then redirection_path");
+		itFirstParam++;
+	}
+	int tmp = atoi(first_param.c_str());
+	if(tmp)
+	{
+		this->return_code = tmp;
+		if(!check_existing_error_code(tmp))
+			throw exceptWebserv("Error Config : return code does not exist");
+		std::string path =  *++it;
+		if(!is_file_path(path))
+			throw exceptWebserv("Error Config : return value should be a path to a dir");
+		this->redirection_path = path;
+	}
+	else
+		this->redirection_path = *it;
+}
+
 void	Location::set_redirection(std::vector<std::string>::iterator & it)
 {
-		int tmp = atoi((*++it).c_str());
-		if(tmp)
-		{
-			this->return_code = tmp;
-			if(!check_existing_error_code(tmp))
-				throw exceptWebserv("Error Config : return code does not exist");
-			std::string path =  *++it;
-			if(!is_file_path(path))
-				throw exceptWebserv("Error Config : return value should be a path to a dir");
-			this->redirection_path = path;
-		}
-		else
-			this->redirection_path = *it;
+	int nbr_parameters_redirection = 0;
+
+	while (*(it + nbr_parameters_redirection + 1) != ";")
+		nbr_parameters_redirection++;
+	if(nbr_parameters_redirection == 1)
+		check_param(it);
+	else if(nbr_parameters_redirection == 2)
+		check_both_params(it);
+	else
+		throw exceptWebserv("Error Config : redirection too many param");
 }
 
 void	Location::set_root_path(std::vector<std::string>::iterator & it)
