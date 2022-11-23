@@ -2,6 +2,8 @@
 #include "define.hpp"
 #include <signal.h>
 #include <unistd.h>
+#include <sstream>
+#include <stdlib.h>
 
 Cgi::Cgi()
 {
@@ -15,7 +17,8 @@ void Cgi::initialise_env(HttpRequest &request, const Server &server)
 {
 	std::vector<std::string>	env_var;
 	
-	_request = request.getRequest();
+	_request =  request.getRequest();
+
 	_path_to_script = buildLocalPath(request);
 
 	env_var.push_back("SERVER_SOFTWARE=Webserv/1.0");
@@ -28,9 +31,15 @@ void Cgi::initialise_env(HttpRequest &request, const Server &server)
 	env_var.push_back("PATH_TRANSLATED=" + buildLocalPath(request)); // idem
 	env_var.push_back("SCRIPT_NAME=" + buildLocalPath(request)); // the constructed path to the script /data/www/script.php
 	env_var.push_back("SCRIPT_FILENAME=" + buildLocalPath(request)); // the constructed path to the script /data/www/script.php
-	env_var.push_back("QUERY_STRING=" + request.getUrl().first);
+	env_var.push_back("QUERY_STRING=" + request.getRequest());
 	env_var.push_back("CONTENT_LENGTH=0");
-
+	if(request.getMethod().first == "POST")
+	{
+		std::stringstream ss;
+		ss.str("");
+		ss << request.getContentLength().first;
+		env_var.push_back("CONTENT_LENGTH=" + ss.str());
+	}
 	env_var.push_back("REDIRECT_STATUS=200");
 	env_var.push_back("HTTP_COOKIE=" + request.getCookie().first);
 
@@ -89,7 +98,7 @@ void	Cgi::set_argv()
 
 bool Cgi::execute()
 {
-	if (access(_arg[1], X_OK) < 0 || access(_exec.c_str(), X_OK))
+	if (access(_arg[1], R_OK) < 0 || access(_exec.c_str(), X_OK))
 		return (0);
 	if(pipe(_pip) == -1)
 		throw exceptWebserv("Error CGI : failed to create a pipe");
@@ -97,9 +106,16 @@ bool Cgi::execute()
 		throw exceptWebserv("Error CGI : failed to fork");
 	if(_pid == 0) 
 	{
+		int tab[2];
+		pipe(tab);
+
+		write(tab[1], _request.c_str(), _request.size());
 		dup2(_pip[1], STDOUT_FILENO);
+		dup2(tab[0], STDIN_FILENO);
 		close(_pip[0]);
 		close(_pip[1]);
+		close(tab[0]);
+		// close(tab[1]);
 		execve(_exec.c_str(), _arg, _env);
 	}
 	else
@@ -125,6 +141,7 @@ int	Cgi::feedOutput()
 		return -1;
 	}
 	memset(buff, 0, LEN_TO_READ);
+
 	nbytes = read(_pip[0], buff, LEN_TO_READ);
 	_output.insert(_output.size(), buff, nbytes);
 	if(nbytes == -1)

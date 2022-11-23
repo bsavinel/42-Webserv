@@ -127,10 +127,10 @@ void HttpManager::initialize(const Server &server)
 	if (!_init)
 	{
 		_init = true;
+		std::cout << "Request Brute = " << _request.getRequest() << std::endl;
 		_request.parser();
 		_lenRead = 0;
 		_lenRead = _request.getRequest().size();
-//		std::cout << _request << std::endl;
 		_request.setLocation(_request.findLocation(server));
 		_goodRequest = checkRequest(server);
 	}
@@ -234,14 +234,13 @@ bool HttpManager::applyMethod(const Server &server)
 			_errorCode = 405;
 		else if (_request.getLocation()->getCgiFileExtension() == get_file_extension(_request.getUrl().first))
 		{
-			std::cout << "REQUEST = " << _request << std::endl;
 			manageCgi(_request, server);
 		}
 		else if (_request.getMethod().first == "GET")
 			methodGET(server);
 		else if (_request.getMethod().first == "POST")
 		{
-			std::cout << _request.getRequest() << std::endl;
+//			std::cout << _request.getRequest() << std::endl;
 			methodPOST();
 		}
 		else if (_request.getMethod().first == "DELETE")
