@@ -16,6 +16,7 @@ std::string			getNbForFileName( void );
 int					openUploadFile();
 void				printAscii(std::string str);
 void				printMultiPartParam(t_multipart_param multipart_param);
+std::string			getFileName( void );
 
 void	HttpManager::methodPOST( void )
 {
@@ -61,6 +62,23 @@ void	HttpManager::methodPOST( void )
 	_request.getRequest().clear();
 }
 
+std::string			HttpManager::getUploadFileName( void )
+{
+	std::string fileName;
+
+	if (_request.getLocation()->getUploadDirectory().empty())
+	{
+		int status = mkdir("./uploads/", 0777);
+		if ((status < 0) && (errno != EEXIST))
+			return (fileName);
+		fileName = "./uploads/" + _multipart_param.fileName.first;
+
+	}
+	else
+		fileName = _request.getLocation()->getUploadDirectory() + _multipart_param.fileName.first;
+	return (fileName);
+}
+
 int HttpManager::parseMultiPart(std::fstream &fstream)
 {
     std::string            BoundaryStartToFind = "--" + _request.getBoundary().first + "\r";
@@ -93,18 +111,30 @@ int HttpManager::parseMultiPart(std::fstream &fstream)
                 _process.header = true;
 				if (_multipart_param.contentType.first.find("application/octet-stream") == 0)
 					return true;
-				if (_request.getLocation()->getUploadDirectory().empty())
+
+////////////////////
+				fileName = getUploadFileName();
+				if (fileName.empty())
 				{
-					int status = mkdir("./uploads/", 0777);
-					if ((status < 0) && (errno != EEXIST))
-					{
-						_errorCode = 409;
-						return (false);
-					}
-					fileName = "./uploads/" + _multipart_param.fileName.first;
+					_errorCode = 409;
+					return (false);
 				}
-				else
-					fileName = _request.getLocation()->getUploadDirectory() + _multipart_param.fileName.first;
+///////////////////
+				// if (_request.getLocation()->getUploadDirectory().empty())
+				// {
+				// 	int status = mkdir("./uploads/", 0777);
+				// 	if ((status < 0) && (errno != EEXIST))
+				// 	{
+				// 		_errorCode = 409;
+				// 		return (false);
+				// 	}
+				// 	fileName = "./uploads/" + _multipart_param.fileName.first;
+				// }
+				// else
+				// 	fileName = _request.getLocation()->getUploadDirectory() + _multipart_param.fileName.first;
+
+////////////////
+
 				if (file_exist(fileName))
 				{
 					std::cout << "File already exist." << std::endl;
