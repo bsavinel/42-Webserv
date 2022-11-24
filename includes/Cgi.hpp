@@ -24,7 +24,8 @@ class Cgi
 		std::string					_output;
 		size_t						_start;
 		pid_t						_pid;
-		int							_pip[2];
+		int							_pip1[2];
+		int							_pip2[2];
 		std::vector<std::string>	_cookies;
 
 	public :

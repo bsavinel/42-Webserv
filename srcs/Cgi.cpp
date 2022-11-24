@@ -21,6 +21,8 @@ void Cgi::initialise_env(HttpRequest &request, const Server &server)
 
 	_path_to_script = buildLocalPath(request);
 
+	std::cout << "METHOD ENVIRONNEMENT = " << request.getMethod().first << std::endl;
+
 	env_var.push_back("SERVER_SOFTWARE=Webserv/1.0");
 	env_var.push_back("SERVER_NAME=" + server.getServerName());
 	env_var.push_back("GATEWAY_INTERFACE=CGI/1.1");
@@ -31,7 +33,7 @@ void Cgi::initialise_env(HttpRequest &request, const Server &server)
 	env_var.push_back("PATH_TRANSLATED=" + buildLocalPath(request)); // idem
 	env_var.push_back("SCRIPT_NAME=" + buildLocalPath(request)); // the constructed path to the script /data/www/script.php
 	env_var.push_back("SCRIPT_FILENAME=" + buildLocalPath(request)); // the constructed path to the script /data/www/script.php
-	env_var.push_back("QUERY_STRING=" + request.getRequest());
+	env_var.push_back("QUERY_STRING=" + buildLocalPath(request));
 	env_var.push_back("CONTENT_LENGTH=0");
 	if(request.getMethod().first == "POST")
 	{
@@ -100,28 +102,25 @@ bool Cgi::execute()
 {
 	if (access(_arg[1], R_OK) < 0 || access(_exec.c_str(), X_OK))
 		return (0);
-	if(pipe(_pip) == -1)
+	if(pipe(_pip1) == -1 || pipe(_pip2) == -1)
 		throw exceptWebserv("Error CGI : failed to create a pipe");
+	std::cout << _request << " LENGTH = " << _request.size() << std::endl;
+	write(_pip2[1], _request.c_str(), _request.size());
 	if((_pid = fork()) == -1)
 		throw exceptWebserv("Error CGI : failed to fork");
-	if(_pid == 0) 
+	if(_pid == 0)
 	{
-		int tab[2];
-		pipe(tab);
-
-		write(tab[1], _request.c_str(), _request.size());
-		dup2(_pip[1], STDOUT_FILENO);
-		dup2(tab[0], STDIN_FILENO);
-		close(_pip[0]);
-		close(_pip[1]);
-		close(tab[0]);
-		// close(tab[1]);
+		dup2(_pip2[0], STDIN_FILENO);
+		dup2(_pip1[1], STDOUT_FILENO);
+		close(_pip1[0]);
+		close(_pip1[1]);
+		std::cerr << _exec.c_str() << std::endl;
 		execve(_exec.c_str(), _arg, _env);
 	}
 	else
 	{
 		_start = give_time();
-		close(_pip[1]);
+		close(_pip1[1]);
 	}
 	return (1);
 }
@@ -142,21 +141,21 @@ int	Cgi::feedOutput()
 	}
 	memset(buff, 0, LEN_TO_READ);
 
-	nbytes = read(_pip[0], buff, LEN_TO_READ);
+	nbytes = read(_pip1[0], buff, LEN_TO_READ);
 	_output.insert(_output.size(), buff, nbytes);
 	if(nbytes == -1)
 		throw exceptWebserv("Error CGI : failed to read output");
 	if (waitpid(_pid, NULL, WNOHANG) == _pid)
 	{
 		memset(buff, 0, LEN_TO_READ);
-		while((nbytes = read(_pip[0], buff, LEN_TO_READ) > 0))
+		while((nbytes = read(_pip1[0], buff, LEN_TO_READ) > 0))
 		{
 			_output.insert(0, buff, nbytes);
 			memset(buff, 0, 4096);
 		}
 		store_cookies();
 		manage_output();
-		close(_pip[0]);
+		close(_pip1[0]);
 		return 1;
 	}
 	return 0;

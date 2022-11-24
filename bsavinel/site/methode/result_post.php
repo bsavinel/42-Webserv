@@ -50,7 +50,12 @@
 			</style>
 	</head>
 	<body>
-		<h1>Post with cgi</h1>
+
+		<?php 
+			$methodvar = getenv('REQUEST_METHOD');
+			echo "<h1>METHODE = ".$methodvar."</h1";
+		?>
+		<!-- <h1>Post with cgi</h1>
 		<center>
 		<p>
 			<?php if (isset($_POST['name']))
@@ -58,6 +63,6 @@
 			<?php if (isset($_POST['bd']))
 				echo "Tu es nee le : ".$_POST['bd'];?>
 		</p>
-		</center>
+		</center> -->
 	</body>
 </html>

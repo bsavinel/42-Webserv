@@ -96,8 +96,12 @@ int HttpManager::receiver()
 	if ((ret = recv(_socketClient, buffer, LEN_TO_READ, MSG_DONTWAIT)) == -1)
 		return (-1);
 	_lenRead += ret;
+//	std::string buff(buffer);
+//	std::cout << buff << std::endl; 
 	if (_request.getContentLength().second == true &&  _lenRead >= _request.getContentLength().first)
+	{
 		_requestFullyReceive = true;
+	}
 	_request.concatenateInsert(buffer, ret);
 	return (0);
 }
@@ -211,7 +215,7 @@ std::string HttpManager::determinateType(const std::string &name_file)
 bool HttpManager::applyMethod(const Server &server)
 {
 	(void)server;
-	if (!_isEnd)
+	if (!_isEnd && _init)
 	{
 		if (_goodRequest == false)
 		{
