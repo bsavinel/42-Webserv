@@ -1,6 +1,6 @@
 server 
 {
-	listen 8080;
+	listen 7070;
 	error_pages 404 ./bsavinel/site/404.html; #testduntrucquimarchepas
 
 	location / 
