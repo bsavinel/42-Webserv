@@ -53,8 +53,8 @@
 		<form method="POST" action="/methode/result_post.php">
 			<label for="name">Nom</label>
 			<input type="text" id="name" name="name">
-			<label for="bd">Date de naissance</label>
-			<input type="date" id="bd" name="bd">
+			<!-- <label for="bd">Date de naissance</label>
+			<input type="date" id="bd" name="bd"> -->
 			<input type="submit" value="Submit">
 		</form>
 	</body>

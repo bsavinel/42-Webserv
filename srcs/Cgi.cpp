@@ -34,14 +34,18 @@ void Cgi::initialise_env(HttpRequest &request, const Server &server)
 	env_var.push_back("SCRIPT_NAME=" + buildLocalPath(request)); // the constructed path to the script /data/www/script.php
 	env_var.push_back("SCRIPT_FILENAME=" + buildLocalPath(request)); // the constructed path to the script /data/www/script.php
 	env_var.push_back("QUERY_STRING=" + buildLocalPath(request));
-	env_var.push_back("CONTENT_LENGTH=0");
+	env_var.push_back("CONTENT_TYPE=" + request.getContentType().first);
+	
 	if(request.getMethod().first == "POST")
 	{
 		std::stringstream ss;
 		ss.str("");
 		ss << request.getContentLength().first;
+		std::cout <<  "TAILLE DE LA REQUETE = " << request.getContentLength().first << std::endl;
 		env_var.push_back("CONTENT_LENGTH=" + ss.str());
 	}
+	else
+		env_var.push_back("CONTENT_LENGTH=0");
 	env_var.push_back("REDIRECT_STATUS=200");
 	env_var.push_back("HTTP_COOKIE=" + request.getCookie().first);
 
@@ -219,6 +223,8 @@ const std::vector<std::string>	& Cgi::getCookies() const
 
 void	Cgi::free_argenv()
 {
+
+	std::cerr << "Destruction de l'environnement" << std::endl;
 	int i = 0;
 
 	while(_arg[i])
