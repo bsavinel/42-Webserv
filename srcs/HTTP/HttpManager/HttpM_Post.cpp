@@ -51,7 +51,7 @@ int HttpManager::parseMultiPart(std::fstream &fstream)
     std::string				BoundaryEndtoFind = "--" + _request.getBoundary().first + "--\r" ;
     std::string				str;
     std::string				boundaryHeader;
-	bool					fileAlreadyExist = false;;
+	bool					skipPart = false;;
     fstream.seekg(0);
 
     while (fstream.eof() != true && _process.boundaryEnd == false)
@@ -76,21 +76,21 @@ int HttpManager::parseMultiPart(std::fstream &fstream)
                 _multipart_param = getParamBoundary(boundaryHeader);
                 _process.header = true;
 				if (_multipart_param.contentType.first.find("application/octet-stream") == 0)
-					return true;
-
+				{
+					skipPart = true;
+					break;
+				}
 				fileName = getUploadFileName();
 				if (fileName.empty())
 				{
-					_errorCode = 409;
-					return (false);
+					skipPart = true;
+					break;
 				}
 				if (fileExist(fileName))
 				{
 					std::cout << "File already exist." << std::endl;
-				//	_errorCode = 409;
-					fileAlreadyExist = true;
+					skipPart = true;
 					break;
-				//	return (false);
 				}
 				_uploaded.open(fileName.c_str(), std::fstream::app | std::fstream::in | std::fstream::out);
 				if (_uploaded.fail())
@@ -116,11 +116,11 @@ int HttpManager::parseMultiPart(std::fstream &fstream)
                 getline(fstream, str);
                 if (str.compare(BoundaryEndtoFind) != 0 && str.compare(BoundaryStartToFind) != 0)
                 {
-                    if (!first && fileAlreadyExist == false)
+                    if (!first && skipPart == false)
                         _uploaded << '\n'; 
                     if (carriageReturn == true)
                     {
-						if (fileAlreadyExist == false)
+						if (skipPart == false)
                         	_uploaded << '\r';
                         carriageReturn = false;
                     }
@@ -130,7 +130,7 @@ int HttpManager::parseMultiPart(std::fstream &fstream)
                         carriageReturn = true;
                         str.erase(str.size() - 1);
                     }
-					if (fileAlreadyExist == false)
+					if (skipPart == false)
 						_uploaded << str;
                 }
                 i++;
@@ -146,7 +146,7 @@ int HttpManager::parseMultiPart(std::fstream &fstream)
                 _new_process = true;
                 _process.boundaryStart = true;
                 boundaryHeader.clear();
-				fileAlreadyExist = false;
+				skipPart = false;
             }
             else
                 _process.boundaryEnd = true;
