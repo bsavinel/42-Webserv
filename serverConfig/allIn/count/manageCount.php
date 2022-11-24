@@ -5,6 +5,9 @@
         <title>To the moon</title>
     </head>
 	<body>
+		<?php if(isset($_POST['Identifiant'])) {
+				echo "Bonjour ".$_POST['Identifiant'];}
+		?>
 		<form action="/count/" method="post" enctype="multipart/form-data">
 			<input type="file" name="myFile" />
 			<input type = "file" name="myFile" />

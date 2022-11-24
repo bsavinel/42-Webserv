@@ -12,6 +12,7 @@ server
 		index login.html;
 		cgi_pass .php ./serverConfig/allIn/cgi/truc.php;
 		upload_store  ./serverConfig/allIn/uploads/;
+		cgi_pass .php /usr/bin/php-cgi;
 	}
 
 	location /count/
@@ -20,6 +21,7 @@ server
 		index manageCount.html;
 		root ./serverConfig/allIn/count/;
 		upload_store  ./serverConfig/allIn/count/payments/;
+		cgi_pass .php /usr/bin/php-cgi;
 	}
 
 	location /count/payments/
