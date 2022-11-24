@@ -49,7 +49,7 @@ class HttpManager
 		void		sender();
 		std::string ErrorRespond(const Server &server);
 		std::string initDefaultErrorResponse();
-		bool		init_error_file(const std::string &error_page, std::string &errResp);
+		bool		init_error_file(const std::string &error_page, std::string &errResp, int error_code);
 		void		manageCgi(HttpRequest &_request, const Server &server);
 
 		// ----------------------

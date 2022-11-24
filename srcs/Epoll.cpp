@@ -92,7 +92,6 @@ void	Epoll::wait()
 	_AllEvents.clear();
 	_AllEvents.resize(_sockClient.size() + _sockServ.size());
 	epoll_wait(_instance, _AllEvents.data(), _sockClient.size() + _sockServ.size(), -1);
-	// TODO  resize a fin de event vca r NULL mais la fin
 }
 
 std::map<t_socket, const Server*> &Epoll::getSockClient()

@@ -106,24 +106,6 @@ int HttpManager::receiver()
 	return (0);
 }
 
-
-
-/*std::string	HttpManager::ErrorRespond()
-{
-	std::string errResp;
-	Error err;
-
-	if (_errorCode == 204)
-		errResp = "HTTP/1.1 204 No Content";
-	else
-	{
-		errResp = buildErrorPage(_errorCode);
-		errResp.insert(0, HeaderRespond(errResp.size(), _errorCode, "text/html"));
-	}
-	_isEnd = true;
-	return errResp;
-}*/
-
 void HttpManager::initialize(const Server &server)
 {
 	if (_request.getRequest().find("\r\n\r\n") == std::string::npos)
@@ -288,21 +270,6 @@ bool HttpManager::applyMethod(const Server &server)
 // 	}
 // }
 
-/*std::string	HttpManager::ErrorRespond()
-{
-	std::string errResp;
-	Error err;
-
-	if (_errorCode == 204)
-		errResp = "HTTP/1.1 204 No Content";
-	else
-	{
-		errResp = buildErrorPage(_errorCode);
-		errResp.insert(0, HeaderRespond(errResp.size(), _errorCode, "text/html"));
-	}
-	_isEnd = true;
-	return errResp;
-}*/
 
 
 

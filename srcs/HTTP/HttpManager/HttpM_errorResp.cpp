@@ -18,7 +18,7 @@ std::string	HttpManager::initDefaultErrorResponse()
 	return errResp;
 }
 
-bool	HttpManager::init_error_file(const std::string &error_page, std::string &errResp)
+bool	HttpManager::init_error_file(const std::string &error_page, std::string &errResp, int error_code)
 {
 	struct stat status;
 
@@ -41,7 +41,7 @@ bool	HttpManager::init_error_file(const std::string &error_page, std::string &er
 		_isEnd = true;
 		return false;
 	}
-	errResp = HeaderRespond(status.st_size, _errorCode, type_file);
+	errResp = HeaderRespond(status.st_size, error_code, type_file);
 	return true;
 }
 
@@ -56,7 +56,7 @@ std::string	HttpManager::ErrorRespond(const Server &server)
 	if (server.getErrorMap().find(_errorCode) != server.getErrorMap().end())
 	{
 		if (_file_fd== -1)
-            if (!init_error_file((*server.getErrorMap().find(_errorCode)).second, errResp))
+            if (!init_error_file((*server.getErrorMap().find(_errorCode)).second, errResp, _errorCode))
 				return errResp;
 		nb_char = read(_file_fd, buffer, LEN_TO_READ);
 		if (nb_char > 0)

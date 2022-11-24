@@ -81,7 +81,7 @@ void	clientEvent(Epoll &epoll, std::map<t_socket, HttpManager> &stockManager)
 
 		if (it_event->events & EPOLLIN)
 			manager.receiver();
-	
+
 		if (manager.getInit() == false)
 			manager.initialize(*socketClient.find(it_event->data.fd)->second);
 		manager.applyMethod(*socketClient.find(it_event->data.fd)->second);
@@ -98,7 +98,6 @@ void	clientEvent(Epoll &epoll, std::map<t_socket, HttpManager> &stockManager)
 			manager.setModeChange(false);
 		}
 		
-
 		if (it_event->events & EPOLLOUT)
 			manager.sender();
 

@@ -11,7 +11,7 @@ bool HttpManager::manageRedirection()
 	{
 		_RedirectionStart = true;
 		_respond.clear();
-		if (!init_error_file(_request.getLocation()->getRedirectionPath(), _respond))
+		if (!init_error_file(_request.getLocation()->getRedirectionPath(), _respond, _request.getLocation()->getReturnCode()))
 			return false;
 	}
 	else

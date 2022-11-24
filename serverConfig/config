@@ -38,8 +38,9 @@ server
 
 server 
 {
-	listen 8081;
+	listen 7070;
 	server_name jetoi;
+	error_pages 405 ./serverConfig/jetoi/405.html;
 
 	location / 
 	{
@@ -59,32 +60,5 @@ server
 	{
 		allow GET;
 		root ./serverConfig/allIn/image/;
-	}
-}
-
-server
-{
-	listen 7070;
-	server_name lautreport;
-
-	location /
-	{
-		allow GET;
-		index index.html;
-		root ./serverConfig/lautreport/;
-	}
-
-	location /methode/
-	{
-		allow GET POST DELETE;
-		autoindex off;
-		root ./serverConfig/lautreport/methode/;
-		upload_store ./serverConfig/lautreport/methode/;
-	}
-
-	location /image/
-	{
-		allow GET;
-		root ./serverConfig/lautreport/image/;
 	}
 }
