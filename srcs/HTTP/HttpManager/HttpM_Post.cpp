@@ -117,20 +117,20 @@ int HttpManager::parseMultiPart(std::fstream &fstream)
                 if (str.compare(BoundaryEndtoFind) != 0 && str.compare(BoundaryStartToFind) != 0)
                 {
                     if (!first && skipPart == false)
-                        _uploaded << '\n'; 
-                    if (carriageReturn == true)
+                        _uploaded << std::endl; 
+                    if (str.size() >= 1 && carriageReturn == true)
                     {
 						if (skipPart == false)
                         	_uploaded << '\r';
                         carriageReturn = false;
                     }
                     first = false;
-                    if (str[str.size() - 1] == '\r')
+                    if (str.size() >= 1 && (str[str.end() - str.begin()]) == '\r')
                     {
                         carriageReturn = true;
                         str.erase(str.size() - 1);
                     }
-					if (skipPart == false)
+					if (str.size() >= 1 && skipPart == false)
 						_uploaded << str;
                 }
                 i++;
