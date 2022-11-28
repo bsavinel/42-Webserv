@@ -1,0 +1,30 @@
+server 
+{
+	listen 8080;
+	client_max_body_size 100;
+
+	location / 
+	{
+		allow GET;
+		root ./YoupiBanane/;
+		cgi_pass .bla ./ubuntu_tester;
+	}
+	location /put_test/
+	{
+		allow ;
+		cgi_pass .bla ./ubuntu_tester;
+		root ./YoupiBanane/;
+	}
+	location /post_body/
+	{
+		allow POST;
+		root ./YoupiBanane/;
+		cgi_pass .bla ./ubuntu_cgi_tester;
+	}
+	location /directory/
+	{
+		allow GET;
+		index youpi.bad_extension;
+		root ./YoupiBanane/;
+	}
+}

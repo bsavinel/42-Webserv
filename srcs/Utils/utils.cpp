@@ -62,7 +62,7 @@ void	remove_comment(std::string & content_file)
 	std::string::iterator end_of_comment;
 	std::string::iterator end = content_file.end();
 
-	while(beg != end)
+	while(beg != end - 1)
 	{
 		if(*beg == '#')
 		{
