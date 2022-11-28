@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   autoIndex.cpp                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rpottier <rpottier@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/11/28 14:43:37 by rpottier          #+#    #+#             */
+/*   Updated: 2022/11/28 14:43:38 by rpottier         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "HttpManager.hpp"
 #include "autoIndex.hpp"
 #include <iostream>
@@ -110,7 +122,6 @@ std::string getParentFolderPath(std::string const & folderPath)
 {
 	std::string		parentFolder(folderPath);
 
-	//std::cout << "folderPath : " << folderPath << std::endl;
 	if (*(parentFolder.rbegin()) == '/')
 		parentFolder.erase(parentFolder.length() - 1, 1);
 	parentFolder.erase(parentFolder.find_last_of('/') + 1, parentFolder.npos);
@@ -141,8 +152,3 @@ int	isRootDirectory(std::string fileName)
 		return true;
 	return false;
 }
-
-/*
-/methode/truc.html
-./bsavinel/site/truc.html
-*/

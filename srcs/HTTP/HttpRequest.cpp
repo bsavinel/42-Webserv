@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   HttpRequest.cpp                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rpottier <rpottier@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/11/28 14:44:02 by rpottier          #+#    #+#             */
+/*   Updated: 2022/11/28 14:44:03 by rpottier         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "HttpRequest.hpp"
 #include "exceptWebserv.hpp"
 #include "Server.hpp"
@@ -117,10 +129,7 @@ std::pair <std::string, bool>	HttpRequest::parseHeader(std::string &header, std:
 	size_t copyUntil = header.find("\n", copyStart) -1;
 
 	if (optionToFindPos == header.npos)
-	{
-//		std::cout << "HTTP request option not found" << std::endl << optionToFindPos << std::endl;
 		option.second = false;
-	}
 	else
 	{
 		option.first = header.substr(copyStart, copyUntil - copyStart);
@@ -136,17 +145,12 @@ std::pair <std::string, bool> getMultiPartBoundary(std::string contentType)
 
 	boundaryPosition = contentType.find("=") + 1;
 	boundary.first.assign(contentType, boundaryPosition, contentType.npos);
-//	boundary.first += "\r";
 	boundary.second = true;
-
-//	std::cout << "boundary = [" << boundary.first << "]" << std::endl;
-
 	return boundary;
 }
 
 void    HttpRequest::parser(/*std::string &request*/)
 {
-  //  std::cout << "REQUEST\n" << _request << std::endl;
     parseStartLine(_request);
     _request.erase(0, _request.find('\n') + 1);
 
@@ -164,7 +168,6 @@ void    HttpRequest::parser(/*std::string &request*/)
 	{
 		_intContentLength.first = atoi(_contentLength.first.c_str());
 		_intContentLength.second = true;
-//		std::cout << "_intContentLength: " << _intContentLength.first <<std::endl;
 	}
 	if (_contentType.first.find("multipart/form-data") == 0)
 	{

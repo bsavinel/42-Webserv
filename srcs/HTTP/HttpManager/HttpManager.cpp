@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   HttpManager.cpp                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rpottier <rpottier@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/11/28 14:44:00 by rpottier          #+#    #+#             */
+/*   Updated: 2022/11/28 14:44:01 by rpottier         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "HttpManager.hpp"
 #include <sys/socket.h>
 
@@ -28,8 +40,6 @@ HttpManager::HttpManager(t_socket socketClient)
 	_lenRead = 0;
 	_new_process = false;
 	_lenOfRequestAlreadyRead = 0;
-//	_tmp_upload_i = false;
-//	_tmp_upload_o = false;
 }
 
 HttpManager::HttpManager(const HttpManager &rhs)
@@ -62,8 +72,6 @@ HttpManager &HttpManager::operator=(const HttpManager &rhs)
 		_tmpEnd = rhs._tmpEnd;
 		_lenRead = rhs._lenRead;
 		_lenOfRequestAlreadyRead = rhs._lenOfRequestAlreadyRead;
-	//	_tmp_upload_i = rhs._tmp_upload_i;
-	//	_tmp_upload_o = rhs._tmp_upload_o;
 	}
 	return *this;
 }
@@ -196,13 +204,9 @@ std::string HttpManager::determinateType(const std::string &name_file)
 	return "";
 }
 
-
-
 bool HttpManager::applyMethod(const Server &server)
 {
 	(void)server;
-
-	std::cout << "---------------RETRIEVELOCALPATH = " << retrieveCorrespondingLocalPath() << std::endl;
 	if (!_isEnd && _init)
 	{
 		if (_goodRequest == false)
@@ -225,10 +229,7 @@ bool HttpManager::applyMethod(const Server &server)
 		else if (!checkIfMethodIsAthorized())
 			_errorCode = 405;
 		else if (!_request.getLocation()->getCgiFileExtension().empty() && _request.getLocation()->getCgiFileExtension() == get_file_extension(retrieveCorrespondingLocalPath()))
-		{
-			std::cout << "############INTO CGI ############" << std::endl;
 			manageCgi(_request, server);
-		}
 		else if (_request.getMethod().first == "GET")
 			methodGET(server);
 		else if (_request.getMethod().first == "POST")
@@ -240,41 +241,3 @@ bool HttpManager::applyMethod(const Server &server)
 	}
 	return _isEnd;
 }
-
-
-// int HttpManager::receiver()
-// {
-// 	int ret;
-// 	char buffer[LEN_TO_READ + 1];
-
-// 	for (int i = 0; i < LEN_TO_READ + 1; i++)
-// 		buffer[i] = 0;
-// 	ret = recv(_socketClient, buffer, LEN_TO_READ, MSG_DONTWAIT);
-// 	if (ret == -1)
-// 	{
-// 		_isEnd = true;
-// 		return -1;
-// 	}
-// 	_request.concatenate(buffer);
-// 	std::cout << buffer << std::endl;
-// 	return (0);
-// }
-
-// void HttpManager::sender()
-// {
-// 	int ret;
-
-// 	if (_respond.size() > 0)
-// 	{
-// 		ret = send(_socketClient, _respond.c_str(), _respond.size(), MSG_NOSIGNAL);
-// 		_respond.clear();
-// 		if (ret == -1)
-// 			_isEnd = true;
-// 	}
-// }
-
-
-
-
-
-

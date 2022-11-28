@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   Cgi.cpp                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rpottier <rpottier@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/11/28 14:44:25 by rpottier          #+#    #+#             */
+/*   Updated: 2022/11/28 14:44:26 by rpottier         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "Cgi.hpp"
 #include "define.hpp"
 #include <signal.h>
@@ -105,7 +117,6 @@ bool Cgi::execute()
 		return (0);
 	if(pipe(_pip1) == -1 || pipe(_pip2) == -1)
 		throw exceptWebserv("Error CGI : failed to create a pipe");
-	std::cout << _request << " LENGTH = " << _request.size() << std::endl;
 	write(_pip2[1], _request.c_str(), _request.size());
 	if((_pid = fork()) == -1)
 		throw exceptWebserv("Error CGI : failed to fork");
@@ -182,7 +193,6 @@ void	Cgi::store_cookies()
 			end_position_of_line = end_of_header;
 		i++;
 	}
-	std::cout<< std::endl<< std::endl<< std::endl;
 }
 
 void	Cgi::manage_output()

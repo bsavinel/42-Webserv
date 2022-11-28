@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   HttpM_Post.cpp                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rpottier <rpottier@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/11/28 14:43:54 by rpottier          #+#    #+#             */
+/*   Updated: 2022/11/28 14:43:56 by rpottier         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "HttpM_Post.hpp"
 
 void	HttpManager::methodPOST( void )
@@ -179,11 +191,9 @@ std::string			HttpManager::getUploadFileName( void )
 
 void printAscii(std::string str)
 {
-//	std::cout << "---------- ASCII -----------" << std::endl;
 	for (size_t i = 0; i < str.length(); i++)
 		std::cout << (int)str[i] << " ";
 	std::cout << std::endl;
-//	std::cout << "---------- ASCII END -----------" << std::endl;
 }
 
 void printMultiPartParam(t_multipart_param multipart_param)
@@ -200,11 +210,6 @@ t_multipart_param	getParamBoundary(std::string boundaryHeader)
 	std::string::size_type	startPos = 0;
 	std::string::size_type	endPos = 0;
 	std::string::size_type	subStrLen = 0;
-
-// 	std::cout << "boundaryHeader/" << std::endl;
-// 	std::cout << boundaryHeader << std::endl;
-//	printAscii(boundaryHeader);
-// 	std::cout << "/boundaryHeader" << std::endl;
 
 	toFind = "Content-Disposition: ";
 	
