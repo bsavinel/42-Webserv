@@ -21,8 +21,6 @@ void Cgi::initialise_env(HttpRequest &request, const Server &server, std::string
 
 	_path_to_script = path;
 
-	std::cout << "BUILD LOCAL PATH " <<  _path_to_script << std::endl;
-
 	env_var.push_back("SERVER_SOFTWARE=Webserv/1.0");
 	env_var.push_back("SERVER_NAME=" + server.getServerName());
 	env_var.push_back("GATEWAY_INTERFACE=CGI/1.1");
@@ -41,7 +39,6 @@ void Cgi::initialise_env(HttpRequest &request, const Server &server, std::string
 		std::stringstream ss;
 		ss.str("");
 		ss << request.getContentLength().first;
-		std::cout <<  "TAILLE DE LA REQUETE = " << request.getContentLength().first << std::endl;
 		env_var.push_back("CONTENT_LENGTH=" + ss.str());
 	}
 	else
