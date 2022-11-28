@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   HttpM_Cgi.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rpottier <rpottier@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nburat-d <nburat-d@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/28 14:43:39 by rpottier          #+#    #+#             */
-/*   Updated: 2022/11/28 14:43:40 by rpottier         ###   ########.fr       */
+/*   Updated: 2022/11/28 17:52:02 by nburat-d         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,10 @@ void	HttpManager::launchCgi()
 		try
 		{
 			if(!_cgi.execute())
+			{
+				std::cout << "Ca foire ici " << std::endl;
 				_errorCode = 401;
+			}
 		}
 		catch(const std::exception& e)
 		{

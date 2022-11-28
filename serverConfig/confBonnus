@@ -1,6 +1,6 @@
 server 
 {
-	listen 8080;
+	listen 7070;
 
 	location /
 	{
@@ -15,6 +15,14 @@ server
 		index cookies.php;
 		cgi_pass .php /usr/bin/php-cgi;
 	}
+	location /session/
+	{
+		allow GET POST DELETE;
+		root ./serverConfig/autreconf/session/;
+		index session_start.php;
+		cgi_pass .php /usr/bin/php-cgi;
+	}
+
 	location /autre_cgi/
 	{
 		allow GET;
