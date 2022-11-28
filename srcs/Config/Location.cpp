@@ -39,8 +39,13 @@ void Location::setConfig(std::vector<std::string>::iterator & it, std::vector<st
 	it+=2;
 	while (it != splitted.end() && (*it).compare("}") != 0)
 	{
-		if ((*it).compare("allow") == 0 && (*(it + 1)) != ";")
-			set_allowed_methods(it, splitted);
+		if ((*it).compare("allow") == 0)
+		{
+			if ((*(it + 1)) != ";")
+				set_allowed_methods(it, splitted);
+			else
+				it++;
+		}
 		else if ((*it).compare("return") == 0 && (*(it + 1)) != ";")
 			set_redirection(it);
 		else if ((*it).compare("root") == 0 && (*(it + 1)) != ";" && (*(it + 2)) == ";")
@@ -54,7 +59,10 @@ void Location::setConfig(std::vector<std::string>::iterator & it, std::vector<st
 		else if ((*it).compare("upload_store") == 0 && (*(it + 1)) != ";" && (*(it + 2)) == ";")
 			set_upload_store(it);
 		else if (*it != ";")
+		{
+			std::cout << "ERROR OPTION = " << *(it) << ", NEXT = " << *(it + 1) << std::endl;
 			throw exceptWebserv ("Error Location : option not compatible or missing \';\'");
+		}
 		it++;
 	}
 }
