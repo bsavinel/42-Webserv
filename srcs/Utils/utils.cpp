@@ -6,7 +6,7 @@
 /*   By: rpottier <rpottier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/28 14:44:21 by rpottier          #+#    #+#             */
-/*   Updated: 2022/11/28 14:44:22 by rpottier         ###   ########.fr       */
+/*   Updated: 2022/11/28 15:05:06 by rpottier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,22 +68,24 @@ std::string read_file(char *config_file)
 	return (file_content);
 }
 
+			#include <iostream>
 void	remove_comment(std::string & content_file)
 {
 	std::string::iterator beg = content_file.begin();
 	std::string::iterator end_of_comment;
 	std::string::iterator end = content_file.end();
 
-	while(beg != end - 1)
+	while(beg < end)
 	{
 		if(*beg == '#')
 		{
 			end_of_comment = beg;
-			while (*end_of_comment != '\n' && end_of_comment != end)
+			while (end_of_comment != end && *end_of_comment != '\n')
 				end_of_comment++;
 			content_file.erase(beg, end_of_comment);
 		}
 		beg++;
+		end = content_file.end();
 	}
 }
 
