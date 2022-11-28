@@ -6,7 +6,7 @@
 /*   By: rpottier <rpottier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/28 14:44:00 by rpottier          #+#    #+#             */
-/*   Updated: 2022/11/28 14:44:01 by rpottier         ###   ########.fr       */
+/*   Updated: 2022/11/28 15:23:43 by rpottier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,6 +92,7 @@ void HttpManager::sender()
 		{
 			_isEnd = true;
 		}
+		// std::cout << _respond << std::endl;
 		_respond.clear();
 		if (ret == -1)
 			_isEnd = true;
