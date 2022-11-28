@@ -10,8 +10,6 @@ server
 		allow GET POST;
 		root ./serverConfig/allIn/;
 		index login.html;
-		cgi_pass .php ./serverConfig/allIn/cgi/truc.php;
-		cgi_pass .cpp ./serverConfig/allIn/cgi/c++_cgi_bin;
 		upload_store  ./serverConfig/allIn/uploads/;
 		cgi_pass .php /usr/bin/php-cgi;
 	}

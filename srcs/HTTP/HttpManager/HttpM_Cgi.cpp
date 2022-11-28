@@ -34,6 +34,7 @@ void	HttpManager::launchCgi()
 void	HttpManager::manageCgi(HttpRequest &_request, const Server &server)
 {
 	struct stat _status;
+	std::string path = retrieveCorrespondingLocalPath();
 
 	if (_tmpEnd == true)
 	{
@@ -44,7 +45,7 @@ void	HttpManager::manageCgi(HttpRequest &_request, const Server &server)
 	{
 		canWrite();
 		std::string header;
-		_cgi.initialise_env(_request, server);
+		_cgi.initialise_env(_request, server, path);
 		_cgi.set_path_cgi(_request.getLocation()->getCgiPathToScript());
 		_cgi.set_argv();
 		stat(_cgi.getScriptPath().c_str(), &_status);

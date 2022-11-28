@@ -28,34 +28,6 @@
 // 	std::cout << std::endl;
 // }
 
-/*void endOfRequest(Epoll &epoll, std::map<t_socket, HttpManager> &stockManager, HttpManager &manager, int fdSock, Server &severOfSocket)
-{
-	if (manager.getClassRequest().getConnection().second == true &&
-		manager.getClassRequest().getConnection().first == "keep-alive")
-	{
-		manager.setIsEnd(false);
-		if (manager.getClassRequest().headerComplete()) //TODO header complete doit voir si il y a un /n/r/n/r dans le reste  de la requete 
-		{
-			manager.initialize(severOfSocket);
-			// TODO avoir un getter de la content lenght pour savoir si on fini de lire la requete
-			if (manager.getClassRequest().getContentLenght().second && 
-				manager.getClassRequest().getContentLenght().fisrt < manager.getClassRequest().getRequest().size())
-				epoll.changeSocket(fdSock, EPOLLIN);
-		}
-		else
-		{
-			manager.setInit(false);
-			epoll.changeSocket(fdSock, EPOLLIN);
-		}
-	}
-	else
-	{
-		std::cout << "Fd : " << fdSock << " a ete suprimer par une fin de traitement" << std::endl;
-		epoll.deleteClient(fdSock);
-		stockManager.erase(fdSock);
-	}
-}*/
-
 void	clientEvent(Epoll &epoll, std::map<t_socket, HttpManager> &stockManager)
 {
 	Epoll::stockEventType::iterator				it_event;
@@ -103,7 +75,6 @@ void	clientEvent(Epoll &epoll, std::map<t_socket, HttpManager> &stockManager)
 
 		if (manager.getIsEnd())
 		{
-			//endOfRequest(epoll, stockManager, manager, it_event->data.fd, socketClient.find(it_event->data.fd)->second);
 			std::cout << "Fd : " << it_event->data.fd << " a ete suprimer par une fin de traitement" << std::endl;
 			epoll.deleteClient(it_event->data.fd);
 			stockManager.erase(it_event->data.fd);

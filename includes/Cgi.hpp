@@ -32,7 +32,7 @@ class Cgi
 		Cgi();
 		~Cgi();
 
-		void				initialise_env(HttpRequest &manager, const Server &server);
+		void				initialise_env(HttpRequest &request, const Server &server, std::string& path);
 		int					feedOutput();
 		void				set_path_cgi(std::string path);
 		void				set_argv();

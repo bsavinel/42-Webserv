@@ -47,7 +47,7 @@ void launcher(char *av)
 
 	configuration.init(av);
 
-	configuration.print_all_conf();
+	//configuration.print_all_conf();
 
 	if(!check_server_port(configuration))
 		throw exceptWebserv("Error : Two servers set on the same port");

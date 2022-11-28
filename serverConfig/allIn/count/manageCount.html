@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+        <meta charset="utf-8" />
+        <title>To the moon</title>
+    </head>
+	<body>
+		<form action="/count/" method="post" enctype="multipart/form-data">
+			<input type="file" name="myFile" />
+			<input type = "file" name="myFile" />
+			<button type="submit">Add payments</button>
+		</form>
+		<input type = "text" id = "myid" value="delete" />
+		<button id="delete-button">Delete payment</button><br>
+		<a href="/count/payments/">See payments</a>
+	</body>
+</html>
+
+<script>
+	
+	class DeleteHTTP {
+	
+	async delete(url) {
+		const response = await fetch(url, {
+			method: 'DELETE',
+			headers: {
+				'Content-type': 'application/json'
+			}
+		});
+		const resData = 'resource deleted...';
+		return resData;
+		}
+	}
+
+	const http = new DeleteHTTP;
+	let button = document.getElementById("delete-button");
+
+	button.addEventListener("click", () => {
+		console.log("clicked");
+		http.delete('http://localhost:8080/count/payments/' + document.getElementById("myid").value)
+		.then(data => console.log(data))
+		.catch(err => console.log(err))
+	});
+
+</script>

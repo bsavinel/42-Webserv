@@ -150,9 +150,9 @@ std::string get_file_extension(std::string path)
 {
 	std::string extension;
 			
-	if(path.find('.') != std::string::npos)
+	if(path.rfind('.') != std::string::npos)
 	{
-		std::size_t start = path.find('.');
+		std::size_t start = path.rfind('.');
 		std::size_t nbr_to_cpy = path.size() - start;
 
 		extension = path.substr(start, nbr_to_cpy);

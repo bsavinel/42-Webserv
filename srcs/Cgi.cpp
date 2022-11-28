@@ -13,15 +13,15 @@ Cgi::~Cgi()
 {
 }
 
-void Cgi::initialise_env(HttpRequest &request, const Server &server)
+void Cgi::initialise_env(HttpRequest &request, const Server &server, std::string& path)
 {
 	std::vector<std::string>	env_var;
 	
 	_request =  request.getRequest();
 
-	_path_to_script = buildLocalPath(request);
+	_path_to_script = path;
 
-	std::cout << "METHOD ENVIRONNEMENT = " << request.getMethod().first << std::endl;
+	std::cout << "BUILD LOCAL PATH " <<  _path_to_script << std::endl;
 
 	env_var.push_back("SERVER_SOFTWARE=Webserv/1.0");
 	env_var.push_back("SERVER_NAME=" + server.getServerName());
@@ -29,11 +29,11 @@ void Cgi::initialise_env(HttpRequest &request, const Server &server)
 	env_var.push_back("SERVER_PROTOCOL=HTTP/1.1");
 	env_var.push_back("SERVER_PORT=" + (std::string) ft_itoa(server.getPort()));
 	env_var.push_back("REQUEST_METHOD=" + request.getMethod().first);
-	env_var.push_back("PATH_INFO=" + buildLocalPath(request)); // the path to the script, example : methode/index.php
-	env_var.push_back("PATH_TRANSLATED=" + buildLocalPath(request)); // idem
-	env_var.push_back("SCRIPT_NAME=" + buildLocalPath(request)); // the constructed path to the script /data/www/script.php
-	env_var.push_back("SCRIPT_FILENAME=" + buildLocalPath(request)); // the constructed path to the script /data/www/script.php
-	env_var.push_back("QUERY_STRING=" + buildLocalPath(request));
+	env_var.push_back("PATH_INFO=" + _path_to_script); // the path to the script, example : methode/index.php
+	env_var.push_back("PATH_TRANSLATED=" + _path_to_script); // idem
+	env_var.push_back("SCRIPT_NAME=" + _path_to_script); // the constructed path to the script /data/www/script.php
+	env_var.push_back("SCRIPT_FILENAME=" + _path_to_script); // the constructed path to the script /data/www/script.php
+	env_var.push_back("QUERY_STRING=" + _path_to_script);
 	env_var.push_back("CONTENT_TYPE=" + request.getContentType().first);
 	
 	if(request.getMethod().first == "POST")

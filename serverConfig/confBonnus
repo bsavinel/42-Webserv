@@ -1,0 +1,25 @@
+server 
+{
+	listen 8080;
+
+	location /
+	{
+		allow GET;
+		root ./serverConfig/autreconf/;
+		index index.html;
+	}
+	location /cookie/
+	{
+		allow GET;
+		root ./serverConfig/autreconf/;
+		index cookies.php;
+		cgi_pass .php /usr/bin/php-cgi;
+	}
+	location /autre_cgi/
+	{
+		allow GET;
+		root ./serverConfig/autreconf/;
+		index hello.cpp;
+		cgi_pass .cpp ./serverConfig/autreconf/c++_cgi_bin;
+	}
+}

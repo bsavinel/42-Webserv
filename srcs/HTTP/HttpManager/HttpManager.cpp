@@ -80,6 +80,10 @@ void HttpManager::sender()
 	if (_respond.size() > 0)
 	{
 		ret = send(_socketClient, _respond.c_str(), _respond.size(), MSG_NOSIGNAL);
+		if (ret == -1)
+		{
+			_isEnd = true;
+		}
 		_respond.clear();
 		if (ret == -1)
 			_isEnd = true;
@@ -94,10 +98,11 @@ int HttpManager::receiver()
 	for (int i = 0; i < LEN_TO_READ + 1; i++)
 		buffer[i] = 0;
 	if ((ret = recv(_socketClient, buffer, LEN_TO_READ, MSG_DONTWAIT)) == -1)
+	{
+		_isEnd = true;
 		return (-1);
+	}
 	_lenRead += ret;
-//	std::string buff(buffer);
-//	std::cout << buff << std::endl; 
 	if (_request.getContentLength().second == true &&  _lenRead >= _request.getContentLength().first)
 	{
 		_requestFullyReceive = true;
@@ -113,7 +118,6 @@ void HttpManager::initialize(const Server &server)
 	if (!_init)
 	{
 		_init = true;
-		std::cout << "Request Brute = " << _request.getRequest() << std::endl;
 		_request.parser();
 		_lenRead = 0;
 		_lenRead = _request.getRequest().size();
@@ -165,9 +169,9 @@ bool HttpManager::checkRequest(const Server &server)
 		_errorCode = 501;
 	else if (!checkIfMethodIsAthorized())
 		_errorCode = 405;
-	/*else if (server.getClientMaxBodySize() != -1 && 
-				(_request.getContentLenght().second == true && _request.getContentLenght().first > server.getClientMaxBodySize()))
-		_errorCode = 413*/
+	else if (server.getClientMaxBodySize() != 0 && 
+				(_request.getContentLength().second == true && _request.getContentLength().first > server.getClientMaxBodySize()))
+		_errorCode = 413;
 	else
 		return true;
 	return false;
@@ -197,6 +201,8 @@ std::string HttpManager::determinateType(const std::string &name_file)
 bool HttpManager::applyMethod(const Server &server)
 {
 	(void)server;
+
+	std::cout << "---------------RETRIEVELOCALPATH = " << retrieveCorrespondingLocalPath() << std::endl;
 	if (!_isEnd && _init)
 	{
 		if (_goodRequest == false)
@@ -218,17 +224,15 @@ bool HttpManager::applyMethod(const Server &server)
 		}
 		else if (!checkIfMethodIsAthorized())
 			_errorCode = 405;
-		else if (!_request.getLocation()->getCgiFileExtension().empty() && _request.getLocation()->getCgiFileExtension() == get_file_extension(_request.getUrl().first))
+		else if (!_request.getLocation()->getCgiFileExtension().empty() && _request.getLocation()->getCgiFileExtension() == get_file_extension(retrieveCorrespondingLocalPath()))
 		{
+			std::cout << "############INTO CGI ############" << std::endl;
 			manageCgi(_request, server);
 		}
 		else if (_request.getMethod().first == "GET")
 			methodGET(server);
 		else if (_request.getMethod().first == "POST")
-		{
-//			std::cout << _request.getRequest() << std::endl;
 			methodPOST();
-		}
 		else if (_request.getMethod().first == "DELETE")
 			methodDELETE();
 		else
