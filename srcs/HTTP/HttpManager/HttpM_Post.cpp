@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   HttpM_Post.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rpottier <rpottier@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nburat-d <nburat-d@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/28 14:43:54 by rpottier          #+#    #+#             */
-/*   Updated: 2022/11/28 14:43:56 by rpottier         ###   ########.fr       */
+/*   Updated: 2022/11/29 11:21:00 by nburat-d         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,11 +87,6 @@ int HttpManager::parseMultiPart(std::fstream &fstream)
             {
                 _multipart_param = getParamBoundary(boundaryHeader);
                 _process.header = true;
-				if (_multipart_param.contentType.first.find("application/octet-stream") == 0)
-				{
-					skipPart = true;
-					break;
-				}
 				fileName = getUploadFileName();
 				if (fileName.empty())
 				{
@@ -120,6 +115,7 @@ int HttpManager::parseMultiPart(std::fstream &fstream)
         }
         if (_process.header == true)
         {
+			std::string file;
             bool first = true;
             bool carriageReturn = false;
             int i = 0;
@@ -129,11 +125,11 @@ int HttpManager::parseMultiPart(std::fstream &fstream)
                 if (str.compare(BoundaryEndtoFind) != 0 && str.compare(BoundaryStartToFind) != 0)
                 {
                     if (!first && skipPart == false)
-                        _uploaded << std::endl; 
+                        file += "\n"; 
                     if (str.size() >= 1 && carriageReturn == true)
                     {
 						if (skipPart == false)
-                        	_uploaded << '\r';
+                        	file +=  '\r';
                         carriageReturn = false;
                     }
                     first = false;
@@ -143,10 +139,12 @@ int HttpManager::parseMultiPart(std::fstream &fstream)
                         str.erase(str.size() - 1);
                     }
 					if (str.size() >= 1 && skipPart == false)
-						_uploaded << str;
+						file +=  str;
                 }
                 i++;
             }
+			file.erase(file.end() - 1);
+			_uploaded << file;
         }
         if (str.compare(BoundaryEndtoFind) == 0 || str.compare(BoundaryStartToFind) == 0)
         {
