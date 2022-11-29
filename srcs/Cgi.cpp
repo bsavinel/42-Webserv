@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Cgi.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rpottier <rpottier@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nburat-d <nburat-d@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/28 14:44:25 by rpottier          #+#    #+#             */
-/*   Updated: 2022/11/28 14:44:26 by rpottier         ###   ########.fr       */
+/*   Updated: 2022/11/29 09:15:55 by nburat-d         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,7 +117,8 @@ bool Cgi::execute()
 		return (0);
 	if(pipe(_pip1) == -1 || pipe(_pip2) == -1)
 		throw exceptWebserv("Error CGI : failed to create a pipe");
-	write(_pip2[1], _request.c_str(), _request.size());
+	if (write(_pip2[1], _request.c_str(), _request.size()) == -1)
+		throw exceptWebserv("Error CGI : failed to write");
 	if((_pid = fork()) == -1)
 		throw exceptWebserv("Error CGI : failed to fork");
 	if(_pid == 0)
@@ -165,6 +166,8 @@ int	Cgi::feedOutput()
 			_output.insert(0, buff, nbytes);
 			memset(buff, 0, 4096);
 		}
+		if (nbytes == -1)
+			throw exceptWebserv("Error CGI : failed to read output");
 		store_cookies();
 		manage_output();
 		close(_pip1[0]);

@@ -3,7 +3,7 @@ server
 	listen 8080;
 	server_name allIn;
 	client_max_body_size 8000;
-	error_pages 404 ./resources/error/404.html;
+	error_pages 404 ./serverConfig/allIn/404.html;
 
 	location /
 	{

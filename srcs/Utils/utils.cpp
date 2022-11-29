@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rpottier <rpottier@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nburat-d <nburat-d@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/28 14:44:21 by rpottier          #+#    #+#             */
-/*   Updated: 2022/11/28 15:05:06 by rpottier         ###   ########.fr       */
+/*   Updated: 2022/11/29 08:55:58 by nburat-d         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,8 @@ std::string read_file(char *config_file)
 		memset(buff,0, BUFFER_SIZE+1);
 		ret = read(fd, buff, BUFFER_SIZE);
 	}
+	if(ret == -1)
+		throw exceptWebserv("Config Error : something went wrong while reading the file");
 	close(fd);
 	return (file_content);
 }

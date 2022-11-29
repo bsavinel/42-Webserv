@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   HttpM_Get.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rpottier <rpottier@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nburat-d <nburat-d@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/28 14:43:48 by rpottier          #+#    #+#             */
-/*   Updated: 2022/11/28 14:43:49 by rpottier         ###   ########.fr       */
+/*   Updated: 2022/11/29 08:54:30 by nburat-d         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,7 +107,11 @@ void HttpManager::buildGetRespond()
 	nb_char = read(_file_fd, buffer, LEN_TO_READ);
 	if (nb_char > 0)
 		_respond.insert(_respond.size(), &buffer[0], nb_char);
-	if (nb_char < LEN_TO_READ)
+	if (nb_char == -1)
+	{
+		_errorCode = 501;
+	}
+	else if (nb_char < LEN_TO_READ)
 		_isEnd = true;
 }
 

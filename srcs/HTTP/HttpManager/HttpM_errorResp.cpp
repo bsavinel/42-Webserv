@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   HttpM_errorResp.cpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rpottier <rpottier@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nburat-d <nburat-d@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/28 14:43:44 by rpottier          #+#    #+#             */
-/*   Updated: 2022/11/28 14:43:45 by rpottier         ###   ########.fr       */
+/*   Updated: 2022/11/29 09:11:52 by nburat-d         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,6 +73,11 @@ std::string	HttpManager::ErrorRespond(const Server &server)
 		nb_char = read(_file_fd, buffer, LEN_TO_READ);
 		if (nb_char > 0)
 			errResp.insert(errResp.size(), &buffer[0], nb_char);
+		if (nb_char == -1)
+		{
+			errResp.clear();
+			errResp = initDefaultErrorResponse();
+		}
 		if (nb_char < LEN_TO_READ)
 		{
 			close(_file_fd);

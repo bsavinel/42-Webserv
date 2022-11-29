@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   HttpM_redir.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rpottier <rpottier@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nburat-d <nburat-d@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/28 14:43:57 by rpottier          #+#    #+#             */
-/*   Updated: 2022/11/28 14:43:58 by rpottier         ###   ########.fr       */
+/*   Updated: 2022/11/29 09:11:20 by nburat-d         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,12 @@ bool HttpManager::manageRedirection()
 		if (nb_char < LEN_TO_READ)
 		{
 			close(_file_fd);
+			_isEnd = true;
+		}
+		if (nb_char == -1)
+		{
+			_respond.clear();
+			_respond = initDefaultErrorResponse();
 			_isEnd = true;
 		}
 	}
