@@ -6,7 +6,7 @@
 /*   By: nburat-d <nburat-d@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/28 14:43:54 by rpottier          #+#    #+#             */
-/*   Updated: 2022/11/29 11:21:00 by nburat-d         ###   ########.fr       */
+/*   Updated: 2022/11/29 13:41:01 by nburat-d         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,9 +63,9 @@ int HttpManager::parseMultiPart(std::fstream &fstream)
     std::string				BoundaryEndtoFind = "--" + _request.getBoundary().first + "--\r" ;
     std::string				str;
     std::string				boundaryHeader;
-	bool					skipPart = false;;
-    fstream.seekg(0);
+	bool					skipPart = false;
 
+    fstream.seekg(0);
     while (fstream.eof() != true && _process.boundaryEnd == false)
     {
         if (_new_process == false)

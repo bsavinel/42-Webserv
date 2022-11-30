@@ -3,14 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   HttpManager.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rpottier <rpottier@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nburat-d <nburat-d@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/28 14:44:00 by rpottier          #+#    #+#             */
-/*   Updated: 2022/11/28 15:23:43 by rpottier         ###   ########.fr       */
+/*   Updated: 2022/11/29 13:39:52 by nburat-d         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "HttpManager.hpp"
+# include "HttpM_Post.hpp"
 #include <sys/socket.h>
 
 #include <iostream>
@@ -40,6 +41,7 @@ HttpManager::HttpManager(t_socket socketClient)
 	_lenRead = 0;
 	_new_process = false;
 	_lenOfRequestAlreadyRead = 0;
+	_process = createProcess();
 }
 
 HttpManager::HttpManager(const HttpManager &rhs)
@@ -72,6 +74,8 @@ HttpManager &HttpManager::operator=(const HttpManager &rhs)
 		_tmpEnd = rhs._tmpEnd;
 		_lenRead = rhs._lenRead;
 		_lenOfRequestAlreadyRead = rhs._lenOfRequestAlreadyRead;
+		_new_process = rhs._new_process;
+		_process = rhs._process;
 	}
 	return *this;
 }

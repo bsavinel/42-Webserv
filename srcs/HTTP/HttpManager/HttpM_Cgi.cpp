@@ -6,7 +6,7 @@
 /*   By: nburat-d <nburat-d@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/28 14:43:39 by rpottier          #+#    #+#             */
-/*   Updated: 2022/11/28 17:52:02 by nburat-d         ###   ########.fr       */
+/*   Updated: 2022/11/29 13:51:58 by nburat-d         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,8 +32,6 @@ void	HttpManager::launchCgi()
 			_errorCode = 500;
 			std::cerr << e.what() << '\n';
 		}
-		
-		
 	}
 	else
 	{

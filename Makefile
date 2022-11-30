@@ -5,12 +5,8 @@ NAME = Webserv
 ################################################################################
 
 CXX			= c++
-CXXFLAGS	= -Wall -Wextra -Werror -std=c++98 -g3 -fsanitize=address
+CXXFLAGS	= -Wall -Wextra -Werror -std=c++98 -g3
 CPPFLAGS	= -MMD
-
-ifeq (sanitize, $(filter sanitize, $(MAKECMDGOALS)))
-	CXXFLAGS += -fsanitize=address
-endif
 
 ################################################################################
 #                               SOURCE FILES                              	   #
@@ -102,13 +98,6 @@ fclean : clean
 re : fclean 
 	echo "Cleaning executable"
 	make all --no-print-directory
-
-################################################################################
-#####                              Flags                                   #####
-################################################################################
-
-sanitize:
-	echo -n ""
 
 -include $(DEPS)
 

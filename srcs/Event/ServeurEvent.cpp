@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ServeurEvent.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rpottier <rpottier@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nburat-d <nburat-d@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/28 14:43:33 by rpottier          #+#    #+#             */
-/*   Updated: 2022/11/28 14:43:34 by rpottier         ###   ########.fr       */
+/*   Updated: 2022/11/29 14:01:26 by nburat-d         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,6 @@ void	serverEvent(Epoll &epoll, std::map<t_socket, HttpManager> &stockManager)
 	size = sizeof(sin);
 	for (it = epoll.getAllEvents().begin(); it != epoll.getAllEvents().end(); it++)
 	{
-		/*je met le fd que je cherche et je recupere un iterateur sur un serveur*/
 		itServ = epoll.getSockServ().find(it->data.fd);
 		if (itServ == epoll.getSockServ().end())
 			continue;
@@ -35,7 +34,7 @@ void	serverEvent(Epoll &epoll, std::map<t_socket, HttpManager> &stockManager)
 		newClient = accept(it->data.fd, (t_sockaddr *)&sin, (socklen_t *)&size);
 		if (newClient == -1)
 			throw exceptWebserv("serverEvent : Accept new client failed");
-		//Socket(epoll, newClient); // client est add a epoll a l'interieur
+		std::cout << "coucou" << std::endl;
 		epoll.addClient(newClient, epoll.getSockServ().find(it->data.fd)->second); // on associe l evetn client a un serveur
 		stockManager.insert(std::make_pair(newClient, HttpManager(newClient)));
 		std::cout << "le fd : " << newClient << " est lie au server " << itServ->second->getPort() << std::endl;

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   HttpManager.hpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rpottier <rpottier@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nburat-d <nburat-d@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/28 14:44:55 by rpottier          #+#    #+#             */
-/*   Updated: 2022/11/28 14:44:56 by rpottier         ###   ########.fr       */
+/*   Updated: 2022/11/29 13:32:57 by nburat-d         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -156,14 +156,14 @@ std::string getFileName();
 		/*delete methode*/
 	
 	private:
-		void methodPOST();
-		int _tmp_upload_fd;
+		void				methodPOST();
+		int					_tmp_upload_fd;
 				/* multipart */
-		std::fstream	_uploaded;
-		t_process		_process;
-		bool			_new_process;
+		std::fstream		_uploaded;
+		t_process			_process;
+		bool				_new_process;
 		t_multipart_param	_multipart_param;
-		int				_lenOfRequestAlreadyRead;
+		int					_lenOfRequestAlreadyRead;
 		// ------------------------------------------------------
 		// |				METHODS ---- DELETE					|
 		// ------------------------------------------------------

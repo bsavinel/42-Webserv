@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ClientEvent.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rpottier <rpottier@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nburat-d <nburat-d@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/28 14:43:31 by rpottier          #+#    #+#             */
-/*   Updated: 2022/11/28 14:43:32 by rpottier         ###   ########.fr       */
+/*   Updated: 2022/11/29 13:51:19 by nburat-d         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,6 @@
 #include <iostream>
 #include <sys/epoll.h>
 
-// TODO changer le open en stream
 #include <unistd.h>
 #include <map>
 #include <fcntl.h>
