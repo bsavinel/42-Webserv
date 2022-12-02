@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.hpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rpottier <rpottier@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nburat-d <nburat-d@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/28 14:45:10 by rpottier          #+#    #+#             */
-/*   Updated: 2022/11/28 14:45:11 by rpottier         ###   ########.fr       */
+/*   Updated: 2022/12/02 06:15:17 by nburat-d         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,10 +22,13 @@
 #include <vector>
 #include <list>
 #include <algorithm>
+#include <bits/stdc++.h>
+
 
 #include "exceptWebserv.hpp"
 
 #define BUFFER_SIZE 10000
+#define DELIM "."
 
 std::string					read_file(char *config_file);
 void						remove_comment(std::string & content_file);
@@ -40,5 +43,7 @@ char						*ft_itoa(int n);
 std::string					retrieve_from_left_till_char(std::string path, char c);
 bool						check_existing_error_code(int nbr);
 size_t						give_time(void);
+int							is_valid_ip(char* ip_str);
+
 
 #endif

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rpottier <rpottier@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nburat-d <nburat-d@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/28 14:44:47 by rpottier          #+#    #+#             */
-/*   Updated: 2022/11/28 14:44:48 by rpottier         ###   ########.fr       */
+/*   Updated: 2022/12/02 06:48:22 by nburat-d         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@ class Server
 		int									_service; // SOCK_STREAM, SOCK_DGRAM
 		int									_protocol; // use 0 for "any"
 		u_long								_interface; // needs to be set to INADDR_ANY
+		std::string							_host;
 		int									_port;
 		int									_backlog; // maximum number of queued clients
 		struct sockaddr_in					_address;
@@ -81,6 +82,7 @@ class Server
 
 	private :
 		void	add_location_block(std::vector<std::string>::iterator & it, std::vector<std::string> & splitted);
+		void	set_host_and_port(std::vector<std::string>::iterator & it);
 		bool	is_path_stored_yet(std::string path);
 		void	set_error_pages(std::vector<std::string>::iterator & it);
 		void	set_client_max_body_size(std::vector<std::string>::iterator & it);

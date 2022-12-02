@@ -1,6 +1,6 @@
 server 
 {
-	listen 8080;
+	listen 127.168.1.1:8080;
 	server_name allIn;
 #	client_max_body_size 8000;
 	error_pages 404 ./serverConfig/allIn/404.html;

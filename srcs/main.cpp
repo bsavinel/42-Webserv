@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rpottier <rpottier@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nburat-d <nburat-d@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/28 14:44:35 by rpottier          #+#    #+#             */
-/*   Updated: 2022/11/28 14:44:36 by rpottier         ###   ########.fr       */
+/*   Updated: 2022/12/02 06:27:17 by nburat-d         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,3 +39,4 @@ int main(int ac, char **av)
 		std::cout << "Missing configuration file" << std::endl;
 	return(EXIT_SUCCESS);
 }
+

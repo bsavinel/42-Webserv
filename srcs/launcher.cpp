@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   launcher.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rpottier <rpottier@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nburat-d <nburat-d@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/28 14:44:33 by rpottier          #+#    #+#             */
-/*   Updated: 2022/11/28 14:44:34 by rpottier         ###   ########.fr       */
+/*   Updated: 2022/12/02 06:54:09 by nburat-d         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ void launcher(char *av)
 
 	configuration.init(av);
 
-	//configuration.print_all_conf();
+	configuration.print_all_conf();
 
 	if(!check_server_port(configuration))
 		throw exceptWebserv("Error : Two servers set on the same port");

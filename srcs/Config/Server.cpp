@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rpottier <rpottier@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nburat-d <nburat-d@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/28 14:43:28 by rpottier          #+#    #+#             */
-/*   Updated: 2022/11/28 14:43:29 by rpottier         ###   ########.fr       */
+/*   Updated: 2022/12/02 07:20:26 by nburat-d         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,6 +71,21 @@ void Server::launch()
 	std::cout << "Port :" << _port << std::endl;
 }
 
+void Server::set_host_and_port(std::vector<std::string>::iterator & it)
+{
+	char *host = strtok((char*)(*(it + 1)).c_str(), ":");
+	std::string cpyhost(host);
+	char *port = strtok(NULL, ":");
+	if(is_valid_ip(host) && port != NULL)
+	{
+		_host = cpyhost;
+		_port = atoi(port);
+		++it;
+	}
+	else
+		this->_port = atoi(((*++it).c_str()));
+}
+
 void Server::setConfig(std::vector<std::string>::iterator & it, std::vector<std::string> & splitted)
 {
 	bool listenIsSet = false;
@@ -81,7 +96,7 @@ void Server::setConfig(std::vector<std::string>::iterator & it, std::vector<std:
 			add_location_block(it, splitted);
 		else if ((*it).compare("listen") == 0 && (*(it + 1)) != ";" && (*(it + 2)) == ";")
 		{
-			this->_port = atoi(((*++it).c_str()));
+			set_host_and_port(it);
 			listenIsSet = true;
 		}
 		else if ((*it).compare("server_name") == 0 && (*(it + 1)) != ";" && (*(it + 2)) == ";")
@@ -179,6 +194,7 @@ const std::map<int, std::string> &Server::getErrorMap() const
 void	Server::printConfig()
 {
 	std::cout << "----Server Configuration----" << std::endl;
+	std::cout << "host = " << _host << std::endl;
 	std::cout << "port = " << _port << std::endl;
 	std::cout << "server_name = " << server_name << std::endl;
 	std::cout << "-----Map Error Content------" << std::endl;
